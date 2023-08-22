@@ -2,7 +2,7 @@ function BookDetails({image, title, author, year, pageCount, genre, blurb}) {
     return ( 
         <>
             <div>
-                <img src={image} alt='image of book cover' />
+                <img src={image} alt={'Cover of ' + title} />
             </div>
             <div>
                 <h2>{title}</h2>

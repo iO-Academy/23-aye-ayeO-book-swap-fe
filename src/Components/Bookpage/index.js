@@ -18,11 +18,10 @@ function Bookpage() {
         fetch('https://book-swap-api.dev.io-academy.uk/api/books/' + id)
             .then(res => res.json())
             .then(bookData => {
-                
+
                 if (bookData.message !== 'Book successfully found') {
                     setError(!error)
                 } else {
-                    console.log(bookData)
                     setImage(bookData.data.image)
                     setTitle(bookData.data.title)
                     setAuthor(bookData.data.author)
@@ -31,7 +30,6 @@ function Bookpage() {
                     setGenre(bookData.data.genre)
                     setBlurb(bookData.data.blurb)
                 }
-
             })
     },[])
 
