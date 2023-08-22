@@ -18,6 +18,7 @@ function Bookshelf() {
             {bookCollection.map((book) => {
                 return (
                     <BookCard
+                        id={book.id}
                         bookCover={book.image}
                         title={book.title}
                         author={book.author}
