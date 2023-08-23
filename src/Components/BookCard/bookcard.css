@@ -13,3 +13,15 @@
     max-width: 16.5vw;
     border-radius: 20px;
 }
+
+@media screen and (max-width: 1200px) {
+    .bookcard {
+        width: 90vw;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .bookcard {
+        width: 90vw;
+    }
+}
