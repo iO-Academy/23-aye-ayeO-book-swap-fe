@@ -4,12 +4,21 @@
     margin: 3rem auto;
     gap: 3rem;
     flex-direction: row;
-    align-items: start;
+    align-items: flex-start;
     justify-content: center;
 }
 
 @media screen and (max-width: 990px) {
     .book-details {
         flex-direction: column;
+        max-width: 80vw;
+        text-align: center;
+    }
+    .book-image {
+      margin: 0 auto;
+    }
+    
+    .book-image img{
+        width: 80vw;
     }
 }

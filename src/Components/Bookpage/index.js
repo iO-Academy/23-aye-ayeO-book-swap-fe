@@ -18,7 +18,7 @@ function Bookpage() {
             .then((res) => res.json())
             .then((bookData) => {
                 if (bookData.message !== "Book successfully found") {
-                    setError(!error)
+                    setError(true)
                 } else {
                     setImage(bookData.data.image)
                     setTitle(bookData.data.title)
