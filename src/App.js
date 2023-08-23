@@ -3,16 +3,18 @@ import "./App.css"
 import Nav from "./Components/Nav"
 import Bookshelf from "./Components/Bookshelf"
 import NotFound from "./Components/NotFound"
-import Claimed from "./Components/Claimed"
-import { useEffect, useState } from "react"
+
 function App() {
     return (
         <div className="App">
             <BrowserRouter>
                 <Nav />
                 <Routes>
-                    <Route path="/" element={<Bookshelf />} />
-                    <Route path="/claimed" element={<Claimed />} />
+                    <Route path="/" element={<Bookshelf available={0} />} />
+                    <Route
+                        path="/claimed"
+                        element={<Bookshelf available={1} />}
+                    />
                     {/* <Route path="/book/:id" element={<Book />} /> */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
