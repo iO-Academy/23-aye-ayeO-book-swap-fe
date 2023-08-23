@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Nav from "./Components/Nav";
+import Bookpage from "./Components/Bookpage";
 
 function App() {
   return (
@@ -8,9 +9,9 @@ function App() {
       <BrowserRouter>
         <Nav />
         <Routes>
-          {/* <Route path="/" element={<Home />} />
-          <Route path="/book/:id" element={<Book />} />
-          <Route path="*" element={<NotFound />} /> */}
+          {/* <Route path="/" element={<Home />} /> */}
+          <Route path="/book/:id" element={<Bookpage />} />
+          {/* <Route path="*" element={<NotFound />} />  */}
         </Routes>
       </BrowserRouter>
     </div>
