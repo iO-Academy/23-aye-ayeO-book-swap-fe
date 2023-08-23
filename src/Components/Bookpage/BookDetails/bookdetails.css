@@ -1,0 +1,15 @@
+.book-details {
+    display: flex;
+    max-width: 1200px;
+    margin: 3rem auto;
+    gap: 3rem;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+}
+
+@media screen and (max-width: 990px) {
+    .book-details {
+        flex-direction: column;
+    }
+}

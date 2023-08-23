@@ -1,18 +1,20 @@
-function BookDetails({image, title, author, year, pageCount, genre, blurb}) {
-    return ( 
-        <>
+import "./bookdetails.css"
+
+function BookDetails({ image, title, author, year, pageCount, genre, blurb }) {
+    return (
+        <div className="book-details">
             <div>
-                <img src={image} alt={'Cover of ' + title} />
+                <img src={image} alt={"Cover of " + title} />
             </div>
             <div>
                 <h2>{title}</h2>
                 <p>{author}</p>
                 <p>{year}</p>
-                <p>{pageCount}</p>
-                <p>{genre.name}</p>
+                <p>{pageCount} pages</p>
+                <p>Genre: {genre.name}</p>
                 <p>{blurb}</p>
             </div>
-        </>
+        </div>
     )
 }
 
