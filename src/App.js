@@ -2,8 +2,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import "./App.css"
 import Nav from "./Components/Nav"
 import Bookshelf from "./Components/Bookshelf"
-// import NotFound from './Components/NotFound';
-
+import NotFound from "./Components/NotFound"
+import Claimed from "./Components/Claimed"
+import { useEffect, useState } from "react"
 function App() {
     return (
         <div className="App">
@@ -11,8 +12,9 @@ function App() {
                 <Nav />
                 <Routes>
                     <Route path="/" element={<Bookshelf />} />
-                    {/* <Route path="/book/:id" element={<Book />} />
-                    <Route path='*' element={<NotFound />} /> */}
+                    <Route path="/claimed" element={<Claimed />} />
+                    {/* <Route path="/book/:id" element={<Book />} /> */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
         </div>
