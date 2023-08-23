@@ -1,0 +1,21 @@
+.bookshelf {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.bookshelf a {
+    text-decoration: none;
+    color: #454545;
+}
+
+@media screen and (max-width: 1200px) {
+    .bookshelf {
+        flex-direction: column;
+    }
+}
