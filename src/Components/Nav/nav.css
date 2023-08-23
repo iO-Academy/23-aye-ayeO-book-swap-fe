@@ -1,5 +1,15 @@
 nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     background-color: rgb(214, 166, 32);
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    margin-right: 2rem;
+}
+
+.active {
+    color: blueviolet;
 }
