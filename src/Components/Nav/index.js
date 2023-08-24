@@ -8,12 +8,11 @@ function Nav() {
             <h1>
                 <Link to="/">Book Swap</Link>
             </h1>
-            <h3>
+            <div className="links">
                 <NavLink to="/">Available</NavLink>
-            </h3>
-            <h3>
+
                 <NavLink to="/claimed">Claimed</NavLink>
-            </h3>
+            </div>
         </nav>
     )
 }
