@@ -14,7 +14,7 @@ function Bookpage() {
     const [error, setError] = useState(false)
     const [claimed, setClaimed] = useState(null)
 
-    useEffect(() => {
+    function getBookData() {
         fetch('https://book-swap-api.dev.io-academy.uk/api/books/' + id)
             .then((res) => res.json())
             .then((bookData) => {
@@ -32,6 +32,11 @@ function Bookpage() {
                     setClaimed(bookData.data.claimed_by_name)
                 }
             })
+
+    }
+
+    useEffect(() => {
+        getBookData()
     }, [id, error])
 
     return (
@@ -48,6 +53,7 @@ function Bookpage() {
                     genre={genre}
                     blurb={blurb}
                     claimed={claimed}
+                    getBookData={getBookData}
                 />
             )}
         </div>
