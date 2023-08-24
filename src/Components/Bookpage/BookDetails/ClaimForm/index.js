@@ -60,6 +60,8 @@ function ClaimForm({ getBookData }) {
             .then((data) => {
                 if (data.message !== `Book ${id} is already claimed`) {
                     getBookData()
+                } else {
+                    alert('Book is already claimed!')
                 }
             })
     }

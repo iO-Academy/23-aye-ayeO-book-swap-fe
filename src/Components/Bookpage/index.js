@@ -35,9 +35,9 @@ function Bookpage() {
 
     }
 
-    useEffect(() => {
-        getBookData()
-    }, [id, error])
+    useEffect(
+        getBookData
+    , [id, error])
 
     return (
         <div>

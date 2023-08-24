@@ -44,6 +44,8 @@ function ReturnForm({claimed, getBookData}) {
             .then((data) => {
                 if (data.message === `Book ${id} was returned`) {
                     getBookData()
+                } else {
+                    alert('NOOOOOO! Wrong email!')
                 }
             })
     }
