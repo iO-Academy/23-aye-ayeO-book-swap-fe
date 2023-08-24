@@ -1,4 +1,4 @@
-import ClaimForm from '../ClaimForm'
+import ClaimForm from './ClaimForm'
 import './bookdetails.css'
 
 function BookDetails({
