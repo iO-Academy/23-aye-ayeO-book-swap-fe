@@ -10,10 +10,10 @@ function App() {
             <BrowserRouter>
                 <Nav />
                 <Routes>
-                    <Route path="/" element={<Bookshelf available={0} />} />
+                    <Route path="/" element={<Bookshelf claimed={0} />} />
                     <Route
                         path="/claimed"
-                        element={<Bookshelf available={1} />}
+                        element={<Bookshelf claimed={1} />}
                     />
                     {/* <Route path="/book/:id" element={<Book />} /> */}
                     <Route path="*" element={<NotFound />} />

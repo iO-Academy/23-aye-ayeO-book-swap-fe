@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react"
 import "./bookshelf.css"
 import BookCard from "../BookCard"
 
-function Bookshelf({ available }) {
+function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([])
 
     useEffect(() => {
         fetch(
             "https://book-swap-api.dev.io-academy.uk/api/books?claimed=" +
-                available
+                claimed
         )
             .then((res) => res.json())
             .then((books) => {
