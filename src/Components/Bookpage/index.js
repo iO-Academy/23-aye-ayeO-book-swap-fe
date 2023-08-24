@@ -1,23 +1,24 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import BookDetails from "./BookDetails"
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import BookDetails from './BookDetails'
 
 function Bookpage() {
     const { id } = useParams()
-    const [image, setImage] = useState("")
-    const [title, setTitle] = useState("")
-    const [author, setAuthor] = useState("")
-    const [year, setYear] = useState("")
-    const [pageCount, setPageCount] = useState("")
-    const [genre, setGenre] = useState("")
-    const [blurb, setBlurb] = useState("")
+    const [image, setImage] = useState('')
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [year, setYear] = useState('')
+    const [pageCount, setPageCount] = useState('')
+    const [genre, setGenre] = useState('')
+    const [blurb, setBlurb] = useState('')
     const [error, setError] = useState(false)
+    const [claimed, setClaimed] = useState(null)
 
     useEffect(() => {
-        fetch("https://book-swap-api.dev.io-academy.uk/api/books/" + id)
+        fetch('https://book-swap-api.dev.io-academy.uk/api/books/' + id)
             .then((res) => res.json())
             .then((bookData) => {
-                if (bookData.message !== "Book successfully found") {
+                if (bookData.message !== 'Book successfully found') {
                     setError(true)
                 } else {
                     setImage(bookData.data.image)
@@ -27,6 +28,7 @@ function Bookpage() {
                     setPageCount(bookData.data.page_count)
                     setGenre(bookData.data.genre)
                     setBlurb(bookData.data.blurb)
+                    setClaimed(bookData.data.claimed_by_name)
                 }
             })
     }, [id, error])
@@ -44,6 +46,7 @@ function Bookpage() {
                     pageCount={pageCount}
                     genre={genre}
                     blurb={blurb}
+                    claimed={claimed}
                 />
             )}
         </div>
