@@ -1,6 +1,6 @@
-import './reviews.css'
+import "./reviews.css"
 
-function Reviews( {review} ) {
+function Reviews({ review }) {
     return (
         <>
             <div>
