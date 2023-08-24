@@ -71,7 +71,7 @@ function ReturnForm({claimed, getBookData}) {
 
                 <input
                     type='submit'
-                    value='Claim'
+                    value='Return'
                     className='submit-button'
                 />
             </form>
