@@ -4,7 +4,6 @@ import './claimform.css'
 
 function ClaimForm({ title, claimed }) {
     const { id } = useParams()
-
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [nameError, setNameError] = useState(false)
@@ -45,7 +44,7 @@ function ClaimForm({ title, claimed }) {
         }
     }
 
-    function handleSubmit(e) {
+    function handleSubmit() {
         fetch('https://book-swap-api.dev.io-academy.uk/api/books/claim/' + id, {
             mode: 'cors',
             method: 'PUT',
@@ -60,11 +59,7 @@ function ClaimForm({ title, claimed }) {
         })
             .then((res) => res.json())
             .then((data) => {
-                if (data.message === `Book ${id} is already claimed`) {
-                    setApiMessage(data.message)
-                    // setClaimed(true)
-                    console.log(data.message)
-                } else {
+                if (data.message !== `Book ${id} is already claimed`) {
                     setApiMessage(`Well done ${name}! You've claimed ${title}!`)
                 }
             })
@@ -94,7 +89,6 @@ function ClaimForm({ title, claimed }) {
                                 Don't like your name
                             </p>
                         </div>
-
                         <div>
                             <label htmlFor='email'>Email</label>
 
