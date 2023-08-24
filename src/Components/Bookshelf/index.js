@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react"
 import "./bookshelf.css"
 import BookCard from "../BookCard"
 
-function Bookshelf() {
+function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([])
 
     useEffect(() => {
-        fetch("https://book-swap-api.dev.io-academy.uk/api/books")
+        fetch(
+            "https://book-swap-api.dev.io-academy.uk/api/books?claimed=" +
+                claimed
+        )
             .then((res) => res.json())
             .then((books) => {
                 setBookCollection(books.data)
