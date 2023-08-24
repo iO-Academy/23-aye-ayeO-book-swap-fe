@@ -1,6 +1,7 @@
+import Reviews from "./Reviews"
 import "./bookdetails.css"
 
-function BookDetails({ image, title, author, year, pageCount, genre, blurb }) {
+function BookDetails({ image, title, author, year, pageCount, genre, blurb, reviews }) {
     return (
         <div className="book-details">
             <div className="book-image">
@@ -13,6 +14,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb }) {
                 <p>{pageCount} pages</p>
                 <p>Genre: {genre.name}</p>
                 <p>{blurb}</p>
+                <Reviews reviews={reviews} />
             </div>
         </div>
     )

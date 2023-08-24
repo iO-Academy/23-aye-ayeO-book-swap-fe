@@ -12,6 +12,7 @@ function Bookpage() {
     const [genre, setGenre] = useState("")
     const [blurb, setBlurb] = useState("")
     const [error, setError] = useState(false)
+    const [reviews, setReviews] = useState([])
 
     useEffect(() => {
         fetch("https://book-swap-api.dev.io-academy.uk/api/books/" + id)
@@ -27,6 +28,7 @@ function Bookpage() {
                     setPageCount(bookData.data.page_count)
                     setGenre(bookData.data.genre)
                     setBlurb(bookData.data.blurb)
+                    setReviews(bookData.data.reviews)
                 }
             })
     }, [id, error])
@@ -44,6 +46,7 @@ function Bookpage() {
                     pageCount={pageCount}
                     genre={genre}
                     blurb={blurb}
+                    reviews={reviews}
                 />
             )}
         </div>
