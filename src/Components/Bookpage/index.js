@@ -21,7 +21,6 @@ function Bookpage() {
                 if (bookData.message !== 'Book successfully found') {
                     setError(true)
                 } else {
-                    console.log(bookData)
                     setImage(bookData.data.image)
                     setTitle(bookData.data.title)
                     setAuthor(bookData.data.author)
