@@ -1,17 +1,12 @@
 import './reviews.css'
 
-function Reviews( {reviews} ) {
+function Reviews( {review} ) {
     return (
         <>
-            <h3>Reviews</h3>
             <div>
-                {reviews.map((review) =>
-                <div>
-                    <p className="reviewer">{review.name}</p>
-                    <p>{review.rating}/5 stars</p>
-                    <p>{review.review}</p>
-                </div>
-                )}
+                <p className="reviewer">{review.name}</p>
+                <p>{review.rating}/5 stars</p>
+                <p>{review.review}</p>
             </div>
         </>
     )
