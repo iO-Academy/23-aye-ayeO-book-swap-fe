@@ -25,7 +25,7 @@ function BookDetails({
                 <p>{pageCount} pages</p>
                 <p>Genre: {genre.name}</p>
                 {claimed && <p>Claimed by {claimed}</p>}
-                {claimed ? <ReturnForm getBookData={getBookData} claimed={claimed}/> : <ClaimForm getBookData={getBookData} title={title} claimed={claimed} />}
+                {claimed ? <ReturnForm getBookData={getBookData} claimed={claimed}/> : <ClaimForm getBookData={getBookData} />}
                 <p>{blurb}</p>
             </div>
         </div>

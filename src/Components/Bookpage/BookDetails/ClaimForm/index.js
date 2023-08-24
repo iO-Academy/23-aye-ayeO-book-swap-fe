@@ -2,14 +2,13 @@ import React, { useState } from "react"
 import { useParams } from "react-router-dom"
 import "./claimform.css"
 
-function ClaimForm({ title, claimed, getBookData }) {
+function ClaimForm({ getBookData }) {
     const { id } = useParams()
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [nameError, setNameError] = useState(false)
     const [emailError, setEmailError] = useState(false)
-    const [apiMessage, setApiMessage] = useState("")
-
+    
     function changeName(e) {
         setName(e.target.value)
     }
@@ -61,12 +60,9 @@ function ClaimForm({ title, claimed, getBookData }) {
             .then((data) => {
                 if (data.message !== `Book ${id} is already claimed`) {
                     getBookData()
-            
                 }
             })
     }
-
-   
 
     return (
         <div className="form-container">

@@ -6,7 +6,6 @@ function ReturnForm({claimed, getBookData}) {
     const { id } = useParams()
     const [email, setEmail] = useState('')
     const [emailError, setEmailError] = useState(false)
-    const [apiMessage, setApiMessage] = useState('')
 
     function changeEmail(e) {
         setEmail(e.target.value)
@@ -15,7 +14,6 @@ function ReturnForm({claimed, getBookData}) {
     function validateForm(e) {
         e.preventDefault()
         let emailError = true
-        console.log(email)
 
         if (email.length <= 0) {
             setEmailError(true)
@@ -27,7 +25,6 @@ function ReturnForm({claimed, getBookData}) {
 
         if (!emailError) {
             handleSubmit(e)
-            console.log('hola')
         }
     } 
 
@@ -50,7 +47,6 @@ function ReturnForm({claimed, getBookData}) {
                 }
             })
     }
-
 
     return (
         
