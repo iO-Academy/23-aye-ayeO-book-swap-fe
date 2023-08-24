@@ -12,7 +12,6 @@ function Bookshelf({ claimed }) {
                 setBookCollection(books.data)
             })
     }, [claimed])
-    console.log(bookCollection)
 
     return (
         <div className="bookshelf">
