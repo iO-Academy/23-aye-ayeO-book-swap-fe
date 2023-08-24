@@ -11,10 +11,7 @@ function App() {
                 <Nav />
                 <Routes>
                     <Route path="/" element={<Bookshelf claimed={0} />} />
-                    <Route
-                        path="/claimed"
-                        element={<Bookshelf claimed={1} />}
-                    />
+                    <Route path="/claimed" element={<Bookshelf claimed={1} />} />
                     {/* <Route path="/book/:id" element={<Book />} /> */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
