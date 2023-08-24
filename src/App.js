@@ -3,6 +3,7 @@ import "./App.css"
 import Nav from "./Components/Nav"
 import Bookshelf from "./Components/Bookshelf"
 import NotFound from "./Components/NotFound"
+import Bookpage from "./Components/Bookpage"
 
 function App() {
     return (
@@ -12,7 +13,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Bookshelf claimed={0} />} />
                     <Route path="/claimed" element={<Bookshelf claimed={1} />} />
-                    {/* <Route path="/book/:id" element={<Book />} /> */}
+                    <Route path="/book/:id" element={<Bookpage />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
