@@ -7,6 +7,11 @@
     color: red;
 }
 
+.input-error {
+    border-color: red;
+    background: #ffe9e9;
+}
+
 .claim-form-box {
     background-color: #fffbdb;
     border: 1px solid rgba(213, 203, 91, 0.8);
