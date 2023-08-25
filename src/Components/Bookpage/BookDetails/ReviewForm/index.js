@@ -25,23 +25,22 @@ function ReviewForm() {
     // Validate form
     function validateForm(e) {
         e.preventDefault()
-        let nameError = true
+
+        let nameError = true // Error!
         let ratingError = true
         let reviewError = true
 
         // name
         if (name.length <= 0) {
             setNameError(true)
-            nameError = true
         } else {
             setNameError(false)
             nameError = false
         }
 
         // rating
-        if (rating > 0) {
+        if (rating < 0 || rating > 5) {
             setRatingError(true)
-            ratingError = true
         } else {
             setRatingError(false)
             ratingError = false
@@ -50,14 +49,13 @@ function ReviewForm() {
         // review
         if (review.length <= 0) {
             setReviewError(true)
-            reviewError = true
         } else {
             setReviewError(false)
             reviewError = false
         }
 
         // FIRE!
-        if (!(nameError && ratingError && reviewError)) {
+        if (!nameError && !ratingError && !reviewError) {
             handleSubmit(e)
         }
     }
@@ -101,7 +99,6 @@ function ReviewForm() {
                         <input
                             type='text'
                             id='name'
-                            name='name'
                             placeholder='Name'
                             value={name}
                             onChange={changeName}
@@ -114,11 +111,7 @@ function ReviewForm() {
 
                     <div>
                         <label htmlFor='rating'>Rating:</label>
-                        <select
-                            name='rating'
-                            id='rating'
-                            onChange={changeRating}
-                        >
+                        <select id='rating' onChange={changeRating}>
                             <option value={null}>- Select -</option>
                             <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -135,7 +128,6 @@ function ReviewForm() {
                     <div>
                         <textarea
                             id='review'
-                            name='review'
                             rows='4'
                             cols='50'
                             onChange={changeReview}
