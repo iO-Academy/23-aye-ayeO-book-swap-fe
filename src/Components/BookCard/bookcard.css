@@ -4,23 +4,25 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 20vw;
+    min-width: 40vw;
+    width: 6rem;
     border-radius: 20px;
     padding: 2rem 0;
 }
 
 .bookcard img {
-    max-width: 16.5vw;
+    width: 20vw;
+    max-width: 20rem;
+    min-width: 10rem;
     border-radius: 20px;
 }
 
-@media screen and (max-width: 1200px) {
+/* @media screen and (max-width: 700px) {
     .bookcard {
         width: 90vw;
     }
-}
-
-@media screen and (max-width: 1200px) {
+} */
+@media screen and (max-width: 450px) {
     .bookcard {
         width: 90vw;
     }
