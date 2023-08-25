@@ -1,6 +1,6 @@
-import "./reviews.css"
+import './review.css'
 
-function Reviews({ review }) {
+function Review({ review }) {
     return (
         <div>
             <h4>{review.name}</h4>
@@ -10,4 +10,4 @@ function Reviews({ review }) {
     )
 }
 
-export default Reviews
+export default Review
