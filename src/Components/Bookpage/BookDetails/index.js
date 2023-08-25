@@ -1,3 +1,4 @@
+import Review from './Review'
 import ClaimForm from './ClaimForm'
 import ReturnForm from './ReturnForm'
 import ReviewForm from './ReviewForm'
@@ -11,9 +12,16 @@ function BookDetails({
     pageCount,
     genre,
     blurb,
+    reviews,
     claimed,
     getBookData,
 }) {
+    const totalScore = reviews.reduce(
+        (ratingSum, review) => ratingSum + review.rating,
+        0
+    )
+    const avgScore = totalScore / reviews.length
+
     return (
         <div className='book-details'>
             <div className='book-image'>
@@ -25,6 +33,10 @@ function BookDetails({
                 <p>{year}</p>
                 <p>{pageCount} pages</p>
                 <p>Genre: {genre.name}</p>
+                <p>
+                    <a href='#reviews'>{reviews.length} reviews</a> -{' '}
+                    {avgScore.toFixed(1)} / 5 stars
+                </p>
                 {claimed && <p>Claimed by {claimed}</p>}
                 {claimed ? (
                     <ReturnForm getBookData={getBookData} claimed={claimed} />
@@ -32,7 +44,11 @@ function BookDetails({
                     <ClaimForm getBookData={getBookData} />
                 )}
                 <p>{blurb}</p>
+                <h3 id='reviews'>Reviews</h3>
                 <ReviewForm />
+                {reviews.map((review) => (
+                    <Review review={review} key={review.id} />
+                ))}
             </div>
         </div>
     )
