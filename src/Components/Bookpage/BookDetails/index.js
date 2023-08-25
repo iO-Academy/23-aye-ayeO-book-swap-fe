@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import Reviews from "./Reviews"
 import "./bookdetails.css"
@@ -6,12 +7,27 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
     const totalScore = reviews.reduce((ratingSum, review) => ratingSum + review.rating, 0)
     const avgScore = totalScore / reviews.length
 
+import ClaimForm from './ClaimForm'
+import ReturnForm from './ReturnForm'
+import './bookdetails.css'
+
+function BookDetails({
+    image,
+    title,
+    author,
+    year,
+    pageCount,
+    genre,
+    blurb,
+    claimed,
+    getBookData
+}) {
     return (
-        <div className="book-details">
-            <div className="book-image">
-                <img src={image} alt={"Cover of " + title} />
+        <div className='book-details'>
+            <div className='book-image'>
+                <img src={image} alt={'Cover of ' + title} />
             </div>
-            <div className="">
+            <div className=''>
                 <h2>{title}</h2>
                 <p>{author}</p>
                 <p>{year}</p>
@@ -20,6 +36,8 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                 <p>
                     <a href="#reviews">{reviews.length} reviews</a> - {avgScore.toFixed(1)} / 5 stars
                 </p>
+                {claimed && <p>Claimed by {claimed}</p>}
+                {claimed ? <ReturnForm getBookData={getBookData} claimed={claimed}/> : <ClaimForm getBookData={getBookData} />}
                 <p>{blurb}</p>
                 <h3 id="reviews">Reviews</h3>
                 {reviews.map((review) => (
@@ -29,5 +47,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
         </div>
     )
 }
+
+
 
 export default BookDetails

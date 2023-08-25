@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import BookDetails from "./BookDetails"
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import BookDetails from './BookDetails'
 
 function Bookpage() {
     const { id } = useParams()
-    const [image, setImage] = useState("")
-    const [title, setTitle] = useState("")
-    const [author, setAuthor] = useState("")
-    const [year, setYear] = useState("")
-    const [pageCount, setPageCount] = useState("")
-    const [genre, setGenre] = useState("")
-    const [blurb, setBlurb] = useState("")
+    const [image, setImage] = useState('')
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [year, setYear] = useState('')
+    const [pageCount, setPageCount] = useState('')
+    const [genre, setGenre] = useState('')
+    const [blurb, setBlurb] = useState('')
     const [error, setError] = useState(false)
     const [reviews, setReviews] = useState([])
+    const [claimed, setClaimed] = useState(null)
 
-    useEffect(() => {
-        fetch("https://book-swap-api.dev.io-academy.uk/api/books/" + id)
+
+    function getBookData() {
+        fetch('https://book-swap-api.dev.io-academy.uk/api/books/' + id)
             .then((res) => res.json())
             .then((bookData) => {
-                if (bookData.message !== "Book successfully found") {
+                if (bookData.message !== 'Book successfully found') {
                     setError(true)
                 } else {
                     setImage(bookData.data.image)
@@ -29,9 +31,16 @@ function Bookpage() {
                     setGenre(bookData.data.genre)
                     setBlurb(bookData.data.blurb)
                     setReviews(bookData.data.reviews)
+                    setClaimed(bookData.data.claimed_by_name)
+
                 }
             })
-    }, [id, error])
+
+    }
+
+    useEffect(
+        getBookData
+    , [id, error])
 
     return (
         <div>
@@ -47,6 +56,8 @@ function Bookpage() {
                     genre={genre}
                     blurb={blurb}
                     reviews={reviews}
+                    claimed={claimed}
+                    getBookData={getBookData}
                 />
             )}
         </div>
