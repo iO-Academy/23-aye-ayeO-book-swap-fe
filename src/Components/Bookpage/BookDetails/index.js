@@ -1,4 +1,5 @@
 import ClaimForm from './ClaimForm'
+import ReturnForm from './ReturnForm'
 import './bookdetails.css'
 
 function BookDetails({
@@ -10,6 +11,7 @@ function BookDetails({
     genre,
     blurb,
     claimed,
+    getBookData
 }) {
     return (
         <div className='book-details'>
@@ -23,11 +25,13 @@ function BookDetails({
                 <p>{pageCount} pages</p>
                 <p>Genre: {genre.name}</p>
                 {claimed && <p>Claimed by {claimed}</p>}
-                {!claimed && <ClaimForm title={title} claimed={claimed} />}
+                {claimed ? <ReturnForm getBookData={getBookData} claimed={claimed}/> : <ClaimForm getBookData={getBookData} />}
                 <p>{blurb}</p>
             </div>
         </div>
     )
 }
+
+
 
 export default BookDetails
