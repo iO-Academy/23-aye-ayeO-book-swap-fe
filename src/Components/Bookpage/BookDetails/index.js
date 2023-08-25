@@ -1,6 +1,7 @@
 import Review from './Review'
 import ClaimForm from './ClaimForm'
 import ReturnForm from './ReturnForm'
+import ReviewForm from './ReviewForm'
 import './bookdetails.css'
 
 function BookDetails({
@@ -44,6 +45,7 @@ function BookDetails({
                 )}
                 <p>{blurb}</p>
                 <h3 id='reviews'>Reviews</h3>
+                <ReviewForm />
                 {reviews.map((review) => (
                     <Review review={review} key={review.id} />
                 ))}
