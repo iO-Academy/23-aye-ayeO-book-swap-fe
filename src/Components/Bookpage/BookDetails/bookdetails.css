@@ -8,21 +8,21 @@
     justify-content: center;
 }
 
-.book-image img{
+.book-image img {
     width: 40vw;
 }
 
 @media screen and (max-width: 450px) {
     .book-details {
         flex-direction: column;
-        max-width: 80vw;
+        width: 80vw;
         text-align: center;
     }
     .book-image {
-      margin: 0 auto;
+        margin: 0 auto;
     }
-    
-    .book-image img{
+
+    .book-image img {
         width: 80vw;
     }
 }
