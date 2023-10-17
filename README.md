@@ -29,10 +29,10 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## Authors 
 
-- Albert Rowett @albertRowett
-- Frankie Dick @FrankieD96
-- Gerry Gillham @gerryg12
-- Vladi Stanchev @vladi-stanchev
-- Zak Koev @zdrvk
+- Albert Rowett [@albertRowett](https://github.com/albertRowett)
+- Frankie Dick [@FrankieD96](https://github.com/FrankieD96)
+- Gerry Gillham [@gerryg12](https://github.com/gerryg12)
+- Vladi Stanchev [@vladi-stanchev](https://github.com/vladi-stanchev)
+- Zak Koev [@zdrvk](https://github.com/zdrvk)
 
 
