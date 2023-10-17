@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react"
-import "./bookshelf.css"
-import BookCard from "../BookCard"
+import React, { useEffect, useState } from "react";
+import "./bookshelf.css";
+import BookCard from "../BookCard";
 
 function Bookshelf({ claimed }) {
-    const [bookCollection, setBookCollection] = useState([])
+    const [bookCollection, setBookCollection] = useState([]);
 
     useEffect(() => {
-        fetch("https://book-swap-api.dev.io-academy.uk/api/books?claimed=" + claimed)
+        fetch("http://localhost:8000/api/books?claimed=" + claimed)
             .then((res) => res.json())
             .then((books) => {
-                setBookCollection(books.data)
-            })
-    }, [claimed])
+                setBookCollection(books.data);
+            });
+    }, [claimed]);
 
     return (
         <div className="bookshelf">
-            {bookCollection == [] && <p>No Books Found</p>}
+            {bookCollection === [] && <p>No Books Found</p>}
             {bookCollection.map((book) => {
                 return (
                     <BookCard
@@ -26,10 +26,10 @@ function Bookshelf({ claimed }) {
                         genre={book.genre.name}
                         key={book.title}
                     />
-                )
+                );
             })}
         </div>
-    )
+    );
 }
 
-export default Bookshelf
+export default Bookshelf;

@@ -1,50 +1,50 @@
-import React, { useState } from "react"
-import { useParams } from "react-router-dom"
-import "./claimform.css"
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import "./claimform.css";
 
 function ClaimForm({ getBookData }) {
-    const { id } = useParams()
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [nameError, setNameError] = useState(false)
-    const [emailError, setEmailError] = useState(false)
-    
+    const { id } = useParams();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [nameError, setNameError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+
     function changeName(e) {
-        setName(e.target.value)
+        setName(e.target.value);
     }
 
     function changeEmail(e) {
-        setEmail(e.target.value)
+        setEmail(e.target.value);
     }
 
     function validateForm(e) {
-        e.preventDefault()
-        let nameError = true
-        let emailError = true
+        e.preventDefault();
+        let nameError = true;
+        let emailError = true;
 
         if (name.length <= 0) {
-            setNameError(true)
-            nameError = true
+            setNameError(true);
+            nameError = true;
         } else {
-            setNameError(false)
-            nameError = false
+            setNameError(false);
+            nameError = false;
         }
 
         if (email.length <= 0) {
-            setEmailError(true)
-            emailError = true
+            setEmailError(true);
+            emailError = true;
         } else {
-            setEmailError(false)
-            emailError = false
+            setEmailError(false);
+            emailError = false;
         }
 
         if (!nameError && !emailError) {
-            handleSubmit(e)
+            handleSubmit(e);
         }
     }
 
     function handleSubmit() {
-        fetch("https://book-swap-api.dev.io-academy.uk/api/books/claim/" + id, {
+        fetch("http://localhost:8000/api/books/claim" + id, {
             mode: "cors",
             method: "PUT",
             headers: {
@@ -59,11 +59,11 @@ function ClaimForm({ getBookData }) {
             .then((res) => res.json())
             .then((data) => {
                 if (data.message !== `Book ${id} is already claimed`) {
-                    getBookData()
+                    getBookData();
                 } else {
-                    alert('Book is already claimed!')
+                    alert("Book is already claimed!");
                 }
-            })
+            });
     }
 
     return (
@@ -82,9 +82,7 @@ function ClaimForm({ getBookData }) {
                         onChange={changeName}
                         className={nameError ? "input-error" : ""}
                     />
-                    <p className={nameError ? "error" : "hidden"}>
-                        Don't like your name
-                    </p>
+                    <p className={nameError ? "error" : "hidden"}>Don't like your name</p>
                 </div>
                 <div>
                     <label htmlFor="email">Email</label>
@@ -97,15 +95,13 @@ function ClaimForm({ getBookData }) {
                         onChange={changeEmail}
                         className={emailError ? "input-error" : ""}
                     />
-                    <p className={emailError ? "error" : "hidden"}>
-                        Don't like your email
-                    </p>
+                    <p className={emailError ? "error" : "hidden"}>Don't like your email</p>
                 </div>
 
                 <input type="submit" value="Claim" className="submit-button" />
             </form>
         </div>
-    )
+    );
 }
 
-export default ClaimForm
+export default ClaimForm;
