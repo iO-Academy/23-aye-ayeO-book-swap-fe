@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import './bookshelf.css';
-import BookCard from '../BookCard';
-import GenresSelector from './GenresSelector';
+import React, { useEffect, useState } from "react";
+import "./bookshelf.css";
+import BookCard from "../BookCard";
+import GenresSelector from "./GenresSelector";
+import SearchCollection from "./SearchCollection";
 
 function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([]);
-    const [selectedGenreId, setSelectedGenreId] = useState(''); // State to hold the selected genre
+    const [selectedGenreId, setSelectedGenreId] = useState("");
+    const [searchedString, setSearchedString] = useState("");
 
     useEffect(() => {
-        fetch(
-            `http://localhost:8000/api/books?claimed=${claimed}&genre=${selectedGenreId}`
-        )
+        fetch(`http://localhost:8000/api/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`)
             .then((res) => res.json())
             .then((books) => {
                 setBookCollection(books.data);
             });
-    }, [claimed, selectedGenreId]);
+    }, [claimed, selectedGenreId, searchedString]);
 
-    // Function to handle changes in the selected genre
     const handleGenreChange = (genre) => {
         setSelectedGenreId(genre);
     };
 
+    const handleSearchChange = (string) => {
+        setSearchedString(string);
+    };
+
     return (
         <div>
-            <GenresSelector onGenreChangeID={handleGenreChange} />{' '}
-            {/* Pass the function to update selectedGenre state */}
-            <div className='bookshelf'>
+            <GenresSelector onGenreChangeID={handleGenreChange} />
+            <SearchCollection onSearchChange={handleSearchChange} />
+            <div className="bookshelf">
                 {bookCollection == null && <p>No Books Found</p>}
                 {bookCollection?.map((book) => {
                     return (
