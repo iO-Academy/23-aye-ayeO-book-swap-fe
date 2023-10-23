@@ -19,7 +19,7 @@ function Bookpage() {
         fetch('http://localhost:8000/api/books/' + id)
             .then((res) => res.json())
             .then((bookData) => {
-                if (bookData.message !== 'Book successfully retrieved') {
+                if (bookData.message !== 'Book successfully found') {
                     setError(true);
                 } else {
                     setImage(bookData.data.image);
