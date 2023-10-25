@@ -146,7 +146,7 @@ function AddBookForm() {
             requestBody.blurb = blurb;
         }
 
-        requestBody.image = imageUrl || `https://via.placeholder.com/600x840.png/efefef?text=${title}`;
+        requestBody.image = imageUrl || `https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon`;
 
         if (year) {
             requestBody.year = year;

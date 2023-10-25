@@ -1,40 +1,39 @@
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 
-function ReturnForm({claimed, getBookData}) {
-
-    const { id } = useParams()
-    const [email, setEmail] = useState('')
-    const [emailError, setEmailError] = useState(false)
+function ReturnForm({ claimed, getBookData }) {
+    const { id } = useParams();
+    const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState(false);
 
     function changeEmail(e) {
-        setEmail(e.target.value)
+        setEmail(e.target.value);
     }
 
     function validateForm(e) {
-        e.preventDefault()
-        let emailError = true
+        e.preventDefault();
+        let emailError = true;
 
         if (email.length <= 0) {
-            setEmailError(true)
-            emailError = true
+            setEmailError(true);
+            emailError = true;
         } else {
-            setEmailError(false)
-            emailError = false
+            setEmailError(false);
+            emailError = false;
         }
 
         if (!emailError) {
-            handleSubmit(e)
+            handleSubmit(e);
         }
-    } 
+    }
 
     function handleSubmit() {
-        fetch('https://book-swap-api.dev.io-academy.uk/api/books/return/' + id, {
-            mode: 'cors',
-            method: 'PUT',
+        fetch("http://localhost:8000/api/books/return/" + id, {
+            mode: "cors",
+            method: "PUT",
             headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
+                "Content-Type": "application/json",
+                Accept: "application/json",
             },
             body: JSON.stringify({
                 email: email,
@@ -43,42 +42,35 @@ function ReturnForm({claimed, getBookData}) {
             .then((res) => res.json())
             .then((data) => {
                 if (data.message === `Book ${id} was returned`) {
-                    getBookData()
+                    getBookData();
                 } else {
-                    alert('NOOOOOO! Wrong email!')
+                    alert("Wrong email!");
                 }
-            })
+            });
     }
 
     return (
-        
         <div onSubmit={validateForm} className="form-container">
-            <form className='claim-form'>
+            <form className="claim-form">
                 <h3>Want to return this book {claimed}?</h3>
                 <div>
-                    <label htmlFor='email'> {claimed}'s Email</label>
+                    <label htmlFor="email"> {claimed}'s Email</label>
 
                     <input
-                    type='email'
-                    name='email'
-                    placeholder='Email'
-                    value={email}
-                    onChange={changeEmail}
-                    className={emailError ? 'input-error' : ''}
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={changeEmail}
+                        className={emailError ? "input-error" : ""}
                     />
-                    <p className={emailError ? 'error' : 'hidden'}>
-                        Don't like your email
-                    </p>
+                    <p className={emailError ? "error" : "hidden"}>Don't like your email</p>
                 </div>
 
-                <input
-                    type='submit'
-                    value='Return'
-                    className='submit-button'
-                />
+                <input type="submit" value="Return" className="submit-button" />
             </form>
         </div>
-        )
+    );
 }
 
-export default ReturnForm 
+export default ReturnForm;

@@ -17,7 +17,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                 <h2>{title}</h2>
                 <p>{author}</p>
                 <p>{year}</p>
-                <p>{pageCount} pages</p>
+                {pageCount && <p>{pageCount} pages</p>}
                 <p>Genre: {genre.name}</p>
                 <p>
                     <a href="#reviews">{reviews?.length} reviews</a> - {avgScore.toFixed(1)} / 5 stars
