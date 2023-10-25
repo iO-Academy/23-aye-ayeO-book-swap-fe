@@ -7,7 +7,8 @@ function SearchCollection(props) {
 
     return (
         <div>
-            <input onChange={(e) => onSearch(e.target.value)} type="text" placeholder="Search.."></input>
+            <label htmlFor="search-bar">Search:</label>
+            <input onChange={(e) => onSearch(e.target.value)} id="search-bar" type="text"></input>
         </div>
     );
 }
