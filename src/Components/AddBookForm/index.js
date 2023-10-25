@@ -156,9 +156,11 @@ function AddBookForm() {
         if (blurb) {
             requestBody.blurb = blurb;
         }
-        if (imageUrl) {
-            requestBody.image = imageUrl;
-        }
+
+        requestBody.image =
+            imageUrl ||
+            `https://via.placeholder.com/600x840.png/efefef?text=${title}`;
+
         if (year) {
             requestBody.year = year;
         }
