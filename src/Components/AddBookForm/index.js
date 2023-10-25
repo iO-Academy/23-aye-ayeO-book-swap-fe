@@ -61,8 +61,8 @@ function AddBookForm() {
     function validateForm(e) {
         e.preventDefault();
 
-        let titleError = true; // Error!
-        let authorError = true;
+        let titleError = false; // Error!
+        let authorError = false;
         let genreError = true;
         let yearError = true;
         let pageCountError = true;
@@ -71,20 +71,20 @@ function AddBookForm() {
 
         // Validation Rules
         // title
-        if (title.length <= 0 || title.length > 255) {
-            setTitleError('Title is required');
-        } else {
-            setTitleError(false);
-            titleError = false;
-        }
+        // if (title.length <= 0 || title.length > 255) {
+        //     setTitleError('Title is required');
+        // } else {
+        //     setTitleError(false);
+        //     titleError = false;
+        // }
 
         // author
-        if (author.length <= 0 || author.length > 255) {
-            setAuthorError('Author is required');
-        } else {
-            setAuthorError(false);
-            authorError = false;
-        }
+        // if (author.length <= 0 || author.length > 255) {
+        //     setAuthorError('Author is required');
+        // } else {
+        //     setAuthorError(false);
+        //     authorError = false;
+        // }
 
         // genre
         if (genre <= 0 || isNaN(genre)) {
@@ -179,7 +179,14 @@ function AddBookForm() {
                 if (data.message === 'Book created') {
                     setSuccessMessage(true);
                 } else {
-                    alert('oops');
+                    const errorContainer =
+                        document.getElementById('error-container');
+                    errorContainer.innerHTML = Object.keys(data.errors)
+                        .map((error) => {
+                            const errorMessage = data.errors[error][0];
+                            return `${errorMessage}`;
+                        })
+                        .join('<br>');
                 }
             });
     }
@@ -220,6 +227,8 @@ function AddBookForm() {
                 </div>
             ) : (
                 <form onSubmit={validateForm}>
+                    <h1>Add New Book</h1>
+                    <div id='error-container' className='error'></div>
                     <div>
                         <label htmlFor='title'>Title (required)</label>
                         <br />
