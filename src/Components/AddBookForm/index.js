@@ -249,7 +249,8 @@ function AddBookForm() {
                             onGenreChangeID={changeGenre}
                             className={genreError ? "select-error" : "null"}
                             label="Genre (required):"
-                            defaultString="- Select -"
+                            defaultString="Select"
+                            isDisabled="true"
                         />
                         {displayErrorMessage(genreError)}
                     </div>
