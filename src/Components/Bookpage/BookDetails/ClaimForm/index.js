@@ -44,7 +44,7 @@ function ClaimForm({ getBookData }) {
     }
 
     function handleSubmit() {
-        fetch("http://localhost:8000/api/books/claim" + id, {
+        fetch("http://localhost:8000/api/books/claim/" + id, {
             mode: "cors",
             method: "PUT",
             headers: {

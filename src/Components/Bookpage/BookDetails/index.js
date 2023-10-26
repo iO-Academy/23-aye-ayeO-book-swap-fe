@@ -4,7 +4,7 @@ import ReturnForm from "./ReturnForm";
 import ReviewForm from "./ReviewForm";
 import "./bookdetails.css";
 
-function BookDetails({ image, title, author, year, pageCount, genre, blurb, reviews, claimed, getBookData }) {
+function BookDetails({ image, title, author, year, pageCount, genre, blurb, reviews, claimed, getBookData, refreshReviewsList }) {
     const totalScore = reviews?.reduce((ratingSum, review) => ratingSum + review.rating, 0);
     const avgScore = totalScore ? totalScore / reviews?.length : 0;
 
@@ -17,7 +17,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                 <h2>{title}</h2>
                 <p>{author}</p>
                 <p>{year}</p>
-                <p>{pageCount} pages</p>
+                {pageCount && <p>{pageCount} pages</p>}
                 <p>Genre: {genre.name}</p>
                 <p>
                     <a href="#reviews">{reviews?.length} reviews</a> - {avgScore.toFixed(1)} / 5 stars
@@ -26,7 +26,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                 {claimed ? <ReturnForm getBookData={getBookData} claimed={claimed} /> : <ClaimForm getBookData={getBookData} />}
                 <p>{blurb}</p>
                 <h3 id="reviews">Reviews</h3>
-                <ReviewForm />
+                <ReviewForm refreshReviewsList={refreshReviewsList} />
                 {reviews?.map((review) => (
                     <Review review={review} key={review.id} />
                 ))}

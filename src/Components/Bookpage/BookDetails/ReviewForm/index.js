@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 
-function ReviewForm() {
+function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
     const [name, setName] = useState("");
     const [rating, setRating] = useState(null);
@@ -80,6 +80,12 @@ function ReviewForm() {
             .then((data) => {
                 if (data.message === "Review created") {
                     setSuccessMessage(true);
+
+                    // Drills back to BookDetails>BookPage
+                    // Changes the state of newReview
+                    // useEffect triggers a new fetch
+                    // Rerenders BookDetails w/reviews
+                    refreshReviewsList(true);
                 } else {
                     alert("Review couldn't be submitted, try again later.");
                 }
