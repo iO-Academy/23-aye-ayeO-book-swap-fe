@@ -19,8 +19,8 @@ function GenresSelector({ onGenreChangeID, className, label, defaultString = "Al
         <div>
             <label htmlFor="genreId">{label}</label>
             <br />
-            <select id="genreId" className={className} onChange={(e) => onGenreChange(e.target.value)}>
-                <option key="0" value="0" disabled={isDisabled} selected>
+            <select id="genreId" className={className} onChange={(e) => onGenreChange(e.target.value)} value="0">
+                <option key="0" value="0" disabled={isDisabled}>
                     {defaultString}
                 </option>
                 {genres.map((genre) => (

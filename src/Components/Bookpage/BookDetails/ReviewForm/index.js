@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import AlertBubble from "../../../Alert";
 
 function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
@@ -9,7 +10,8 @@ function ReviewForm({ refreshReviewsList }) {
     const [nameError, setNameError] = useState(false);
     const [ratingError, setRatingError] = useState(false);
     const [reviewError, setReviewError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(false);
+
+    const [successMessage, setSuccessMessage] = useState("");
 
     // State setters for form values
     function changeName(e) {
@@ -79,7 +81,7 @@ function ReviewForm({ refreshReviewsList }) {
             .then((res) => res.json())
             .then((data) => {
                 if (data.message === "Review created") {
-                    setSuccessMessage(true);
+                    setSuccessMessage(data.message);
 
                     // Drills back to BookDetails>BookPage
                     // Changes the state of newReview
@@ -95,8 +97,9 @@ function ReviewForm({ refreshReviewsList }) {
     return (
         <div className="form-container">
             {successMessage ? (
-                <p>Review submitted!</p>
+                <AlertBubble message={successMessage} />
             ) : (
+                // <p>Review submitted!</p>
                 <form onSubmit={validateForm} className="claim-form">
                     <h3>Want to review this book?</h3>
                     <div>

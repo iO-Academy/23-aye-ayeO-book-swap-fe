@@ -1,27 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import BookDetails from './BookDetails';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import BookDetails from "./BookDetails";
 
 function Bookpage() {
     const { id } = useParams();
-    const [image, setImage] = useState('');
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [year, setYear] = useState('');
-    const [pageCount, setPageCount] = useState('');
-    const [genre, setGenre] = useState('');
-    const [blurb, setBlurb] = useState('');
+    const [image, setImage] = useState("");
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+    const [year, setYear] = useState("");
+    const [pageCount, setPageCount] = useState("");
+    const [genre, setGenre] = useState("");
+    const [blurb, setBlurb] = useState("");
     const [error, setError] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [claimed, setClaimed] = useState(null);
-
     const [refreshReviews, setRefreshReviews] = useState(false);
 
     function getBookData() {
-        fetch('http://localhost:8000/api/books/' + id)
+        fetch("http://localhost:8000/api/books/" + id)
             .then((res) => res.json())
             .then((bookData) => {
-                if (bookData.message !== 'Book successfully found') {
+                if (bookData.message !== "Book successfully found") {
                     setError(true);
                 } else {
                     setImage(bookData.data.image);
@@ -46,7 +45,7 @@ function Bookpage() {
     }
 
     return (
-        <div className='page'>
+        <div className="page">
             {error ? (
                 <p>Error, book not found</p>
             ) : (
