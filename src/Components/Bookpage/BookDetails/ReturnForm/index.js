@@ -14,7 +14,7 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle }) {
 
     function validateForm(e) {
         e.preventDefault();
-        let emailError = true;
+        let emailError = false;
 
         if (email.length <= 0) {
             setEmailError(true);
@@ -56,7 +56,7 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle }) {
                 throw new Error(data.message);
             }
         } catch (error) {
-            setAlert(error);
+            setAlert(error.message);
         }
     }
 
