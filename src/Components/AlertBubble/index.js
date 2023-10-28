@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 function AlertBubble({ message }) {
     const [isVisible, setIsVisible] = useState(false);
@@ -9,7 +9,7 @@ function AlertBubble({ message }) {
 
             const timer = setTimeout(() => {
                 setIsVisible(false);
-            }, 2000); // Disappear after 2 seconds
+            }, 4000); // Disappear after 2 seconds
 
             return () => {
                 clearTimeout(timer);
@@ -17,7 +17,11 @@ function AlertBubble({ message }) {
         }
     }, [message]); // Watch for changes in the "message" prop
 
-    return <div className={`alert-bubble ${isVisible ? "visible" : "hidden"}`}>{message}</div>;
+    return (
+        <div className={`alert-bubble ${isVisible ? 'visible' : 'hidden'}`}>
+            {message}
+        </div>
+    );
 }
 
 export default AlertBubble;
