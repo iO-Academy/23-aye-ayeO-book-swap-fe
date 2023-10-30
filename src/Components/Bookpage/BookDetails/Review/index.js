@@ -1,4 +1,4 @@
-import './review.css'
+import './review.css';
 
 function Review({ review }) {
     return (
@@ -7,7 +7,7 @@ function Review({ review }) {
             <p>{review.rating}/5 stars</p>
             <p>{review.review}</p>
         </div>
-    )
+    );
 }
 
-export default Review
+export default Review;

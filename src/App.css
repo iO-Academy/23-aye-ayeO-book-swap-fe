@@ -2,3 +2,14 @@
     transition: 2s;
     scroll-behavior: smooth;
 }
+.alert-bubble {
+    position: fixed;
+    bottom: 0;
+    left: 0; /* You can adjust the left position as needed */
+    width: 100%; /* To span the entire width of the page */
+    background-color: #b9e2ad; /* Background color for the div */
+    color: #303030; /* Text color for the content */
+    padding: 20px; /* Add some padding for content */
+    text-align: center;
+    font-size: larger;
+}
