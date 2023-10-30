@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import './claimform.css';
-import { Context } from '../../../../Context';
+import React, { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import "./claimform.css";
+import { Context } from "../../../../Context";
+import { displayErrorMessage } from "../../../../utilities";
 
 function ClaimForm({ getBookData, open, visibilityToggle }) {
     const { id } = useParams();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [nameError, setNameError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [nameError, setNameError] = useState("");
+    const [emailError, setEmailError] = useState("");
 
     const { setAlert } = useContext(Context);
 
@@ -48,83 +49,69 @@ function ClaimForm({ getBookData, open, visibilityToggle }) {
 
     async function handleSubmit() {
         try {
-            const res = await fetch(
-                'http://localhost:8000/api/books/claim/' + id,
-                {
-                    mode: 'cors',
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                    }),
-                }
-            );
+            const res = await fetch("http://localhost:8000/api/books/claim/" + id, {
+                mode: "cors",
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                }),
+            });
             const data = await res.json();
 
             if (res.ok) {
                 visibilityToggle();
                 getBookData();
-                setAlert('Book claimed');
+                setAlert("Book claimed");
             } else {
                 throw new Error(data.message);
             }
         } catch (error) {
-            setAlert(error);
+            setEmailError(error.message);
         }
     }
 
     return (
-        <>
-            <dialog open={open}>
-                <div className='form-container claim-return-form '>
-                    <form onSubmit={validateForm} className='claim-form'>
-                        <h3>Want to claim this book?</h3>
-                        <div>
-                            <label htmlFor='name'>Name</label>
-
-                            <input
-                                type='text'
-                                id='name'
-                                name='name'
-                                placeholder='Name'
-                                value={name}
-                                onChange={changeName}
-                                className={nameError ? 'input-error' : ''}
-                            />
-                            <p className={nameError ? 'error' : 'hidden'}>
-                                Don't like your name
-                            </p>
-                        </div>
-                        <div>
-                            <label htmlFor='email'>Email</label>
-
-                            <input
-                                type='email'
-                                name='email'
-                                placeholder='Email'
-                                value={email}
-                                onChange={changeEmail}
-                                className={emailError ? 'input-error' : ''}
-                            />
-                            <p className={emailError ? 'error' : 'hidden'}>
-                                Don't like your email
-                            </p>
-                        </div>
+        <dialog open={open}>
+            <div className="form-container claim-return-form ">
+                <form onSubmit={validateForm} className="claim-form">
+                    <h3>Want to claim this book?</h3>
+                    <div>
+                        <label htmlFor="name">Name</label>
 
                         <input
-                            type='submit'
-                            value='Claim'
-                            className='submit-button'
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Name"
+                            value={name}
+                            onChange={changeName}
+                            className={nameError ? "input-error" : ""}
                         />
-                    </form>
-                </div>
-            </dialog>
-            {/* <AlertBubble message={alert} /> */}
-        </>
+                        {nameError && displayErrorMessage("Name is required")}
+                    </div>
+                    <div>
+                        <label htmlFor="email">Email</label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={changeEmail}
+                            className={emailError ? "input-error" : ""}
+                        />
+                        {emailError && displayErrorMessage("Email is required")}
+                    </div>
+
+                    <input type="submit" value="Claim" className="submit-button" />
+                </form>
+            </div>
+        </dialog>
     );
 }
 

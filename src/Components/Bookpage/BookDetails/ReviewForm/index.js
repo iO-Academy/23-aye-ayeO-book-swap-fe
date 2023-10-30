@@ -1,28 +1,33 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { Context } from '../../../../Context';
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useContext } from "react";
+import { Context } from "../../../../Context";
+import { displayErrorMessage } from "../../../../utilities";
 
 function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
-    const [name, setName] = useState('');
+    const { setAlert } = useContext(Context);
+
+    const [name, setName] = useState("");
     const [rating, setRating] = useState(null);
-    const [review, setReview] = useState('');
+    const [review, setReview] = useState("");
+
     const [nameError, setNameError] = useState(false);
     const [ratingError, setRatingError] = useState(false);
     const [reviewError, setReviewError] = useState(false);
+    const [serverError, setServerError] = useState("");
 
-    const [successMessage, setSuccessMessage] = useState('');
-
-    const { setAlert } = useContext(Context);
+    const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
     // State setters for form values
     function changeName(e) {
         setName(e.target.value);
     }
+
     function changeRating(e) {
         setRating(parseInt(e.target.value));
     }
+
     function changeReview(e) {
         setReview(e.target.value);
     }
@@ -66,62 +71,63 @@ function ReviewForm({ refreshReviewsList }) {
     }
 
     // SUBMIT form / FETCH
-    function handleSubmit() {
-        fetch('http://localhost:8000/api/reviews', {
-            mode: 'cors',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                rating: rating,
-                review: review,
-                book_id: id,
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.message === 'Review created') {
-                    setSuccessMessage(data.message);
-                    setAlert(data.message);
-                    // Drills back to BookDetails>BookPage
-                    // Changes the state of newReview
-                    // useEffect triggers a new fetch
-                    // Rerenders BookDetails w/reviews
-                    refreshReviewsList(true);
-                } else {
-                    // alert("Review couldn't be submitted, try again later.");
-                    setAlert(data.message);
-                }
+    async function handleSubmit() {
+        try {
+            const response = await fetch("http://localhost:8000/api/reviews", {
+                mode: "cors",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    name: name,
+                    rating: rating,
+                    review: review,
+                    book_id: id,
+                }),
             });
+
+            const data = await response.json();
+
+            if (response.ok && data.message === "Review created") {
+                setReviewSubmitted(true);
+                setAlert(data.message);
+                // Drills back to BookDetails>BookPage
+                // Changes the state of newReview
+                // useEffect triggers a new fetch
+                // Rerenders BookDetails w/reviews
+                refreshReviewsList(true);
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            setServerError(error.message);
+        }
     }
 
     return (
-        !successMessage && (
-            <div className='form-container'>
-                <form onSubmit={validateForm} className='claim-form'>
+        !reviewSubmitted && (
+            <div className="form-container">
+                <form onSubmit={validateForm} className="claim-form">
                     <h3>Want to review this book?</h3>
                     <div>
-                        <label htmlFor='name'>Name</label>
+                        <label htmlFor="name">Name</label>
 
                         <input
-                            type='text'
-                            id='name'
-                            placeholder='Name'
+                            type="text"
+                            id="name"
+                            placeholder="Name"
                             value={name}
                             onChange={changeName}
-                            className={nameError ? 'input-error' : ''}
+                            className={nameError ? "input-error" : ""}
                         />
-                        <p className={nameError ? 'error' : 'hidden'}>
-                            Don't like your name
-                        </p>
+                        {nameError && displayErrorMessage("Name is required")}
                     </div>
 
                     <div>
-                        <label htmlFor='rating'>Rating:</label>
-                        <select id='rating' onChange={changeRating}>
+                        <label htmlFor="rating">Rating:</label>
+                        <select id="rating" onChange={changeRating} className={ratingError ? "input-error" : ""}>
                             <option value={null}> Select </option>
                             <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -130,28 +136,23 @@ function ReviewForm({ refreshReviewsList }) {
                             <option value={1}>1</option>
                             <option value={0}>0</option>
                         </select>
-                        <p className={ratingError ? 'error' : 'hidden'}>
-                            Select a rating!
-                        </p>
+                        {ratingError && displayErrorMessage("Select a rating")}
                     </div>
 
                     <div>
                         <textarea
-                            id='review'
-                            rows='4'
-                            cols='50'
+                            id="review"
+                            rows="4"
+                            maxLength="255"
+                            cols="50"
                             onChange={changeReview}
+                            className={reviewError ? "input-error" : ""}
                         ></textarea>
-                        <p className={reviewError ? 'error' : 'hidden'}>
-                            Min: 10 chars
-                        </p>
+                        <div>{review.length} / 255 characters</div>
+                        {reviewError && displayErrorMessage("Review is required (Min. 10 characters)")}
                     </div>
-
-                    <input
-                        type='submit'
-                        value='Review'
-                        className='submit-button'
-                    />
+                    <span className="error">{serverError}</span>
+                    <input type="submit" value="Review" className="submit-button" />
                 </form>
             </div>
         )
