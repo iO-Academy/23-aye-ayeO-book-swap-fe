@@ -5,7 +5,10 @@ import React from "react";
 export function displayErrorMessage(error = " ") {
     return (
         <div>
-            <p className={error ? "error" : "hidden"}>{error}</p>
+            <p className={error ? "error" : "hidden"}>
+                <span class="material-symbols-outlined">warning</span>
+                {error}
+            </p>
         </div>
     );
 }
