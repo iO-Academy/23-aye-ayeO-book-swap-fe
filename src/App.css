@@ -34,7 +34,7 @@ select:-webkit-autofill:focus {
 }
 
 .form-container {
-    @apply bg-slate-200 flex justify-center p-10 my-5 w-1/2 m-auto rounded-md transition;
+    @apply bg-slate-200 flex justify-center p-10 my-5 md:w-2/3 lg:w-1/2 m-auto rounded-md transition w-full;
 }
 
 .form-text {
@@ -51,5 +51,5 @@ select:-webkit-autofill:focus {
 }
 
 .montserrat {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
