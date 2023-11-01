@@ -1,9 +1,9 @@
 /* * {
-    transition: 2s;
+    transition: 0.5s;
     scroll-behavior: smooth;
-}
+} */
 
-.alert-bubble {
+/* .alert-bubble {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -42,7 +42,7 @@ h2 {
 }
 
 .button {
-    @apply rounded-md px-4 bg-rose-400 border  hover:bg-transparent hover:border hover:border-rose-500 hover:text-rose-500 text-slate-50 text-base transition;
+    @apply rounded-md px-4 bg-rose-400 border border-rose-400  hover:bg-transparent hover:border hover:border-rose-500 hover:text-rose-500 text-slate-50 text-base transition cursor-pointer;
 }
 
 .form-container {
@@ -63,5 +63,5 @@ h2 {
 }
 
 .montserrat {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
