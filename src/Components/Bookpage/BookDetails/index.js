@@ -39,8 +39,8 @@ function BookDetails({
 
     return (
         <div className='w-full max-w-7xl m-auto bg-zinc-100'>
-            <div className='book-details w-full m-auto p-4 flex flex-col md:flex-row justify-center gap-4'>
-                <div>
+            <div className='book-details w-full m-auto p-20 flex flex-col md:flex-row justify-center gap-4'>
+                <div className='w-[600px]'>
                     <ImgLoader
                         src={image}
                         alt={'Cover of ' + title}
@@ -48,16 +48,22 @@ function BookDetails({
                         h='96'
                     />
                 </div>
-                <div className='w-[600px] p-2 flex flex-col gap-2'>
+                <div className=' p-2 flex flex-col gap-2 w-[1200px]'>
                     <h1 className='text-left p-0'>{title}</h1>
                     <p>{author}</p>
                     <p>
-                        <a href='#reviews'>{reviews?.length} reviews</a> -{' '}
-                        {avgScore.toFixed(1)} / 5 stars
+                        {' '}
+                        {avgScore.toFixed(1)} / 5 stars |{' '}
+                        <a href='#reviews' className='underline'>
+                            {reviews?.length} reviews
+                        </a>
                     </p>
+
+                    <p>{blurb}</p>
+
+                    <p>Genre: {genre.name}</p>
                     <p>{year}</p>
                     {pageCount && <p>{pageCount} pages</p>}
-                    <p>Genre: {genre.name}</p>
                     {claimed && <p>Claimed by {claimed}</p>}
                     {claimed ? (
                         <button
@@ -65,7 +71,7 @@ function BookDetails({
                             onClick={toggleReturn}
                             className='button py-2 w-max'
                         >
-                            Return
+                            Return Book
                         </button>
                     ) : (
                         <button
@@ -73,7 +79,7 @@ function BookDetails({
                             onClick={toggleClaim}
                             className='button py-2 w-max'
                         >
-                            Claim
+                            Claim Book
                         </button>
                     )}
 
@@ -94,17 +100,17 @@ function BookDetails({
                         />
                     )}
 
-                    <p>{blurb}</p>
+                    <div>
+                        <hr />
+                        <h2 className='text-center' id='reviews'>
+                            Reviews
+                        </h2>
+                        {reviews?.map((review) => (
+                            <Review review={review} key={review.id} />
+                        ))}
+                        <ReviewForm refreshReviewsList={refreshReviewsList} />
+                    </div>
                 </div>
-            </div>
-            <div className='w-1/2 m-auto'>
-                <h2 className='text-center' id='reviews'>
-                    Reviews
-                </h2>
-                {reviews?.map((review) => (
-                    <Review review={review} key={review.id} />
-                ))}
-                <ReviewForm refreshReviewsList={refreshReviewsList} />
             </div>
         </div>
     );

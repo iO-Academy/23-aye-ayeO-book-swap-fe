@@ -36,6 +36,10 @@ h2 {
     @apply pt-5 pb-1 text-lg font-semibold;
 }
 
+h3 {
+    @apply pt-5 pb-1 text-lg font-semibold text-slate-600;
+}
+
 .active {
     font-weight: bold;
     pointer-events: none;
@@ -46,7 +50,7 @@ h2 {
 }
 
 .form-container {
-    @apply bg-zinc-200 flex justify-center p-10 my-5 md:w-2/3 lg:w-1/2 m-auto rounded-md transition w-full;
+    @apply bg-zinc-200 flex justify-center p-10 my-5 m-auto rounded-md transition;
 }
 
 .form-text {
