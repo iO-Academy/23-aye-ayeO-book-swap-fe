@@ -8,7 +8,6 @@ function BookCard({ id, bookCover, title, author, genre }) {
 
     const handleImageLoad = () => {
         setIsImageLoaded(true);
-        console.log(isImageLoaded);
     };
 
     return (
