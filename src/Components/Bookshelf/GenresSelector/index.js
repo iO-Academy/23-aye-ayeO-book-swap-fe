@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-function GenresSelector({
-    onGenreChangeID,
-    className,
-    label = null,
-    defaultString = 'All',
-    isDisabled = false,
-}) {
+function GenresSelector({ onGenreChangeID, className, label = null, defaultString = "All", isDisabled = false }) {
     const [genres, setGenres] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/genres')
+        fetch("http://localhost:8000/api/genres")
             .then((res) => res.json())
             .then((genres) => {
                 setGenres(genres.data);
@@ -22,15 +16,15 @@ function GenresSelector({
     }
 
     return (
-        <div className='flex items-center gap-3 flex-row pr-3 text-slate-600'>
-            {label && <label htmlFor='genreId'>{label}</label>}
+        <div className="flex items-center gap-3 flex-row pr-3 text-slate-600">
+            {label && <label htmlFor="genreId">{label}</label>}
             <select
-                id='genreId'
-                className={`rounded-md p-2 text-lg bg-slate-50 text-slate-600 ${className}`}
+                id="genreId"
+                className={`rounded-md p-2 text-lg bg-zinc-50 text-slate-600 ${className}`}
                 onChange={(e) => onGenreChange(e.target.value)}
-                defaultValue='0'
+                defaultValue="0"
             >
-                <option key='0' value='0' disabled={isDisabled}>
+                <option key="0" value="0" disabled={isDisabled}>
                     {defaultString}
                 </option>
                 {genres.map((genre) => (

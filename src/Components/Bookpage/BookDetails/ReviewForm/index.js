@@ -110,24 +110,23 @@ function ReviewForm({ refreshReviewsList }) {
         !reviewSubmitted && (
             <div className="form-container">
                 <form onSubmit={validateForm} className="claim-form">
-                    <h3>Want to review this book?</h3>
+                    <h3>What do you think?</h3>
                     <div>
                         <label htmlFor="name">Name</label>
 
                         <input
                             type="text"
                             id="name"
-                            placeholder="Name"
                             value={name}
                             onChange={changeName}
-                            className={nameError ? "input-error" : ""}
+                            className={nameError ? "input-error form-text" : "form-text"}
                         />
                         {nameError && displayErrorMessage("Name is required")}
                     </div>
 
                     <div>
-                        <label htmlFor="rating">Rating:</label>
-                        <select id="rating" onChange={changeRating} className={ratingError ? "input-error" : ""}>
+                        <label htmlFor="rating">Rating</label>
+                        <select id="rating" onChange={changeRating} className={ratingError ? "input-error form-text" : "form-text"}>
                             <option value={null}> Select </option>
                             <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -140,19 +139,21 @@ function ReviewForm({ refreshReviewsList }) {
                     </div>
 
                     <div>
+                        <label htmlFor="review">Review</label>
+                        <br />
                         <textarea
                             id="review"
                             rows="4"
                             maxLength="255"
                             cols="50"
                             onChange={changeReview}
-                            className={reviewError ? "input-error" : ""}
+                            className={reviewError ? "input-error form-text" : "form-text"}
                         ></textarea>
-                        <div>{review.length} / 255 characters</div>
                         {reviewError && displayErrorMessage("Review is required (Min. 10 characters)")}
+                        <div>{review.length} / 255 characters</div>
                     </div>
                     <span className="error">{serverError}</span>
-                    <input type="submit" value="Review" className="submit-button" />
+                    <input type="submit" value="Review" className="button py-2" />
                 </form>
             </div>
         )

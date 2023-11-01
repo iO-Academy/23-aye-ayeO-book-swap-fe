@@ -23,12 +23,13 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
     }
 
     return (
-        <>
-            <div className="book-details w-1/2 m-auto flex flex-col md:flex-row">
-                <ImgLoader src={image} alt={"Cover of " + title} w="60" h="96" />
-
-                <div className="">
-                    <h2 className="text-3xl font-bold underline">{title}</h2>
+        <div className="w-full max-w-7xl m-auto bg-zinc-200">
+            <div className="book-details w-full m-auto p-4 flex flex-col md:flex-row  gap-4 bg-red-200">
+                <div className="w-1/2">
+                    <ImgLoader src={image} alt={"Cover of " + title} w="full" h="" />
+                </div>
+                <div className="w-1/2 bg-blue-400 p-2">
+                    <h1 className="text-left">{title}</h1>
                     <p>{author}</p>
                     <p>{year}</p>
                     {pageCount && <p>{pageCount} pages</p>}
@@ -38,11 +39,11 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                     </p>
                     {claimed && <p>Claimed by {claimed}</p>}
                     {claimed ? (
-                        <button data-element="return" onClick={toggleReturn}>
+                        <button data-element="return" onClick={toggleReturn} className="button py-2">
                             Return
                         </button>
                     ) : (
-                        <button data-element="claim" onClick={toggleClaim}>
+                        <button data-element="claim" onClick={toggleClaim} className="button py-2">
                             Claim
                         </button>
                     )}
@@ -56,14 +57,16 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                     <p>{blurb}</p>
                 </div>
             </div>
-            <div>
-                <h3 id="reviews">Reviews</h3>
-                <ReviewForm refreshReviewsList={refreshReviewsList} />
+            <div className="w-1/2 m-auto">
+                <h2 className="text-center" id="reviews">
+                    Reviews
+                </h2>
                 {reviews?.map((review) => (
                     <Review review={review} key={review.id} />
                 ))}
+                <ReviewForm refreshReviewsList={refreshReviewsList} />
             </div>
-        </>
+        </div>
     );
 }
 
