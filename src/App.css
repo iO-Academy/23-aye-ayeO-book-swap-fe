@@ -1,15 +1,55 @@
-* {
+/* * {
     transition: 2s;
     scroll-behavior: smooth;
 }
+
 .alert-bubble {
     position: fixed;
     bottom: 0;
-    left: 0; /* You can adjust the left position as needed */
-    width: 100%; /* To span the entire width of the page */
-    background-color: #b9e2ad; /* Background color for the div */
-    color: #303030; /* Text color for the content */
-    padding: 20px; /* Add some padding for content */
+    left: 0;
+    width: 100%;
+    background-color: #b9e2ad;
+    color: #303030;
+    padding: 20px;
     text-align: center;
     font-size: larger;
+} */
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.active {
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.form-container {
+    @apply bg-slate-200 flex justify-center p-10 my-5 w-1/2 m-auto rounded-md transition;
+}
+
+.form-text {
+    @apply p-2 text-lg bg-slate-50 focus:outline-none rounded w-full;
+}
+
+.error {
+    @apply text-red-700 relative text-xs mt-1;
+}
+
+.input-error,
+.select-error {
+    @apply border-2 border-rose-200;
+}
+
+.montserrat {
+    font-family: 'Montserrat', sans-serif;
 }

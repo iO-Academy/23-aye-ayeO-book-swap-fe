@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 function GenresSelector({
     onGenreChangeID,
     className,
-    label,
+    label = null,
     defaultString = 'All',
     isDisabled = false,
 }) {
@@ -22,12 +22,11 @@ function GenresSelector({
     }
 
     return (
-        <div>
-            <label htmlFor='genreId'>{label}</label>
-            <br />
+        <div className='flex items-center gap-3 flex-row pr-3 text-slate-600'>
+            {label && <label htmlFor='genreId'>{label}</label>}
             <select
                 id='genreId'
-                className={className}
+                className={`rounded-md p-2 text-lg bg-slate-50 text-slate-600 ${className}`}
                 onChange={(e) => onGenreChange(e.target.value)}
                 defaultValue='0'
             >

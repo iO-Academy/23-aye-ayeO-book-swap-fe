@@ -1,5 +1,3 @@
-import './review.css';
-
 function Review({ review }) {
     return (
         <div>

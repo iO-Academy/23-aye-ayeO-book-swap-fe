@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
-import "./bookshelf.css";
-import BookCard from "../BookCard";
-import GenresSelector from "./GenresSelector";
-import SearchCollection from "./SearchCollection";
+import React, { useEffect, useState } from 'react';
+import './bookshelf.css';
+import BookCard from '../BookCard';
+import GenresSelector from './GenresSelector';
+import SearchCollection from './SearchCollection';
 
 function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([]);
-    const [selectedGenreId, setSelectedGenreId] = useState("");
-    const [searchedString, setSearchedString] = useState("");
+    const [selectedGenreId, setSelectedGenreId] = useState('');
+    const [searchedString, setSearchedString] = useState('');
 
     useEffect(() => {
         // selectedGenreId === 0 && setSelectedGenreId("");
-        fetch(`http://localhost:8000/api/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`)
+        fetch(
+            `http://localhost:8000/api/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`
+        )
             .then((res) => res.json())
             .then((books) => {
                 setBookCollection(books.data);
@@ -27,10 +29,15 @@ function Bookshelf({ claimed }) {
     };
 
     return (
-        <div>
-            <GenresSelector onGenreChangeID={handleGenreChange} label="Filter by genre: " />
-            <SearchCollection onSearchChange={handleSearchChange} />
-            <div className="bookshelf">
+        <>
+            <div className='flex p-4 gap-3 bg-slate-200 justify-between items-center'>
+                <GenresSelector
+                    onGenreChangeID={handleGenreChange}
+                    label='Filter by genre '
+                />
+                <SearchCollection onSearchChange={handleSearchChange} />
+            </div>
+            <div className='bookshelf flex flex-row flex-wrap gap-4 p-4 justify-center'>
                 {bookCollection == null && <p>No Books Found</p>}
                 {bookCollection?.map((book) => {
                     return (
@@ -45,7 +52,7 @@ function Bookshelf({ claimed }) {
                     );
                 })}
             </div>
-        </div>
+        </>
     );
 }
 

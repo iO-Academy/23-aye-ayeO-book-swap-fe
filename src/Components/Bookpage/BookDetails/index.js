@@ -42,7 +42,7 @@ function BookDetails({
                 <img src={image} alt={'Cover of ' + title} />
             </div>
             <div className=''>
-                <h2>{title}</h2>
+                <h2 className='text-3xl font-bold underline'>{title}</h2>
                 <p>{author}</p>
                 <p>{year}</p>
                 {pageCount && <p>{pageCount} pages</p>}

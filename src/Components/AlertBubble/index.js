@@ -18,7 +18,11 @@ function AlertBubble({ message }) {
     }, [message]); // Watch for changes in the "message" prop
 
     return (
-        <div className={`alert-bubble ${isVisible ? 'visible' : 'hidden'}`}>
+        <div
+            className={` rounded-full bg-lime-200
+
+        alert-bubble ${isVisible ? 'visible' : 'hidden'}`}
+        >
             {message}
         </div>
     );
