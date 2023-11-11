@@ -10,6 +10,7 @@ import AlertBubble from './Components/AlertBubble';
 
 import { Context } from './Context';
 import { useState } from 'react';
+import ScrollToTop from './Components/ScrollToTop';
 
 function App() {
     const [alert, setAlert] = useState('');
@@ -17,6 +18,7 @@ function App() {
     return (
         <div className='App montserrat'>
             <BrowserRouter>
+                <ScrollToTop />
                 <Nav />
                 <Context.Provider value={{ alert, setAlert }}>
                     <AlertBubble message={alert} />
