@@ -174,7 +174,7 @@ function ReviewForm({ refreshReviewsList }) {
                     <span className='error'>{serverError}</span>
                     <input
                         type='submit'
-                        value='Review'
+                        value='Post Review'
                         className='button py-2'
                     />
                 </form>

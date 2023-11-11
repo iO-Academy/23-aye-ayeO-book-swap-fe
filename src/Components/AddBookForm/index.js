@@ -334,7 +334,7 @@ function AddBookForm() {
                         displayErrorMessage('Must be less than 255 characters')}
                 </div>
                 <div id='error-container' className='error'></div>
-                <input type='submit' value='Add book' className='button py-3' />
+                <input type='submit' value='Add Book' className='button py-3' />
             </form>
         </div>
     );

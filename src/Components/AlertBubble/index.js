@@ -19,7 +19,7 @@ function AlertBubble({ message }) {
 
     return (
         <div
-            className={`rounded-full bg-lime-200 alert-bubble ${
+            className={`rounded bg-lime-200 alert-bubble fixed m-auto w-96 ${
                 isVisible ? 'visible' : 'hidden'
             }`}
         >

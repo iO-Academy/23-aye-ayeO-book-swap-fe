@@ -18,7 +18,7 @@ function ImgLoader({ src, alt, w, h }) {
                         className={`object-cover flex items-center justify-center bg-gray-300 rounded dark:bg-gray-200  w-${w} h-${h}`}
                     >
                         <svg
-                            className='w-10 h-10 text-gray-300 dark:text-gray-300'
+                            className='w-10 h-10 text-zinc-300 dark:text-zinc-400'
                             aria-hidden='true'
                             xmlns='http://www.w3.org/2000/svg'
                             fill='currentColor'

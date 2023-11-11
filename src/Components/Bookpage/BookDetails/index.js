@@ -49,18 +49,18 @@ function BookDetails({
                     />
                 </div>
                 <div className=' p-2 flex flex-col gap-2 w-[1200px]'>
-                    <h1 className='text-left p-0'>{title}</h1>
+                    <h1 className='text-left p-0 text-5xl'>{title}</h1>
                     <p>{author}</p>
-                    <p>
+                    <br />
+                    <p className='text-sm'>
                         {' '}
                         {avgScore.toFixed(1)} / 5 stars |{' '}
                         <a href='#reviews' className='underline'>
                             {reviews?.length} reviews
                         </a>
                     </p>
-
                     <p>{blurb}</p>
-
+                    <br />
                     <p>Genre: {genre.name}</p>
                     <p>{year}</p>
                     {pageCount && <p>{pageCount} pages</p>}
