@@ -63,3 +63,28 @@ export function isValidISBN(isbn) {
         return false; // Invalid length or format
     }
 }
+export function capitaliseTitle(title) {
+    const articles = ['a', 'an', 'the'];
+    const prepositions = ['at', 'by', 'for', 'in', 'of', 'on', 'to', 'with'];
+    const conjunctions = ['and', 'but', 'or', 'nor'];
+
+    const words = title.toLowerCase().split(' ');
+
+    for (let i = 0; i < words.length; i++) {
+        if (
+            (i !== 0 &&
+                (articles.includes(words[i]) ||
+                    prepositions.includes(words[i]) ||
+                    conjunctions.includes(words[i]))) ||
+            (i === 0 &&
+                (articles.includes(words[i]) ||
+                    prepositions.includes(words[i])))
+        ) {
+            words[i] = words[i].toLowerCase();
+        } else {
+            words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+        }
+    }
+
+    return words.join(' ');
+}
