@@ -1,10 +1,23 @@
 import React, { useContext, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import { Context } from '../../Context';
-import { displayErrorMessage, isValidUrl, isValidYear } from '../../utilities';
+import {
+    displayErrorMessage,
+    isValidUrl,
+    isValidYear,
+    isValidISBN,
+    capitaliseTitle,
+    removeQuotes,
+    extractYear,
+    limitString,
+    scrollToTop,
+} from '../../utilities';
 
 function AddBookForm() {
     // AddBookForm Fields States
+    const [remoteSuccess, setRemoteSuccess] = useState(false);
+    const [isbn, setISBN] = useState('');
+    const [goodreadsLink, setGoodreadsLink] = useState('');
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [genre, setGenre] = useState('');
@@ -14,6 +27,7 @@ function AddBookForm() {
     const [blurb, setBlurb] = useState('');
 
     // Error States
+    const [isbnError, setIsbnError] = useState('');
     const [titleError, setTitleError] = useState('');
     const [authorError, setAuthorError] = useState('');
     const [genreError, setGenreError] = useState('');
@@ -25,6 +39,14 @@ function AddBookForm() {
     const { setAlert } = useContext(Context);
 
     // State setters for form values + form reset
+    function changeISBN(e) {
+        resetForm();
+        setISBN(e.target.value);
+        setIsbnError('');
+        setRemoteSuccess(false);
+        const isbn = e.target.value;
+        isValidISBN(isbn) && getBookData(isbn);
+    }
     function changeTitle(e) {
         setTitle(e.target.value);
         setTitleError(false);
@@ -91,6 +113,7 @@ function AddBookForm() {
         // genre
         if (genre <= 0 || isNaN(genre)) {
             setGenreError(true);
+            setGenre(0);
         } else {
             setGenreError(false);
             genreError = false;
@@ -139,6 +162,99 @@ function AddBookForm() {
             !blurbError
         ) {
             handleSubmit(e);
+            scrollToTop();
+        } else {
+            scrollToTop();
+        }
+    }
+
+    // Fetch bookData  from Open Library
+    async function getBookData(isbn) {
+        console.log(`isbn: ${isbn}`);
+        try {
+            const isbnRes = await fetch(
+                `https://openlibrary.org/isbn/${isbn}.json`
+            );
+
+            if (!isbnRes.ok) {
+                throw new Error('Network response was not ok.');
+            }
+
+            const book = await isbnRes.json();
+
+            const workRes = await fetch(
+                `https://openlibrary.org${book.works[0].key}.json`
+            );
+
+            if (!workRes.ok) {
+                throw new Error('Network response was not ok.');
+            }
+
+            const work = await workRes.json();
+
+            const authorRes = await fetch(
+                `https://openlibrary.org${work.authors[0].author.key}.json`
+            );
+            if (!authorRes.ok) {
+                throw new Error('Network response was not ok.');
+            }
+
+            const author = await authorRes.json();
+            // console.log(author);
+
+            if (author && author.name) setAuthor(author.name.trim());
+            // }
+
+            if (book) {
+                setRemoteSuccess(true);
+
+                if (
+                    book.identifiers &&
+                    book.identifiers.goodreads &&
+                    book.identifiers.goodreads[0]
+                )
+                    setGoodreadsLink(
+                        `https://www.goodreads.com/book/show/${book.identifiers.goodreads[0]}`
+                    );
+
+                const bookCovers = book.covers || [];
+                const workCovers = work.covers || [];
+
+                const cover =
+                    (bookCovers.length > 0 && bookCovers[0]) ||
+                    (workCovers.length > 0 && workCovers[0]);
+
+                if (cover) {
+                    setImageUrl(
+                        `https://covers.openlibrary.org/b/id/${cover}-L.jpg`
+                    );
+                }
+
+                work.title && setTitle(capitaliseTitle(work.title));
+
+                book.publish_date && setYear(extractYear(book.publish_date));
+                work.first_publish_date &&
+                    setYear(extractYear(work.first_publish_date));
+
+                book.pagination && setPageCount(book.pagination);
+                book.number_of_pages && setPageCount(book.number_of_pages);
+
+                if (work.description && work.description.value) {
+                    setBlurb(
+                        limitString(removeQuotes(work.description.value), 255)
+                    );
+                } else if (work.description) {
+                    setBlurb(limitString(removeQuotes(work.description), 255));
+                } else if (book.description && book.description.value) {
+                    setBlurb(
+                        limitString(removeQuotes(book.description.value), 255)
+                    );
+                }
+            }
+        } catch (error) {
+            setIsbnError('No book found');
+            console.error('Error fetching book data: ' + error);
+            // setError(error.message);
         }
     }
 
@@ -196,6 +312,9 @@ function AddBookForm() {
     }
 
     function resetForm() {
+        setISBN('');
+        setGoodreadsLink('');
+        setRemoteSuccess(false);
         setTitle('');
         setAuthor('');
         setGenre('');
@@ -203,6 +322,7 @@ function AddBookForm() {
         setPageCount('');
         setImageUrl('');
         setBlurb('');
+        setIsbnError('');
     }
 
     return (
@@ -212,7 +332,44 @@ function AddBookForm() {
                 className='flex flex-col gap-4 w-3/4 '
             >
                 <h1>Add New Book</h1>
-
+                <div
+                    className={`p-8 rounded-2xl border-4 border-zinc-300 
+                    ${
+                        isValidISBN(isbn) &&
+                        !remoteSuccess &&
+                        !isbnError &&
+                        'bg-gradient-to-r from-blue-300 via-teal-200 to-blue-300 background-animate'
+                    }
+                    ${remoteSuccess && 'success-isbn'}
+                    ${isbnError && 'bg-rose-200 border-rose-300'}`}
+                >
+                    <label htmlFor='title' className='text-center'>
+                        Search by ISBN
+                    </label>
+                    <input
+                        type='text'
+                        id='isbn'
+                        className='form-text'
+                        value={isbn}
+                        onChange={changeISBN}
+                    ></input>
+                    {isbnError &&
+                        !title &&
+                        displayErrorMessage(
+                            'Oops, book not found. Please fill in the form below manually.'
+                        )}
+                    {goodreadsLink && (
+                        <a
+                            href={goodreadsLink}
+                            target='_blank'
+                            rel='noreferrer'
+                            className=' text-xs text-green-800'
+                        >
+                            Check "{title}" on{' '}
+                            <span className='font-bold'>Goodreads</span>
+                        </a>
+                    )}
+                </div>
                 <div>
                     <label htmlFor='title'>
                         Title <span className='text-rose-700'>*</span>
@@ -298,7 +455,16 @@ function AddBookForm() {
                     />
                     {yearError && displayErrorMessage('Incorrect year format')}
                 </div>
-
+                {imageUrl && (
+                    <div>
+                        <img
+                            src={imageUrl}
+                            alt={`${title} cover`}
+                            width='200px'
+                            className='mx-auto rounded-md'
+                        ></img>
+                    </div>
+                )}
                 <div>
                     <label htmlFor='image'>Image URL</label>
                     <br />

@@ -90,3 +90,27 @@ export function capitaliseTitle(title) {
 export function removeQuotes(str) {
     return str.replace(/^['"]|['"]$/g, '');
 }
+
+export function limitString(str, limiter) {
+    if (str.length > limiter) {
+        return str.substring(0, limiter);
+    }
+    return str;
+}
+
+export function extractYear(dateString) {
+    const dateArray = dateString.split(' ');
+
+    // Check if the array contains only the year
+    if (dateArray.length === 1) {
+        return dateArray[0]; // Return the year directly
+    } else {
+        // If it's in a format like 'Month day, year', extract the year from the last element
+        const year = dateArray[dateArray.length - 1];
+        return year.replace(/[^0-9]/g, ''); // Extract only the digits (the year)
+    }
+}
+
+export function scrollToTop() {
+    window.scrollTo(0, 0);
+}
