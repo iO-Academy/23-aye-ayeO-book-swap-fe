@@ -86,3 +86,7 @@ export function capitaliseTitle(title) {
 
     return words.join(' ');
 }
+
+export function removeQuotes(str) {
+    return str.replace(/^['"]|['"]$/g, '');
+}
