@@ -341,7 +341,7 @@ function AddBookForm() {
                         'bg-gradient-to-r from-blue-300 via-teal-200 to-blue-300 background-animate'
                     }
                     ${remoteSuccess && 'success-isbn'}
-                    ${isbnError && 'bg-rose-200 border-rose-300'}`}
+                    ${isbnError && 'bg-rose-200 !border-rose-300'}`}
                 >
                     <label htmlFor='title' className='text-center'>
                         Search by ISBN
