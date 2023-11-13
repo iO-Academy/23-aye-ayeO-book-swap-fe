@@ -333,7 +333,7 @@ function AddBookForm() {
             >
                 <h1>Add New Book</h1>
                 <div
-                    className={`p-8 rounded-2xl border-4 border-zinc-300 
+                    className={`p-8 rounded-2xl border-4 
                     ${
                         isValidISBN(isbn) &&
                         !remoteSuccess &&
@@ -341,7 +341,11 @@ function AddBookForm() {
                         'bg-gradient-to-r from-blue-300 via-teal-200 to-blue-300 background-animate'
                     }
                     ${remoteSuccess && 'success-isbn'}
-                    ${isbnError && 'bg-rose-200 !border-rose-300'}`}
+                    ${
+                        isbnError
+                            ? 'bg-rose-200 border-rose-300'
+                            : 'border-zinc-300'
+                    }`}
                 >
                     <label htmlFor='title' className='text-center'>
                         Search by ISBN
