@@ -31,10 +31,12 @@ function BookDetails({
 
     function toggleClaim() {
         openClaim ? setOpenClaim(false) : setOpenClaim(true);
+        document.body.style.overflow = !openClaim ? 'hidden' : 'auto';
     }
 
     function toggleReturn() {
         openReturn ? setOpenReturn(false) : setOpenReturn(true);
+        document.body.style.overflow = !openReturn ? 'hidden' : 'auto';
     }
 
     return (
@@ -89,6 +91,7 @@ function BookDetails({
                             claimed={claimed}
                             open={openReturn}
                             visibilityToggle={toggleReturn}
+                            bookTitle={title}
                         />
                     )}
 
@@ -97,6 +100,7 @@ function BookDetails({
                             getBookData={getBookData}
                             open={openClaim}
                             visibilityToggle={toggleClaim}
+                            bookTitle={title}
                         />
                     )}
 

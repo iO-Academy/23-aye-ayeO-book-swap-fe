@@ -200,10 +200,8 @@ function AddBookForm() {
             }
 
             const author = await authorRes.json();
-            // console.log(author);
 
             if (author && author.name) setAuthor(author.name.trim());
-            // }
 
             if (book) {
                 setRemoteSuccess(true);
@@ -254,7 +252,6 @@ function AddBookForm() {
         } catch (error) {
             setIsbnError('No book found');
             console.error('Error fetching book data: ' + error);
-            // setError(error.message);
         }
     }
 

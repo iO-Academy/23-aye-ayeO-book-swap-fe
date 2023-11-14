@@ -92,3 +92,8 @@ h3 {
         background-position: 100% 50%;
     }
 }
+
+.dialog {
+    backdrop-filter: blur(5px) brightness(0.9);
+    background: rgba(0, 0, 0, 0.6);
+}
