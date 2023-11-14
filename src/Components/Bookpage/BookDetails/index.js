@@ -31,13 +31,13 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                 <div className="w-[600px]">
                     <ImgLoader src={image} alt={"Cover of " + title} w="60" h="96" />
                 </div>
-                <div className=" p-2 flex flex-col gap-2 w-[1200px]">
+                <div className="flex flex-col gap-2 w-[1200px]">
                     <h1 className="text-left p-0 text-5xl">{title}</h1>
                     <p>{author}</p>
-                    <br />
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-baseline m-2">
+                        <p className="text-2xl">{avgScore.toFixed(1)}</p>
                         <StarRating rating={avgScore} />
-                        <a href="#reviews" className="underline">
+                        <a href="#reviews" className="underline text-zinc-500">
                             {reviews?.length} reviews
                         </a>
                     </div>
@@ -72,7 +72,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                     )}
 
                     <div className="mt-6 border-zinc-300">
-                        <h2 className="border-t border-zinc-300" id="reviews">
+                        <h2 className="border-t border-zinc-200" id="reviews">
                             Reviews
                         </h2>
                         {reviews?.map((review) => (

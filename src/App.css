@@ -33,7 +33,7 @@ h1 {
 }
 
 h2 {
-    @apply py-5 text-3xl text-slate-600 font-semibold;
+    @apply py-5 text-3xl text-slate-600;
 }
 
 h3 {
@@ -54,7 +54,7 @@ h4 {
 }
 
 .form-container {
-    @apply bg-zinc-200 flex justify-center p-10 my-5 m-auto rounded-md transition;
+    @apply bg-zinc-200 flex justify-center p-10 my-5 m-auto rounded-lg transition;
 }
 
 .form-text {
@@ -121,29 +121,29 @@ h4 {
     color: #ccc;
 }
 .rate:not(:checked) > label:before {
-    content: "★ ";
+    content: "★";
 }
 .rate > input:checked ~ label {
-    color: #ffc700;
+    color: #fb7185;
 }
 .rate:not(:checked) > label:hover,
 .rate:not(:checked) > label:hover ~ label {
-    color: #deb217;
+    color: #fda4af;
 }
 .rate > input:checked + label:hover,
 .rate > input:checked + label:hover ~ label,
 .rate > input:checked ~ label:hover,
 .rate > input:checked ~ label:hover ~ label,
 .rate > label:hover ~ input:checked ~ label {
-    color: #c59b08;
+    color: #fb7185;
 }
 
 /* Star Rating pt2*/
 
 :root {
-    --star-size: 22px;
+    --star-size: 25px;
     --star-color: #cdcdcd;
-    --star-background: #fc0;
+    --star-background: #fb7185;
 }
 
 .Stars {

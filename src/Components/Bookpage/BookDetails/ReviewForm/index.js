@@ -119,6 +119,7 @@ function ReviewForm({ refreshReviewsList }) {
                             autoComplete="name"
                             type="text"
                             id="name"
+                            name="name"
                             value={name}
                             onChange={changeName}
                             className={nameError ? "input-error form-text" : "form-text"}
@@ -126,10 +127,8 @@ function ReviewForm({ refreshReviewsList }) {
                         {nameError && displayErrorMessage("Name is required")}
                     </div>
 
-                    <div className="flex flex-col justify-between">
-                        <label className="block" htmlFor="rate">
-                            Rating
-                        </label>
+                    <fieldset className="flex flex-col justify-between">
+                        <legend>Rating</legend>
 
                         <div
                             id="rate"
@@ -137,38 +136,39 @@ function ReviewForm({ refreshReviewsList }) {
                             className={ratingError ? "rate flex flex-row-reverse justify-end" : "rate flex flex-row-reverse justify-end"}
                         >
                             <input type="radio" id="star5" name="rate" value="5" />
-                            <label for="star5" title="Excellent">
+                            <label htmlFor="star5" title="Excellent">
                                 5 stars
                             </label>
                             <input type="radio" id="star4" name="rate" value="4" />
-                            <label for="star4" title="Great">
+                            <label htmlFor="star4" title="Great">
                                 4 stars
                             </label>
                             <input type="radio" id="star3" name="rate" value="3" />
-                            <label for="star3" title="Good">
+                            <label htmlFor="star3" title="Good">
                                 3 stars
                             </label>
                             <input type="radio" id="star2" name="rate" value="2" />
-                            <label for="star2" title="Fair">
+                            <label htmlFor="star2" title="Fair">
                                 2 stars
                             </label>
                             <input type="radio" id="star1" name="rate" value="1" />
-                            <label for="star1" title="Poor">
+                            <label htmlFor="star1" title="Poor">
                                 1 star
                             </label>
                             <input type="radio" id="star0" name="rate" value="0" />
-                            <label for="star0" title="Terrible">
+                            <label htmlFor="star0" title="Terrible">
                                 0 stars
                             </label>
                         </div>
-                        {ratingError && displayErrorMessage("Select a rating")}
-                    </div>
+                    </fieldset>
+                    {ratingError && displayErrorMessage("Select a rating")}
 
                     <div>
                         <label htmlFor="review">Review</label>
                         <br />
                         <textarea
                             id="review"
+                            name="review"
                             rows="4"
                             maxLength="255"
                             cols="50"
