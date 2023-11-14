@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useContext } from "react";
-import { Context } from "../../../../Context";
-import { displayErrorMessage } from "../../../../utilities";
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { Context } from '../../../../Context';
+import { displayErrorMessage } from '../../../../utilities';
 
 function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
     const { setAlert } = useContext(Context);
 
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
     const [rating, setRating] = useState(null);
-    const [review, setReview] = useState("");
+    const [review, setReview] = useState('');
 
     const [nameError, setNameError] = useState(false);
     const [ratingError, setRatingError] = useState(false);
     const [reviewError, setReviewError] = useState(false);
-    const [serverError, setServerError] = useState("");
+    const [serverError, setServerError] = useState('');
 
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
@@ -73,12 +73,12 @@ function ReviewForm({ refreshReviewsList }) {
     // SUBMIT form / FETCH
     async function handleSubmit() {
         try {
-            const response = await fetch("http://localhost:8000/api/reviews", {
-                mode: "cors",
-                method: "POST",
+            const response = await fetch('http://localhost:8000/api/reviews', {
+                mode: 'cors',
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
                 },
                 body: JSON.stringify({
                     name: name,
@@ -90,7 +90,7 @@ function ReviewForm({ refreshReviewsList }) {
 
             const data = await response.json();
 
-            if (response.ok && data.message === "Review created") {
+            if (response.ok && data.message === 'Review created') {
                 setReviewSubmitted(true);
                 setAlert(data.message);
                 // Drills back to BookDetails>BookPage
@@ -108,26 +108,37 @@ function ReviewForm({ refreshReviewsList }) {
 
     return (
         !reviewSubmitted && (
-            <div className="form-container">
-                <form onSubmit={validateForm} className="claim-form">
-                    <h3>Want to review this book?</h3>
+            <div className='form-container'>
+                <form onSubmit={validateForm} className='flex flex-col gap-4'>
+                    <h3 className='text-center'>What do you think?</h3>
                     <div>
-                        <label htmlFor="name">Name</label>
+                        <label htmlFor='name'>Name</label>
 
                         <input
-                            type="text"
-                            id="name"
-                            placeholder="Name"
+                            type='text'
+                            id='name'
                             value={name}
                             onChange={changeName}
-                            className={nameError ? "input-error" : ""}
+                            className={
+                                nameError
+                                    ? 'input-error form-text'
+                                    : 'form-text'
+                            }
                         />
-                        {nameError && displayErrorMessage("Name is required")}
+                        {nameError && displayErrorMessage('Name is required')}
                     </div>
 
                     <div>
-                        <label htmlFor="rating">Rating:</label>
-                        <select id="rating" onChange={changeRating} className={ratingError ? "input-error" : ""}>
+                        <label htmlFor='rating'>Rating</label>
+                        <select
+                            id='rating'
+                            onChange={changeRating}
+                            className={
+                                ratingError
+                                    ? 'input-error form-text'
+                                    : 'form-text'
+                            }
+                        >
                             <option value={null}> Select </option>
                             <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -136,23 +147,36 @@ function ReviewForm({ refreshReviewsList }) {
                             <option value={1}>1</option>
                             <option value={0}>0</option>
                         </select>
-                        {ratingError && displayErrorMessage("Select a rating")}
+                        {ratingError && displayErrorMessage('Select a rating')}
                     </div>
 
                     <div>
+                        <label htmlFor='review'>Review</label>
+                        <br />
                         <textarea
-                            id="review"
-                            rows="4"
-                            maxLength="255"
-                            cols="50"
+                            id='review'
+                            rows='4'
+                            maxLength='255'
+                            cols='50'
                             onChange={changeReview}
-                            className={reviewError ? "input-error" : ""}
+                            className={
+                                reviewError
+                                    ? 'input-error form-text'
+                                    : 'form-text'
+                            }
                         ></textarea>
+                        {reviewError &&
+                            displayErrorMessage(
+                                'Review is required (Min. 10 characters)'
+                            )}
                         <div>{review.length} / 255 characters</div>
-                        {reviewError && displayErrorMessage("Review is required (Min. 10 characters)")}
                     </div>
-                    <span className="error">{serverError}</span>
-                    <input type="submit" value="Review" className="submit-button" />
+                    <span className='error'>{serverError}</span>
+                    <input
+                        type='submit'
+                        value='Post Review'
+                        className='button py-2'
+                    />
                 </form>
             </div>
         )

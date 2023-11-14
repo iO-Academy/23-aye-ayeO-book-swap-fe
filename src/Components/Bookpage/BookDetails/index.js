@@ -4,6 +4,7 @@ import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
 import './bookdetails.css';
 import { useState } from 'react';
+import ImgLoader from '../../ImgLoader';
 
 function BookDetails({
     image,
@@ -37,54 +38,79 @@ function BookDetails({
     }
 
     return (
-        <div className='book-details'>
-            <div className='book-image'>
-                <img src={image} alt={'Cover of ' + title} />
-            </div>
-            <div className=''>
-                <h2>{title}</h2>
-                <p>{author}</p>
-                <p>{year}</p>
-                {pageCount && <p>{pageCount} pages</p>}
-                <p>Genre: {genre.name}</p>
-                <p>
-                    <a href='#reviews'>{reviews?.length} reviews</a> -{' '}
-                    {avgScore.toFixed(1)} / 5 stars
-                </p>
-                {claimed && <p>Claimed by {claimed}</p>}
-                {claimed ? (
-                    <button data-element='return' onClick={toggleReturn}>
-                        Return
-                    </button>
-                ) : (
-                    <button data-element='claim' onClick={toggleClaim}>
-                        Claim
-                    </button>
-                )}
-
-                {openReturn && claimed && (
-                    <ReturnForm
-                        getBookData={getBookData}
-                        claimed={claimed}
-                        open={openReturn}
-                        visibilityToggle={toggleReturn}
+        <div className='w-full max-w-7xl m-auto bg-zinc-100'>
+            <div className='book-details w-full m-auto p-20 flex flex-col md:flex-row justify-center gap-4'>
+                <div className='w-[600px]'>
+                    <ImgLoader
+                        src={image}
+                        alt={'Cover of ' + title}
+                        w='60'
+                        h='96'
                     />
-                )}
+                </div>
+                <div className=' p-2 flex flex-col gap-2 w-[1200px]'>
+                    <h1 className='text-left p-0 text-5xl'>{title}</h1>
+                    <p>{author}</p>
+                    <br />
+                    <p className='text-sm'>
+                        {' '}
+                        {avgScore.toFixed(1)} / 5 stars |{' '}
+                        <a href='#reviews' className='underline'>
+                            {reviews?.length} reviews
+                        </a>
+                    </p>
+                    <p>{blurb}</p>
+                    <br />
+                    <p>Genre: {genre.name}</p>
+                    <p>{year}</p>
+                    {pageCount && <p>{pageCount} pages</p>}
+                    {claimed && <p>Claimed by {claimed}</p>}
+                    {claimed ? (
+                        <button
+                            data-element='return'
+                            onClick={toggleReturn}
+                            className='button py-2 w-max'
+                        >
+                            Return Book
+                        </button>
+                    ) : (
+                        <button
+                            data-element='claim'
+                            onClick={toggleClaim}
+                            className='button py-2 w-max'
+                        >
+                            Claim Book
+                        </button>
+                    )}
 
-                {openClaim && !claimed && (
-                    <ClaimForm
-                        getBookData={getBookData}
-                        open={openClaim}
-                        visibilityToggle={toggleClaim}
-                    />
-                )}
+                    {openReturn && claimed && (
+                        <ReturnForm
+                            getBookData={getBookData}
+                            claimed={claimed}
+                            open={openReturn}
+                            visibilityToggle={toggleReturn}
+                        />
+                    )}
 
-                <p>{blurb}</p>
-                <h3 id='reviews'>Reviews</h3>
-                <ReviewForm refreshReviewsList={refreshReviewsList} />
-                {reviews?.map((review) => (
-                    <Review review={review} key={review.id} />
-                ))}
+                    {openClaim && !claimed && (
+                        <ClaimForm
+                            getBookData={getBookData}
+                            open={openClaim}
+                            visibilityToggle={toggleClaim}
+                        />
+                    )}
+
+                    <div>
+                        <hr />
+                        <h2 className='text-center' id='reviews'>
+                            Reviews
+                        </h2>
+                        {reviews?.map((review) => (
+                            <Review review={review} key={review.id} />
+                        ))}
+                        <ReviewForm refreshReviewsList={refreshReviewsList} />
+                    </div>
+                </div>
             </div>
         </div>
     );

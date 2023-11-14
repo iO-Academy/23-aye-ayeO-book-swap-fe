@@ -9,7 +9,7 @@ function AlertBubble({ message }) {
 
             const timer = setTimeout(() => {
                 setIsVisible(false);
-            }, 4000); // Disappear after 2 seconds
+            }, 4000);
 
             return () => {
                 clearTimeout(timer);
@@ -18,7 +18,11 @@ function AlertBubble({ message }) {
     }, [message]); // Watch for changes in the "message" prop
 
     return (
-        <div className={`alert-bubble ${isVisible ? 'visible' : 'hidden'}`}>
+        <div
+            className={`rounded bg-lime-200 alert-bubble fixed m-auto w-96 ${
+                isVisible ? 'visible' : 'hidden'
+            }`}
+        >
             {message}
         </div>
     );

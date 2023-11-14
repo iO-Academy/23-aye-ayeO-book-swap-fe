@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 
 // Render error messages, prevent page jump
 
-export function displayErrorMessage(error = " ") {
+export function displayErrorMessage(error = ' ') {
     return (
         <div>
-            <p className={error ? "error" : "hidden"}>
-                <span class="material-symbols-outlined">warning</span>
+            <p className={error ? 'error' : 'hidden'}>
+                {/* <span class="material-symbols-outlined">warning</span> */}
                 {error}
             </p>
         </div>

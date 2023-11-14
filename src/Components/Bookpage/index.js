@@ -44,7 +44,7 @@ function Bookpage() {
         getBookData();
     }, [refreshReviews]);
 
-    // Triggered in ReviewForm (through BookDeatils)
+    // Triggered in ReviewForm (through BookDetails)
     // Upon new review created > success msg (from the server)
     function refreshReviewsList() {
         setRefreshReviews(true);
