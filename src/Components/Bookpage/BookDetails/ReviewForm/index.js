@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { Context } from "../../../../Context";
-import { displayErrorMessage } from "../../../../utilities";
+import { displayErrorMessage, scrollToTop } from "../../../../utilities";
 
 function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
@@ -93,6 +93,7 @@ function ReviewForm({ refreshReviewsList }) {
             if (response.ok && data.message === "Review created") {
                 setReviewSubmitted(true);
                 setAlert(data.message);
+                scrollToTop();
                 // Drills back to BookDetails>BookPage
                 // Changes the state of newReview
                 // useEffect triggers a new fetch
@@ -126,20 +127,10 @@ function ReviewForm({ refreshReviewsList }) {
                     </div>
 
                     <div className="flex flex-col justify-between">
-                        {/* <div> */}
                         <label className="block" htmlFor="rate">
                             Rating
                         </label>
-                        {/* </div> */}
-                        {/* <select id="rating" onChange={changeRating} className={ratingError ? "input-error form-text" : "form-text"}>
-                            <option value={null}> Select </option>
-                            <option value={5}>5</option>
-                            <option value={4}>4</option>
-                            <option value={3}>3</option>
-                            <option value={2}>2</option>
-                            <option value={1}>1</option>
-                            <option value={0}>0</option>
-                        </select> */}
+
                         <div
                             id="rate"
                             onChange={changeRating}
