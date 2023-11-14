@@ -5,6 +5,7 @@ import ReviewForm from "./ReviewForm";
 import "./bookdetails.css";
 import { useState } from "react";
 import ImgLoader from "../../ImgLoader";
+import StarRating from "./StarRating";
 
 function BookDetails({ image, title, author, year, pageCount, genre, blurb, reviews, claimed, getBookData, refreshReviewsList }) {
     const totalScore = reviews?.reduce((ratingSum, review) => ratingSum + review.rating, 0);
@@ -34,13 +35,12 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                     <h1 className="text-left p-0 text-5xl">{title}</h1>
                     <p>{author}</p>
                     <br />
-                    <p className="text-sm">
-                        {" "}
-                        {avgScore.toFixed(1)} / 5 stars |{" "}
+                    <div className="flex gap-2">
+                        <StarRating rating={avgScore} />
                         <a href="#reviews" className="underline">
                             {reviews?.length} reviews
                         </a>
-                    </p>
+                    </div>
                     <p>{blurb}</p>
                     <br />
                     <p>Genre: {genre.name}</p>
@@ -72,7 +72,7 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                     )}
 
                     <div className="mt-6 border-zinc-300">
-                        <h2 className="border-b border-zinc-300" id="reviews">
+                        <h2 className="border-t border-zinc-300" id="reviews">
                             Reviews
                         </h2>
                         {reviews?.map((review) => (

@@ -125,9 +125,13 @@ function ReviewForm({ refreshReviewsList }) {
                         {nameError && displayErrorMessage("Name is required")}
                     </div>
 
-                    <div>
-                        <label htmlFor="rating">Rating</label>
-                        <select id="rating" onChange={changeRating} className={ratingError ? "input-error form-text" : "form-text"}>
+                    <div className="flex flex-col justify-between">
+                        {/* <div> */}
+                        <label className="block" htmlFor="rate">
+                            Rating
+                        </label>
+                        {/* </div> */}
+                        {/* <select id="rating" onChange={changeRating} className={ratingError ? "input-error form-text" : "form-text"}>
                             <option value={null}> Select </option>
                             <option value={5}>5</option>
                             <option value={4}>4</option>
@@ -135,7 +139,37 @@ function ReviewForm({ refreshReviewsList }) {
                             <option value={2}>2</option>
                             <option value={1}>1</option>
                             <option value={0}>0</option>
-                        </select>
+                        </select> */}
+                        <div
+                            id="rate"
+                            onChange={changeRating}
+                            className={ratingError ? "rate flex flex-row-reverse justify-end" : "rate flex flex-row-reverse justify-end"}
+                        >
+                            <input type="radio" id="star5" name="rate" value="5" />
+                            <label for="star5" title="Excellent">
+                                5 stars
+                            </label>
+                            <input type="radio" id="star4" name="rate" value="4" />
+                            <label for="star4" title="Great">
+                                4 stars
+                            </label>
+                            <input type="radio" id="star3" name="rate" value="3" />
+                            <label for="star3" title="Good">
+                                3 stars
+                            </label>
+                            <input type="radio" id="star2" name="rate" value="2" />
+                            <label for="star2" title="Fair">
+                                2 stars
+                            </label>
+                            <input type="radio" id="star1" name="rate" value="1" />
+                            <label for="star1" title="Poor">
+                                1 star
+                            </label>
+                            <input type="radio" id="star0" name="rate" value="0" />
+                            <label for="star0" title="Terrible">
+                                0 stars
+                            </label>
+                        </div>
                         {ratingError && displayErrorMessage("Select a rating")}
                     </div>
 
