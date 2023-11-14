@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Context } from "../../../../Context";
 import { displayErrorMessage, isValidEmail } from "../../../../utilities";
 
-function ReturnForm({ claimed, getBookData, open, visibilityToggle }) {
+function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle }) {
     const { id } = useParams();
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState(false);
@@ -29,6 +29,7 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle }) {
 
         if (!emailError) {
             handleSubmit(e);
+            document.body.style.overflow = !open ? "hidden" : "auto";
         }
     }
 
@@ -60,27 +61,44 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle }) {
         }
     }
 
+    function backdropClick(e) {
+        if (e.target === e.currentTarget) {
+            visibilityToggle();
+        }
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            visibilityToggle();
+        }
+    });
+
     return (
-        <dialog open={open}>
-            <div onSubmit={validateForm} className="form-container claim-return-form ">
+        <dialog open={open} className="dialog w-full fixed inset-0 flex items-center justify-center h-full" onClick={backdropClick}>
+            <div onSubmit={validateForm} className="form-container w-[500px] relative">
+                <button onClick={backdropClick} className="absolute top-5 right-5 text-3xl text-zinc-600 material-symbols-outlined">
+                    close
+                </button>
                 <form className="claim-form">
-                    <h3>Want to return this book {claimed}?</h3>
+                    <h3>Return "{bookTitle}"?</h3>
+                    <br />
                     <div>
                         <label htmlFor="email"> {claimed}'s Email</label>
 
                         <input
+                            autoComplete="email"
                             type="email"
+                            id="email"
                             name="email"
-                            placeholder="Email"
                             value={email}
                             onChange={changeEmail}
-                            className={emailError ? "input-error" : ""}
+                            className={emailError ? "form-text input-error" : "form-text"}
                         />
-                        {emailError && displayErrorMessage("Valid email required")}
+                        {emailError && displayErrorMessage("Valid email is required")}
                         {serverError && displayErrorMessage(serverError)}
                     </div>
-
-                    <input type="submit" value="Return" className="submit-button" />
+                    <br />
+                    <input type="submit" value="Return Book" className="button py-3" />
                 </form>
             </div>
         </dialog>
