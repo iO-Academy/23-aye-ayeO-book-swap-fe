@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function ImgLoader({ src, alt, w, h }) {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const dimensionClasses = `w-${w} h-${h}`;
 
     const handleImageLoad = () => {
         setIsImageLoaded(true);
@@ -15,7 +16,7 @@ function ImgLoader({ src, alt, w, h }) {
                     className='space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center m-auto'
                 >
                     <div
-                        className={`object-cover flex items-center justify-center bg-gray-300 rounded dark:bg-gray-200  w-${w} h-${h}`}
+                        className={`object-cover flex items-center justify-center bg-gray-300 rounded dark:bg-gray-200  ${dimensionClasses}`}
                     >
                         <svg
                             className='w-10 h-10 text-zinc-300 dark:text-zinc-400'
@@ -35,7 +36,7 @@ function ImgLoader({ src, alt, w, h }) {
             <img
                 src={src}
                 alt={alt}
-                className={`rounded object-cover w-${w} h-${h}`}
+                className={`rounded object-cover ${dimensionClasses}`}
                 onLoad={handleImageLoad}
                 style={{ display: isImageLoaded ? 'block' : 'none' }}
             />
