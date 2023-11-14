@@ -71,9 +71,8 @@ function BookDetails({ image, title, author, year, pageCount, genre, blurb, revi
                         <ClaimForm getBookData={getBookData} open={openClaim} visibilityToggle={toggleClaim} bookTitle={title} />
                     )}
 
-                    <div>
-                        <hr />
-                        <h2 className="text-center" id="reviews">
+                    <div className="mt-6 border-zinc-300">
+                        <h2 className="border-b border-zinc-300" id="reviews">
                             Reviews
                         </h2>
                         {reviews?.map((review) => (

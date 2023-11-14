@@ -33,11 +33,15 @@ h1 {
 }
 
 h2 {
-    @apply pt-5 pb-1 text-lg font-semibold;
+    @apply py-5 text-3xl text-slate-600 font-semibold;
 }
 
 h3 {
-    @apply pt-5 pb-1 text-lg font-semibold text-slate-600;
+    @apply py-5 text-2xl text-slate-600 font-semibold;
+}
+
+h4 {
+    @apply py-5 text-lg text-slate-600 font-semibold;
 }
 
 .active {
@@ -67,7 +71,7 @@ h3 {
 }
 
 .montserrat {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .success-isbn {
