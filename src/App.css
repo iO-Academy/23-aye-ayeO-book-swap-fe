@@ -63,7 +63,7 @@ h3 {
 
 .input-error,
 .select-error {
-    @apply border-2 border-rose-200;
+    @apply border-2 border-rose-300;
 }
 
 .montserrat {
