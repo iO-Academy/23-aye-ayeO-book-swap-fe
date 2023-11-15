@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 function AlertBubble({ message }) {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState("-translate-y-[800px]");
 
     useEffect(() => {
         if (message) {
-            setIsVisible(true);
+            setIsVisible("translate-y-0");
 
             const timer = setTimeout(() => {
-                setIsVisible(false);
-            }, 4000);
+                setIsVisible("-translate-y-[800px]");
+            }, 3000);
 
             return () => {
                 clearTimeout(timer);
@@ -19,8 +19,9 @@ function AlertBubble({ message }) {
 
     return (
         <div
-            className={`rounded bg-lime-200 alert-bubble fixed m-auto w-96 ${
-                isVisible ? 'visible' : 'hidden'
+            className={`rounded-xl bg-emerald-300 alert-bubble transition fixed z-50 mx-auto  w-full text-center py-10 ${
+                // isVisible ? "visible" : "hidden"
+                isVisible
             }`}
         >
             {message}

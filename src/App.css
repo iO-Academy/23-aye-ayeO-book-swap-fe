@@ -71,7 +71,7 @@ h4 {
 }
 
 .montserrat {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .success-isbn {
@@ -121,7 +121,7 @@ h4 {
     color: #ccc;
 }
 .rate:not(:checked) > label:before {
-    content: '★';
+    content: "★";
 }
 .rate > input:checked ~ label {
     color: #fb7185;
@@ -155,13 +155,9 @@ h4 {
 }
 
 .Stars::before {
-    content: '★★★★★';
+    content: "★★★★★";
     letter-spacing: 3px;
-    background: linear-gradient(
-        90deg,
-        var(--star-background) var(--percent),
-        var(--star-color) var(--percent)
-    );
+    background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
