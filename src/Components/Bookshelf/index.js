@@ -30,7 +30,7 @@ function Bookshelf({ claimed }) {
 
     return (
         <>
-            <div className='bg-zinc-200'>
+            <div className='bg-zinc-200 pt-20'>
                 <div className='flex p-4 gap-3  justify-between items-center m-auto w-full max-w-7xl'>
                     <GenresSelector
                         onGenreChangeID={handleGenreChange}
@@ -40,7 +40,7 @@ function Bookshelf({ claimed }) {
                 </div>
             </div>
             <h1>{claimed ? 'Claimed Books' : 'Available Books'}</h1>
-            <div className='bookshelf w-full max-w-7xl m-auto flex flex-row flex-wrap gap-6 p-4 justify-center sm:p-0'>
+            <div className='bookshelf w-full max-w-7xl m-auto flex flex-row flex-wrap sm:gap-4 gap-2  p-4 justify-center sm:p-0'>
                 {bookCollection == null && <p>No Books Found</p>}
                 {bookCollection?.map((book) => {
                     return (
