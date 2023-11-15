@@ -29,7 +29,7 @@ select:-webkit-autofill:focus {
 }
 
 h1 {
-    @apply text-4xl py-10 text-slate-600 text-center;
+    @apply text-4xl py-12 text-slate-600 text-center;
 }
 
 h2 {

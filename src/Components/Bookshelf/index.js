@@ -8,6 +8,7 @@ function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([]);
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
+    const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
 
     useEffect(() => {
         // selectedGenreId === 0 && setSelectedGenreId("");
@@ -28,10 +29,26 @@ function Bookshelf({ claimed }) {
         setSearchedString(string);
     };
 
+    function showFilter() {
+        isFilterVisible === '-translate-y-full'
+            ? setIsFilterVisible('translate-y-0')
+            : setIsFilterVisible('-translate-y-full');
+    }
+
     return (
         <>
-            <div className='bg-zinc-200 pt-20'>
-                <div className='flex p-4 gap-3  justify-between items-center m-auto w-full max-w-7xl'>
+            <div
+                onClick={showFilter}
+                className='sm:hidden text-center bg-rose-100 py-4 cursor-pointer text-zinc-600 font-semibold text-sm flex justify-center items-center gap-1 z-20 relative'
+            >
+                <span className='material-symbols-outlined'>filter_list</span>
+                {' Filter'}
+            </div>
+            <div
+                className={`bg-zinc-200 sm:pt-[68px] sm:flex transition absolute transform z-10 w-full rounded-b-lg ${isFilterVisible}`}
+                id='filter'
+            >
+                <div className='flex p-4 gap-3  justify-between items-center m-auto w-full max-w-7xl flex-col sm:flex-row '>
                     <GenresSelector
                         onGenreChangeID={handleGenreChange}
                         label='Filter by genre '
@@ -40,7 +57,7 @@ function Bookshelf({ claimed }) {
                 </div>
             </div>
             <h1>{claimed ? 'Claimed Books' : 'Available Books'}</h1>
-            <div className='bookshelf w-full max-w-7xl m-auto flex flex-row flex-wrap sm:gap-4 gap-2  p-4 justify-center sm:p-0'>
+            <div className='bookshelf w-full max-w-7xl m-auto flex flex-row flex-wrap sm:gap-4 gap-2  p-1 justify-center sm:p-0'>
                 {bookCollection == null && <p>No Books Found</p>}
                 {bookCollection?.map((book) => {
                     return (
