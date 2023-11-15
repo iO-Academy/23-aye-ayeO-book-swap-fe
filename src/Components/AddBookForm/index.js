@@ -335,7 +335,7 @@ function AddBookForm() {
                         isValidISBN(isbn) &&
                         !remoteSuccess &&
                         !isbnError &&
-                        'bg-gradient-to-r from-blue-300 via-teal-200 to-blue-300 background-animate'
+                        'bg-gradient-to-r from-orange-100 via-rose-300 to-orange-100 background-animate'
                     }
                     ${remoteSuccess && 'success-isbn'}
                     ${

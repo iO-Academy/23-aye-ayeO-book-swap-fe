@@ -7,7 +7,7 @@ function Nav() {
         <div className='w-full bg-rose-400'>
             <nav className='p-4 py-2  flex justify-between text-slate-800 w-full max-w-7xl m-auto'>
                 <span className='text-3xl font-semibold py-2'>
-                    <Link to='/'>Swapper</Link>
+                    <Link to='/'>Swapp</Link>
                 </span>
                 <div className='flex w-2/4 gap-4 justify-end transition items-center text-lg'>
                     <NavLink to='/' className='transition-font duration-2000'>
