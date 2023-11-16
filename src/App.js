@@ -12,7 +12,7 @@ import { useState } from "react";
 import ScrollToTop from "./Components/ScrollToTop";
 
 function App() {
-    const [alert, setAlert] = useState([]);
+    const [alert, setAlert] = useState();
 
     return (
         <div className="App montserrat">
