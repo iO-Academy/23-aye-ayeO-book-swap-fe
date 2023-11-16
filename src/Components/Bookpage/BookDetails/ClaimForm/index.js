@@ -69,7 +69,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
             if (res.ok) {
                 visibilityToggle();
                 getBookData();
-                setAlert('Book claimed');
+                setAlert(['Book claimed']);
             } else {
                 throw new Error(data.message);
             }

@@ -11,6 +11,7 @@ import {
     extractYear,
     limitString,
     scrollToTop,
+    getTimestamp,
 } from '../../utilities';
 
 function AddBookForm() {
@@ -288,8 +289,7 @@ function AddBookForm() {
             const data = await res.json();
 
             if (res.ok) {
-                const timestamp = new Date().getTime();
-                setAlert(['Book added', timestamp]);
+                setAlert(['Book added']);
 
                 resetForm();
             } else {
