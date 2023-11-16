@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 function AlertBubble({ message }) {
-    const [isVisible, setIsVisible] = useState('-translate-y-full');
+    const [position, setPosition] = useState('-translate-y-full');
 
     useEffect(() => {
         if (message) {
-            setIsVisible('translate-y-0');
+            setPosition('translate-y-0');
 
             const timer = setTimeout(() => {
-                setIsVisible('-translate-y-full');
+                setPosition('-translate-y-full');
             }, 2000);
 
             return () => {
@@ -19,9 +19,10 @@ function AlertBubble({ message }) {
 
     return (
         <div
-            className={`rounded-b-xl bg-[#202124] alert-bubble transition-all ease-in-out duration-600 fixed z-50 mx-auto  w-full text-center text-zinc-200 text-2xl py-10 ${isVisible}`}
+            className={`rounded-b-xl bg-[#202124] alert-bubble transition-all ease-in-out duration-600 fixed z-50 mx-auto  w-full text-center text-zinc-200 text-2xl py-10 ${position}`}
         >
-            {message}
+            {/* message[1] is a unique identifier (timestamp) that triggers the useEffect hook when the message of the alert itself is unchanged between calls */}
+            {message[0]}
         </div>
     );
 }

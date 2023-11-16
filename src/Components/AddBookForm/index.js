@@ -170,7 +170,6 @@ function AddBookForm() {
 
     // Fetch bookData  from Open Library
     async function getBookData(isbn) {
-        console.log(`isbn: ${isbn}`);
         try {
             const isbnRes = await fetch(
                 `https://openlibrary.org/isbn/${isbn}.json`
@@ -251,7 +250,6 @@ function AddBookForm() {
             }
         } catch (error) {
             setIsbnError('No book found');
-            console.error('Error fetching book data: ' + error);
         }
     }
 
@@ -290,7 +288,9 @@ function AddBookForm() {
             const data = await res.json();
 
             if (res.ok) {
-                setAlert(`"${title}" added`);
+                const timestamp = new Date().getTime();
+                setAlert(['Book added', timestamp]);
+
                 resetForm();
             } else {
                 const errorContainer =
