@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useContext } from "react";
-import { Context } from "../../../../Context";
-import { displayErrorMessage, scrollToTop } from "../../../../utilities";
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { Context } from '../../../../Context';
+import { displayErrorMessage, scrollToTop } from '../../../../utilities';
 
 function ReviewForm({ refreshReviewsList }) {
     const { id } = useParams();
     const { setAlert } = useContext(Context);
 
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
     const [rating, setRating] = useState(null);
-    const [review, setReview] = useState("");
+    const [review, setReview] = useState('');
 
     const [nameError, setNameError] = useState(false);
     const [ratingError, setRatingError] = useState(false);
     const [reviewError, setReviewError] = useState(false);
-    const [serverError, setServerError] = useState("");
+    const [serverError, setServerError] = useState('');
 
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
@@ -73,12 +73,12 @@ function ReviewForm({ refreshReviewsList }) {
     // SUBMIT form / FETCH
     async function handleSubmit() {
         try {
-            const response = await fetch("http://localhost:8000/api/reviews", {
-                mode: "cors",
-                method: "POST",
+            const response = await fetch('http://localhost:8000/api/reviews', {
+                mode: 'cors',
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
                 },
                 body: JSON.stringify({
                     name: name,
@@ -90,9 +90,9 @@ function ReviewForm({ refreshReviewsList }) {
 
             const data = await response.json();
 
-            if (response.ok && data.message === "Review created") {
+            if (response.ok && data.message === 'Review created') {
                 setReviewSubmitted(true);
-                setAlert(data.message);
+                setAlert(['Review created']);
                 scrollToTop();
                 // Drills back to BookDetails>BookPage
                 // Changes the state of newReview
@@ -109,77 +109,82 @@ function ReviewForm({ refreshReviewsList }) {
 
     return (
         !reviewSubmitted && (
-            <div className="form-container">
-                <form onSubmit={validateForm} className="flex flex-col gap-4">
-                    <h3 className="text-center">What do you think?</h3>
+            <div className='form-container'>
+                <form onSubmit={validateForm} className='flex flex-col gap-4'>
+                    <h3 className='text-center'>What do you think?</h3>
                     <div>
-                        <label htmlFor="name">Name</label>
+                        <label htmlFor='name'>Name</label>
 
                         <input
-                            autoComplete="name"
-                            type="text"
-                            id="name"
-                            name="name"
+                            autoComplete='name'
+                            type='text'
+                            id='name'
+                            name='name'
                             value={name}
                             onChange={changeName}
-                            className={nameError ? "input-error form-text" : "form-text"}
+                            className={nameError ? 'input-error form-text' : 'form-text'}
                         />
-                        {nameError && displayErrorMessage("Name is required")}
+                        {nameError && displayErrorMessage('Name is required')}
                     </div>
 
-                    <fieldset className="flex flex-col justify-between">
+                    <fieldset className='flex flex-col justify-between'>
                         <legend>Rating</legend>
 
                         <div
-                            id="rate"
+                            id='rate'
                             onChange={changeRating}
-                            className={ratingError ? "rate flex flex-row-reverse justify-end" : "rate flex flex-row-reverse justify-end"}
+                            className={
+                                ratingError
+                                    ? 'rate flex flex-row-reverse justify-end'
+                                    : 'rate flex flex-row-reverse justify-end'
+                            }
                         >
-                            <input type="radio" id="star5" name="rate" value="5" />
-                            <label htmlFor="star5" title="Excellent">
+                            <input type='radio' id='star5' name='rate' value='5' />
+                            <label htmlFor='star5' title='Excellent'>
                                 5 stars
                             </label>
-                            <input type="radio" id="star4" name="rate" value="4" />
-                            <label htmlFor="star4" title="Great">
+                            <input type='radio' id='star4' name='rate' value='4' />
+                            <label htmlFor='star4' title='Great'>
                                 4 stars
                             </label>
-                            <input type="radio" id="star3" name="rate" value="3" />
-                            <label htmlFor="star3" title="Good">
+                            <input type='radio' id='star3' name='rate' value='3' />
+                            <label htmlFor='star3' title='Good'>
                                 3 stars
                             </label>
-                            <input type="radio" id="star2" name="rate" value="2" />
-                            <label htmlFor="star2" title="Fair">
+                            <input type='radio' id='star2' name='rate' value='2' />
+                            <label htmlFor='star2' title='Fair'>
                                 2 stars
                             </label>
-                            <input type="radio" id="star1" name="rate" value="1" />
-                            <label htmlFor="star1" title="Poor">
+                            <input type='radio' id='star1' name='rate' value='1' />
+                            <label htmlFor='star1' title='Poor'>
                                 1 star
                             </label>
-                            <input type="radio" id="star0" name="rate" value="0" />
-                            <label htmlFor="star0" title="Terrible">
+                            <input type='radio' id='star0' name='rate' value='0' />
+                            <label htmlFor='star0' title='Terrible'>
                                 0 stars
                             </label>
                         </div>
                     </fieldset>
-                    {ratingError && displayErrorMessage("Select a rating")}
+                    {ratingError && displayErrorMessage('Select a rating')}
 
                     <div>
-                        <label htmlFor="review">Review</label>
+                        <label htmlFor='review'>Review</label>
                         <br />
                         <textarea
-                            id="review"
-                            name="review"
-                            rows="4"
-                            maxLength="255"
-                            cols="50"
+                            id='review'
+                            name='review'
+                            rows='4'
+                            maxLength='255'
+                            cols='50'
                             onChange={changeReview}
-                            className={reviewError ? "input-error form-text" : "form-text"}
+                            className={reviewError ? 'input-error form-text' : 'form-text'}
                         ></textarea>
-                        {reviewError && displayErrorMessage("Review is required (Min. 10 characters)")}
+                        {reviewError &&
+                            displayErrorMessage('Review is required (Min. 10 characters)')}
                         <div>{review.length} / 255 characters</div>
                     </div>
-                    <span className="error">{serverError}</span>
-                    <input type="submit" value="Post Review" className="button py-2" />
+                    <span className='error'>{serverError}</span>
+                    <input type='submit' value='Post Review' className='button py-2' />
                 </form>
             </div>
         )

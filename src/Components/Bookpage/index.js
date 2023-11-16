@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import BookDetails from "./BookDetails";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import BookDetails from './BookDetails';
 
 function Bookpage() {
     const { id } = useParams();
-    const [image, setImage] = useState("");
-    const [title, setTitle] = useState("");
-    const [author, setAuthor] = useState("");
-    const [year, setYear] = useState("");
-    const [pageCount, setPageCount] = useState("");
-    const [genre, setGenre] = useState("");
-    const [blurb, setBlurb] = useState("");
+    const [image, setImage] = useState('');
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [year, setYear] = useState('');
+    const [pageCount, setPageCount] = useState('');
+    const [genre, setGenre] = useState('');
+    const [blurb, setBlurb] = useState('');
     const [error, setError] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [claimed, setClaimed] = useState(null);
@@ -18,10 +18,10 @@ function Bookpage() {
 
     async function getBookData() {
         try {
-            const response = await fetch("http://localhost:8000/api/books/" + id);
+            const response = await fetch('http://localhost:8000/api/books/' + id);
             const book = await response.json();
 
-            if (book.message === "Book successfully found") {
+            if (book.message === 'Book successfully found') {
                 setImage(book.data.image);
                 setTitle(book.data.title);
                 setAuthor(book.data.author);
@@ -35,7 +35,7 @@ function Bookpage() {
                 throw new Error(book.message);
             }
         } catch (error) {
-            console.error("Error fetching book data:", error.message);
+            console.error('Error fetching book data:', error.message);
             setError(error.message);
         }
     }
@@ -51,7 +51,7 @@ function Bookpage() {
     }
 
     return (
-        <div className="page">
+        <div>
             {error ? (
                 <p>{error}</p>
             ) : (
