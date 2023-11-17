@@ -322,7 +322,7 @@ function AddBookForm() {
                     ${remoteSuccess && 'success-isbn'}
                     ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
                     >
-                        <label htmlFor='title' className='text-center'>
+                        <label htmlFor='isbn' className='text-center'>
                             Search by ISBN
                         </label>
                         <input
