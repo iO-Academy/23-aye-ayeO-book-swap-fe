@@ -49,21 +49,18 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
 
     async function handleSubmit() {
         try {
-            const res = await fetch(
-                'http://localhost:8000/api/books/claim/' + id,
-                {
-                    mode: 'cors',
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                    }),
-                }
-            );
+            const res = await fetch('http://localhost:8000/api/books/claim/' + id, {
+                mode: 'cors',
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                }),
+            });
             const data = await res.json();
 
             if (res.ok) {
@@ -117,11 +114,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                             name='name'
                             value={name}
                             onChange={changeName}
-                            className={
-                                nameError
-                                    ? 'form-text input-error'
-                                    : 'form-text'
-                            }
+                            className={nameError ? 'form-text input-error' : 'form-text'}
                         />
                         {nameError && displayErrorMessage('Name is required')}
                     </div>
@@ -136,21 +129,12 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                             name='email'
                             value={email}
                             onChange={changeEmail}
-                            className={
-                                emailError
-                                    ? 'form-text input-error'
-                                    : 'form-text'
-                            }
+                            className={emailError ? 'form-text input-error' : 'form-text'}
                         />
-                        {emailError &&
-                            displayErrorMessage('Valid email is required')}
+                        {emailError && displayErrorMessage('Valid email is required')}
                     </div>
                     <br />
-                    <input
-                        type='submit'
-                        value='Claim Book'
-                        className='button py-3'
-                    />
+                    <input type='submit' value='Claim Book' className='button py-3' />
                 </form>
             </div>
         </dialog>

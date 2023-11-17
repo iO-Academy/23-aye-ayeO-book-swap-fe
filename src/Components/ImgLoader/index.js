@@ -16,7 +16,7 @@ function ImgLoader({ src, alt, w, h }) {
                     className={`space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center m-auto ${dimensions}`}
                 >
                     <div
-                        className={`object-cover flex items-center justify-center bg-gray-300 rounded dark:bg-gray-200 h-full w-full`}
+                        className={`object-cover flex items-center justify-center bg-gray-300 rounded-lg dark:bg-gray-200 h-full w-full`}
                     >
                         <svg
                             className='w-10 h-10 text-zinc-300 dark:text-zinc-400'
@@ -37,7 +37,7 @@ function ImgLoader({ src, alt, w, h }) {
                 src={src}
                 alt={alt}
                 onLoad={handleImageLoad}
-                className={`object-cover object-top ${dimensions} `}
+                className={`object-cover object-top ${dimensions} rounded-lg`}
                 style={{ display: isImageLoaded ? 'block' : 'none' }}
             />
         </>

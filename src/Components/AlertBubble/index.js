@@ -19,7 +19,7 @@ function AlertBubble({ message }) {
     return (
         <div className='flex items-center justify-center '>
             <div
-                className={`rounded-[30px] bg-zinc-800 opacity-95 transition-all ease-in-out duration-1600 fixed bottom-0 sz-10 w-full max-w-[800px] text-center text-zinc-100 text-2xl py-8 ${position}`}
+                className={`rounded-[30px]  backdrop-blur-sm bg-slate-800/80 transition-all ease-in-out duration-1600 fixed bottom-0 z-10 w-full max-w-[800px] text-center text-zinc-100 text-2xl py-8 ${position}`}
             >
                 {message}
             </div>{' '}
