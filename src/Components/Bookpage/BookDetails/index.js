@@ -41,24 +41,33 @@ function BookDetails({
         <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto bg-zinc-100'>
             <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
                 <div className='w-[800px] flex justify-center max-lg:self-center'>
-                    {/* <div className='lg:fixed w-[15vw] left-[7.5%]'> */}
-
-                    {/* min-w-[1000px]:w-[15vw]
-                    max-w-[1200px]:w-[15vw]
-                    min-w-[1000px]:left-[7.5%]
-                    max-w-[1200px]:left-[7.5%] */}
                     <div className='lg:fixed lg:z-40'>
-                        <ImgLoader src={image} alt={'Cover of ' + title} w='72' h='[400px]' />
+                        <ImgLoader
+                            src={image}
+                            alt={'Cover of ' + title}
+                            dimensions='
+                            h-[96vw]
+                            w-[60vw]
+         
+
+                            sm:h-[70vw]
+                            sm:w-[44vw]
+
+                            lg:h-[500px]
+                            lg:w-[312.5px]
+                            '
+                            rounded='rounded-md'
+                        />
                         <div className='w-full mx-auto mt-3 text-sm'>
                             {claimed && (
-                                <p className='text-xs text-zinc-600'>Claimed by {claimed}</p>
+                                <p className='text-xs text-zinc-600'>
+                                    Claimed by: <span className='italic'>{claimed}</span>
+                                </p>
                             )}
-
                             {claimed ? (
                                 <button
                                     data-element='return'
                                     onClick={toggleReturn}
-                                    // className='button py-2 w-full'
                                     className='underline text-center text-md text-rose-400 font-bold'
                                 >
                                     Return Book
@@ -72,7 +81,6 @@ function BookDetails({
                                     Claim Book
                                 </button>
                             )}
-
                             {openReturn && claimed && (
                                 <ReturnForm
                                     getBookData={getBookData}
@@ -82,7 +90,6 @@ function BookDetails({
                                     bookTitle={title}
                                 />
                             )}
-
                             {openClaim && !claimed && (
                                 <ClaimForm
                                     getBookData={getBookData}
@@ -95,7 +102,9 @@ function BookDetails({
                     </div>
                 </div>
                 <div className='flex flex-col w-full gap-2 md:max-w-[1000px]'>
-                    <h1 className='text-center lg:text-left p-0 text-5xl '>{title}</h1>
+                    <h1 className='text-center lg:text-left p-0 sm:text-5xl text-[7vw] leading-tight'>
+                        {title}
+                    </h1>
                     <p className='text-center lg:text-left'>{author}</p>
                     <div className='flex gap-2 items-baseline m-2 self-center lg:self-start pb-4 lg:pb-0'>
                         <p className='text-2xl'>{avgScore.toFixed(1)}</p>
@@ -111,7 +120,10 @@ function BookDetails({
 
                     {pageCount && <p>{pageCount} pages</p>}
                     <div className='mt-6 border-zinc-300'>
-                        <h2 className='border-t border-zinc-200' id='reviews'>
+                        <h2
+                            className='border-t border-zinc-200 text-center lg:text-left'
+                            id='reviews'
+                        >
                             Reviews
                         </h2>
                         {reviews?.map((review) => (

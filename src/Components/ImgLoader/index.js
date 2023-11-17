@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-function ImgLoader({ src, alt, w, h }) {
+function ImgLoader({ src, alt, dimensions, rounded }) {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const dimensions = `w-${w} h-${h}`;
 
     const handleImageLoad = () => {
         setIsImageLoaded(true);
@@ -13,10 +12,10 @@ function ImgLoader({ src, alt, w, h }) {
             {!isImageLoaded && (
                 <div
                     role='status'
-                    className={`space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center m-auto ${dimensions}`}
+                    className={`space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center m-auto ${dimensions} ${rounded}`}
                 >
                     <div
-                        className={`object-cover flex items-center justify-center bg-gray-300 rounded-lg dark:bg-gray-200 h-full w-full`}
+                        className={`object-cover flex items-center justify-center bg-gray-300  dark:bg-gray-200 ${dimensions}`}
                     >
                         <svg
                             className='w-10 h-10 text-zinc-300 dark:text-zinc-400'
@@ -37,7 +36,7 @@ function ImgLoader({ src, alt, w, h }) {
                 src={src}
                 alt={alt}
                 onLoad={handleImageLoad}
-                className={`object-cover object-top ${dimensions} rounded-lg`}
+                className={`object-cover object-top ${dimensions}  ${rounded}`}
                 style={{ display: isImageLoaded ? 'block' : 'none' }}
             />
         </>
