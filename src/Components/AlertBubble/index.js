@@ -17,9 +17,9 @@ function AlertBubble({ message }) {
     }, [message]); // Watch for changes in the "message" prop
 
     return (
-        <div className='flex items-center justify-center '>
+        <div className='flex items-center justify-center'>
             <div
-                className={`rounded-[30px]  backdrop-blur-sm bg-slate-800/80 transition-all ease-in-out duration-1600 fixed bottom-0 z-10 w-full max-w-[800px] text-center text-zinc-100 text-2xl py-8 ${position}`}
+                className={`rounded-[30px] backdrop-blur-sm bg-slate-800/80 transition-all ease-in-out duration-1600 fixed bottom-0 z-50 sm:w-full w-[95vw] max-w-[800px] text-center text-zinc-100 text-2xl py-8 ${position}`}
             >
                 {message}
             </div>{' '}
