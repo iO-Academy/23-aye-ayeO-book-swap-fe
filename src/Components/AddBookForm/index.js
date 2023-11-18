@@ -11,7 +11,6 @@ import {
     extractYear,
     limitString,
     scrollToTop,
-    getTimestamp,
 } from '../../utilities';
 
 function AddBookForm() {
@@ -261,7 +260,7 @@ function AddBookForm() {
                 requestBody.year = year;
             }
 
-            const res = await fetch('http://localhost:8000/api/books', {
+            const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
                 method: 'POST',
                 headers: {

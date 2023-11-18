@@ -35,7 +35,7 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
 
     async function handleSubmit() {
         try {
-            const res = await fetch('http://localhost:8000/api/books/return/' + id, {
+            const res = await fetch(`${process.env.REACT_APP_API_URI}/books/return/${id}`, {
                 mode: 'cors',
                 method: 'PUT',
                 headers: {

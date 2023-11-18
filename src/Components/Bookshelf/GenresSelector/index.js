@@ -10,7 +10,7 @@ function GenresSelector({
     const [genres, setGenres] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/genres')
+        fetch(`${process.env.REACT_APP_API_URI}/genres`)
             .then((res) => res.json())
             .then((genres) => {
                 setGenres(genres.data);

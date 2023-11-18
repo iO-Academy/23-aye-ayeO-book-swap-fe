@@ -13,7 +13,7 @@ function Bookshelf({ claimed }) {
     useEffect(() => {
         // selectedGenreId === 0 && setSelectedGenreId("");
         fetch(
-            `http://localhost:8000/api/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`
+            `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`
         )
             .then((res) => res.json())
             .then((books) => {

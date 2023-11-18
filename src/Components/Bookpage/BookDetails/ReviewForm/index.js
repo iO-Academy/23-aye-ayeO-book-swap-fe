@@ -73,7 +73,7 @@ function ReviewForm({ refreshReviewsList }) {
     // SUBMIT form / FETCH
     async function handleSubmit() {
         try {
-            const response = await fetch('http://localhost:8000/api/reviews', {
+            const response = await fetch(`${process.env.REACT_APP_API_URI}/reviews`, {
                 mode: 'cors',
                 method: 'POST',
                 headers: {
