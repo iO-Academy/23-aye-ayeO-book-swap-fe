@@ -5,7 +5,7 @@ import './nav.css';
 function Nav() {
     return (
         <div className='w-full bg-rose-400 sm:fixed  relative z-40'>
-            <nav className='p-4 py-2 flex justify-between text-slate-800 w-full max-w-7xl m-auto min-[500px]:flex-row flex-col gap-3'>
+            <nav className='px-4 sm:py-2 pb-2 flex justify-between text-slate-800 w-full max-w-7xl m-auto min-[500px]:flex-row flex-col gap-3'>
                 <span className='text-3xl font-semibold py-2 justify-center flex'>
                     <Link to='/'>Swapp</Link>
                 </span>
