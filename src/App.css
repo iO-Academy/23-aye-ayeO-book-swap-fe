@@ -1,6 +1,7 @@
 * {
     transition: 0.1s;
     scroll-behavior: smooth;
+    overscroll-behavior-y: none;
 }
 
 /* Change Autocomplete styles in Chrome*/
