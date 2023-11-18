@@ -49,7 +49,7 @@ function ReviewForm({ refreshReviewsList }) {
         }
 
         // rating
-        if (rating === null || rating < 0 || rating > 5) {
+        if (rating === null || rating < 1 || rating > 5) {
             setRatingError(true);
             ratingError = true;
         } else {
@@ -158,10 +158,6 @@ function ReviewForm({ refreshReviewsList }) {
                             <input type='radio' id='star1' name='rate' value='1' />
                             <label htmlFor='star1' title='Poor'>
                                 1 star
-                            </label>
-                            <input type='radio' id='star0' name='rate' value='0' />
-                            <label htmlFor='star0' title='Terrible'>
-                                0 stars
                             </label>
                         </div>
                     </fieldset>
