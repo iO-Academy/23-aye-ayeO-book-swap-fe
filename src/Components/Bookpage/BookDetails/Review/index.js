@@ -47,7 +47,6 @@ function Review({ review }) {
                 className='flex-grow
             p-5
             border-slate-200
-            mx-auto
             min-w-0
             max-w-full'
             >
