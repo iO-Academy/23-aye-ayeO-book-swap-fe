@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
 function AlertBubble({ message }) {
-    const [position, setPosition] = useState('translate-y-full');
+    const [position, setPosition] = useState('translate-y-full -z-50');
+
     useEffect(() => {
         if (message) {
             setPosition('-translate-y-5');
 
             const timer = setTimeout(() => {
-                setPosition('translate-y-full');
+                setPosition('translate-y-full -z-50');
             }, 3000);
 
             return () => {
                 clearTimeout(timer);
             };
         }
+        //useEffect for it to chenge based on screen orientation as well
     }, [message]); // Watch for changes in the "message" prop
 
     return (
