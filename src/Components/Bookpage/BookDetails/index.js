@@ -40,7 +40,7 @@ function BookDetails({
     return (
         <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto bg-zinc-100'>
             <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
-                <div className='w-[800px] flex justify-center max-lg:self-center'>
+                <div className='w-[400px] flex justify-center max-lg:self-center'>
                     <div className='lg:fixed lg:z-40'>
                         <ImgLoader
                             src={image}
@@ -101,7 +101,7 @@ function BookDetails({
                         </div>
                     </div>
                 </div>
-                <div className='flex flex-col w-full gap-2 md:max-w-[1000px]'>
+                <div className='flex flex-col w-full gap-2 lg:max-w-2xl'>
                     <h1 className='text-center lg:text-left p-0 sm:text-5xl text-[7vw] leading-tight'>
                         {title}
                     </h1>

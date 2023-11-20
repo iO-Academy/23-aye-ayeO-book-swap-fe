@@ -15,7 +15,6 @@ function AlertBubble({ message }) {
                 clearTimeout(timer);
             };
         }
-        //useEffect for it to chenge based on screen orientation as well
     }, [message]); // Watch for changes in the "message" prop
 
     return (
