@@ -4,9 +4,9 @@ import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
 import './bookdetails.css';
 import { useState } from 'react';
-import ImgLoader from '../../ImgLoader';
 import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
+import LazyImgLoader from '../../LazyImgLoader';
 
 function BookDetails({
     image,
@@ -45,7 +45,7 @@ function BookDetails({
                 <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
                     <div className='w-[400px] flex justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
-                            <ImgLoader
+                            <LazyImgLoader
                                 src={image}
                                 alt={'Cover of ' + title}
                                 dimensions='
