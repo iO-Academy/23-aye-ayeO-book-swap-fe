@@ -363,12 +363,12 @@ function AddBookForm() {
                             Search by ISBN
                         </label>
                         <div
-                            className={`pb-2   rounded-b      bg-violet-100
+                            className={`pb-2 rounded-md bg-slate-300
                     ${
                         isValidISBN(isbn) &&
                         !remoteSuccess &&
                         !isbnError &&
-                        'bg-gradient-to-r from-orange-100 via-violet-300 to-orange-100 background-animate border-none rounded-t'
+                        'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
                     }
                     ${remoteSuccess && 'success-isbn border-none'}
                     ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
@@ -376,7 +376,7 @@ function AddBookForm() {
                             <input
                                 type='text'
                                 id='isbn'
-                                className='form-text'
+                                className='form-text !rounded-b-none'
                                 value={isbn}
                                 onChange={changeISBN}
                             ></input>

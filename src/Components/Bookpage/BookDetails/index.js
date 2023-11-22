@@ -112,7 +112,7 @@ function BookDetails({
                         <div className='flex gap-2 items-baseline m-2 self-center lg:self-start pb-4 lg:pb-0'>
                             <p className='text-2xl'>{avgScore.toFixed(1)}</p>
                             <StarRating rating={avgScore} />
-                            <a href='#reviews' className='underline text-zinc-500'>
+                            <a href='#reviews' className='underline text-zinc-600'>
                                 {reviews?.length} reviews
                             </a>
                         </div>
