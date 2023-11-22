@@ -8,21 +8,39 @@ import Bookpage from './Components/Bookpage';
 import AddBookForm from './Components/AddBookForm';
 import AlertBubble from './Components/AlertBubble';
 import { Context } from './Context';
-import { useEffect, useState } from 'react';
-import ScrollToTop from './Components/ScrollToTop';
+import { useState } from 'react';
 
 function App() {
     const [alert, setAlert] = useState();
+    const [scrollPositionAvailable, setScrollPositionAvailable] = useState(0);
+    const [scrollPositionClaimed, setScrollPositionClaimed] = useState(0);
 
     return (
         <div className='App montserrat'>
             <BrowserRouter>
-                <ScrollToTop />
                 <Nav />
                 <Context.Provider value={{ alert, setAlert }}>
                     <Routes>
-                        <Route path='/' element={<Bookshelf claimed={0} />} />
-                        <Route path='/claimed' element={<Bookshelf claimed={1} />} />
+                        <Route
+                            path='/'
+                            element={
+                                <Bookshelf
+                                    claimed={0}
+                                    scrollPosition={scrollPositionAvailable}
+                                    setScrollPosition={setScrollPositionAvailable}
+                                />
+                            }
+                        />
+                        <Route
+                            path='/claimed'
+                            element={
+                                <Bookshelf
+                                    claimed={1}
+                                    scrollPosition={scrollPositionClaimed}
+                                    setScrollPosition={setScrollPositionClaimed}
+                                />
+                            }
+                        />
                         <Route path='/books/:id' element={<Bookpage />} />
                         <Route path='*' element={<NotFound />} />
                         <Route path='/books/add' element={<AddBookForm />} />

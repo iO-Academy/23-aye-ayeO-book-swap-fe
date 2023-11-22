@@ -2,11 +2,12 @@ import './bookcard.css';
 import { Link } from 'react-router-dom';
 import ImgLoader from '../ImgLoader';
 
-function BookCard({ id, bookCover, title, author, genre }) {
+function BookCard({ id, bookCover, title, author, genre, onClick }) {
     return (
         <Link
             to={'/books/' + id}
             className='sm:w-72 sm:h-auto sm:p-0 bg-zinc-100 sm:rounded-t-xl rounded-b-md rounded-lg text-slate-800 w-full mx-2 sm:h-min-96'
+            onClick={onClick}
         >
             <div className='flex sm:flex-col '>
                 <div

@@ -4,11 +4,19 @@ import BookCard from '../BookCard';
 import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 
-function Bookshelf({ claimed }) {
+function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
+
+    // Restore scroll position from state in App.js
+    window.scrollTo(0, scrollPosition);
+
+    // Preserve scroll position when bookcard is clicked
+    function saveScroll() {
+        setScrollPosition(window.scrollY);
+    }
 
     useEffect(() => {
         // selectedGenreId === 0 && setSelectedGenreId("");
@@ -65,6 +73,7 @@ function Bookshelf({ claimed }) {
                             author={book.author}
                             genre={book.genre.name}
                             key={book.title + book.id}
+                            onClick={saveScroll}
                         />
                     );
                 })}
