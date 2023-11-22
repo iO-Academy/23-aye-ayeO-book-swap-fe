@@ -6,11 +6,11 @@ import {
     isValidUrl,
     isValidYear,
     isValidISBN,
-    capitaliseTitle,
     removeQuotes,
     extractYear,
     limitString,
     scrollToTop,
+    getYearFromDateString,
 } from '../../utilities';
 
 function AddBookForm() {
@@ -47,10 +47,12 @@ function AddBookForm() {
         const isbn = e.target.value;
         isValidISBN(isbn) && getBookData(isbn);
     }
+
     function changeTitle(e) {
         setTitle(e.target.value);
         setTitleError(false);
     }
+
     function changeAuthor(e) {
         setAuthor(e.target.value);
         setAuthorError(false);
@@ -85,7 +87,7 @@ function AddBookForm() {
     function validateForm(e) {
         e.preventDefault();
 
-        let titleError = true; // Error!
+        let titleError = true;
         let authorError = true;
         let genreError = true;
         let yearError = true;
@@ -162,76 +164,119 @@ function AddBookForm() {
             !blurbError
         ) {
             handleSubmit(e);
-            scrollToTop();
         } else {
             scrollToTop();
         }
     }
 
-    // Fetch bookData  from Open Library
     async function getBookData(isbn) {
+        // Fetch bookData from Google and Open Library to populate Add Book form
+
+        // Local values for getBookData used to set corresponding state values
+        let openLibraryRes;
+        let book;
+
+        let workRes;
+        let work;
+
+        let authorRes;
+        let author;
+
+        let goodreads = '';
+        let cover = '';
+        let blurb = '';
+        let pageCount = '';
+        let year = '';
+
+        // OPEN LIBRARY
         try {
-            const isbnRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+            openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+            book = await openLibraryRes.json();
 
-            if (!isbnRes.ok) {
-                throw new Error('Network response was not ok.');
+            workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+            work = await workRes.json();
+
+            authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
+            author = await authorRes.json();
+
+            // ****************** GOODREADS
+            if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
+                goodreads = book.identifiers.goodreads[0];
             }
 
-            const book = await isbnRes.json();
+            // ****************** AUTHOR
+            author && author.name && (author = author.name.trim());
 
-            const workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+            // ****************** PAGES
+            book.pagination && (pageCount = book.pagination);
+            book.number_of_pages && (pageCount = book.number_of_pages);
 
-            if (!workRes.ok) {
-                throw new Error('Network response was not ok.');
+            // ****************** YEAR
+            work.first_publish_date && (year = extractYear(work.first_publish_date));
+            book.publish_date && (year = extractYear(book.publish_date));
+
+            // ****************** COVER
+            const bookCovers = book.covers || [];
+            const workCovers = work.covers || [];
+
+            cover =
+                (bookCovers.length > 0 && bookCovers[0]) ||
+                (workCovers.length > 0 && workCovers[0]);
+
+            if (cover) {
+                cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
             }
 
-            const work = await workRes.json();
+            // ****************** BLURB
+            if (work.description && work.description.value) {
+                blurb = limitString(removeQuotes(work.description.value), 255);
+            } else if (work.description) {
+                blurb = limitString(removeQuotes(work.description), 255);
+            } else if (book.description && book.description.value) {
+                blurb = limitString(removeQuotes(book.description.value), 255);
+            }
+        } catch (error) {
+            // Log errors
+        }
 
-            const authorRes = await fetch(
-                `https://openlibrary.org${work.authors[0].author.key}.json`
+        // GOOGLE
+        try {
+            const google = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
             );
-            if (!authorRes.ok) {
-                throw new Error('Network response was not ok.');
-            }
+            const googleRes = await google.json();
 
-            const author = await authorRes.json();
+            const titleGoogle = googleRes.items[0].volumeInfo.title;
+            const authorGoogle = googleRes.items[0].volumeInfo.authors[0];
+            const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
+            const descriptionGoogle = googleRes.items[0].volumeInfo.description;
+            const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
 
-            if (author && author.name) setAuthor(author.name.trim());
-
-            if (book) {
+            if (google.ok) {
                 setRemoteSuccess(true);
 
-                if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0])
-                    setGoodreadsLink(
-                        `https://www.goodreads.com/book/show/${book.identifiers.goodreads[0]}`
-                    );
+                // ✅ GOODREADS
+                setGoodreadsLink(goodreads);
 
-                const bookCovers = book.covers || [];
-                const workCovers = work.covers || [];
+                // ✅ TITLE
+                setTitle(titleGoogle);
 
-                const cover =
-                    (bookCovers.length > 0 && bookCovers[0]) ||
-                    (workCovers.length > 0 && workCovers[0]);
+                // ✅ AUTHOR
+                authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
 
-                if (cover) {
-                    setImageUrl(`https://covers.openlibrary.org/b/id/${cover}-L.jpg`);
-                }
+                // ✅ PAGES
+                pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
 
-                work.title && setTitle(capitaliseTitle(work.title));
+                // ✅ YEAR
+                yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
 
-                book.publish_date && setYear(extractYear(book.publish_date));
-                work.first_publish_date && setYear(extractYear(work.first_publish_date));
+                // ✅ COVER
+                setImageUrl(cover);
 
-                book.pagination && setPageCount(book.pagination);
-                book.number_of_pages && setPageCount(book.number_of_pages);
-
-                if (work.description && work.description.value) {
-                    setBlurb(limitString(removeQuotes(work.description.value), 255));
-                } else if (work.description) {
-                    setBlurb(limitString(removeQuotes(work.description), 255));
-                } else if (book.description && book.description.value) {
-                    setBlurb(limitString(removeQuotes(book.description.value), 255));
-                }
+                // ✅ BLURB
+                descriptionGoogle && descriptionGoogle.length > 0
+                    ? setBlurb(descriptionGoogle)
+                    : setBlurb(blurb);
             }
         } catch (error) {
             setIsbnError('No book found');
@@ -310,20 +355,20 @@ function AddBookForm() {
             <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
                 <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
                     <h1>Add New Book</h1>
+                    <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
+                        Search by ISBN
+                    </label>
                     <div
-                        className={`p-8 rounded-2xl border-4 
+                        className={`pb-2   rounded-b      bg-violet-100
                     ${
                         isValidISBN(isbn) &&
                         !remoteSuccess &&
                         !isbnError &&
-                        'bg-gradient-to-r from-orange-100 via-rose-300 to-orange-100 background-animate'
+                        'bg-gradient-to-r from-orange-100 via-violet-300 to-orange-100 background-animate border-none rounded-t'
                     }
-                    ${remoteSuccess && 'success-isbn'}
+                    ${remoteSuccess && 'success-isbn border-none'}
                     ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
                     >
-                        <label htmlFor='isbn' className='text-center'>
-                            Search by ISBN
-                        </label>
                         <input
                             type='text'
                             id='isbn'
@@ -341,7 +386,7 @@ function AddBookForm() {
                                 href={goodreadsLink}
                                 target='_blank'
                                 rel='noreferrer'
-                                className=' text-xs text-green-800'
+                                className=' text-xs text-green-800 px-2'
                             >
                                 Check "{title}" on <span className='font-bold'>Goodreads</span>
                             </a>
@@ -386,7 +431,7 @@ function AddBookForm() {
                         </label>
                         <GenresSelector
                             onGenreChangeID={changeGenre}
-                            className={genreError ? 'select-error' : 'null'}
+                            className={genreError ? 'select-error' : null}
                             defaultString='Select'
                             isDisabled={true}
                         />
@@ -411,7 +456,7 @@ function AddBookForm() {
                         <label htmlFor='year'>Year</label>
                         <br />
                         <input
-                            type='number'
+                            type='text'
                             id='year'
                             name='year'
                             value={year}
