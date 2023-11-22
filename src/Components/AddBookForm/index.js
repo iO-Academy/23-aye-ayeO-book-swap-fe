@@ -364,14 +364,16 @@ function AddBookForm() {
                         </label>
                         <div
                             className={`pb-2 rounded-md bg-slate-300
-                    ${
-                        isValidISBN(isbn) &&
-                        !remoteSuccess &&
-                        !isbnError &&
-                        'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
-                    }
-                    ${remoteSuccess && 'success-isbn border-none'}
-                    ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
+                            ${
+                                isValidISBN(isbn) &&
+                                !remoteSuccess &&
+                                !isbnError &&
+                                'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
+                            }
+                            ${remoteSuccess && 'success-isbn border-none'}
+                            ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
+                            
+                            `}
                         >
                             <input
                                 type='text'
@@ -380,17 +382,19 @@ function AddBookForm() {
                                 value={isbn}
                                 onChange={changeISBN}
                             ></input>
-                            {isbnError &&
-                                !title &&
-                                displayErrorMessage(
-                                    'Oops, book not found. Please fill in the form below manually.'
-                                )}
+                            <div className='px-2'>
+                                {isbnError &&
+                                    !title &&
+                                    displayErrorMessage(
+                                        'Oops, book not found. Please fill in the form below manually.'
+                                    )}
+                            </div>
                             {goodreadsLink && (
                                 <a
                                     href={goodreadsLink}
                                     target='_blank'
                                     rel='noreferrer'
-                                    className=' text-xs text-green-800 px-2'
+                                    className='px-2 text-xs text-green-800'
                                 >
                                     Check "{title}" on <span className='font-bold'>Goodreads</span>
                                 </a>
