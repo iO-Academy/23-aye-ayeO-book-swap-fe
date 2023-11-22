@@ -6,11 +6,11 @@ import {
     isValidUrl,
     isValidYear,
     isValidISBN,
-    capitaliseTitle,
     removeQuotes,
     extractYear,
     limitString,
     scrollToTop,
+    getYearFromDateString,
 } from '../../utilities';
 
 function AddBookForm() {
@@ -47,10 +47,12 @@ function AddBookForm() {
         const isbn = e.target.value;
         isValidISBN(isbn) && getBookData(isbn);
     }
+
     function changeTitle(e) {
         setTitle(e.target.value);
         setTitleError(false);
     }
+
     function changeAuthor(e) {
         setAuthor(e.target.value);
         setAuthorError(false);
@@ -85,7 +87,7 @@ function AddBookForm() {
     function validateForm(e) {
         e.preventDefault();
 
-        let titleError = true; // Error!
+        let titleError = true;
         let authorError = true;
         let genreError = true;
         let yearError = true;
@@ -162,96 +164,122 @@ function AddBookForm() {
             !blurbError
         ) {
             handleSubmit(e);
-            scrollToTop();
         } else {
             scrollToTop();
         }
     }
 
-    // Fetch bookData  from Open Library
     async function getBookData(isbn) {
-        console.log(`isbn: ${isbn}`);
+        // Fetch bookData from Google and Open Library to populate Add Book form
+
+        // Local values for getBookData used to set corresponding state values
+        let openLibraryRes;
+        let book;
+
+        let workRes;
+        let work;
+
+        let authorRes;
+        let author;
+
+        let goodreads = '';
+        let cover = '';
+        let blurb = '';
+        let pageCount = '';
+        let year = '';
+
+        // OPEN LIBRARY
         try {
-            const isbnRes = await fetch(
-                `https://openlibrary.org/isbn/${isbn}.json`
-            );
+            openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+            book = await openLibraryRes.json();
 
-            if (!isbnRes.ok) {
-                throw new Error('Network response was not ok.');
+            workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+            work = await workRes.json();
+
+            authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
+            author = await authorRes.json();
+
+            // ****************** GOODREADS
+            if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
+                goodreads = book.identifiers.goodreads[0];
             }
 
-            const book = await isbnRes.json();
+            // ****************** AUTHOR
+            author && author.name && (author = author.name.trim());
 
-            const workRes = await fetch(
-                `https://openlibrary.org${book.works[0].key}.json`
-            );
+            // ****************** PAGES
+            book.pagination && (pageCount = book.pagination);
+            book.number_of_pages && (pageCount = book.number_of_pages);
 
-            if (!workRes.ok) {
-                throw new Error('Network response was not ok.');
+            // ****************** YEAR
+            work.first_publish_date && (year = extractYear(work.first_publish_date));
+            book.publish_date && (year = extractYear(book.publish_date));
+
+            // ****************** COVER
+            const bookCovers = book.covers || [];
+            const workCovers = work.covers || [];
+
+            cover =
+                (bookCovers.length > 0 && bookCovers[0]) ||
+                (workCovers.length > 0 && workCovers[0]);
+
+            if (cover) {
+                cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
             }
 
-            const work = await workRes.json();
-
-            const authorRes = await fetch(
-                `https://openlibrary.org${work.authors[0].author.key}.json`
-            );
-            if (!authorRes.ok) {
-                throw new Error('Network response was not ok.');
+            // ****************** BLURB
+            if (work.description && work.description.value) {
+                blurb = limitString(removeQuotes(work.description.value), 255);
+            } else if (work.description) {
+                blurb = limitString(removeQuotes(work.description), 255);
+            } else if (book.description && book.description.value) {
+                blurb = limitString(removeQuotes(book.description.value), 255);
             }
+        } catch (error) {
+            // Log errors
+        }
 
-            const author = await authorRes.json();
+        // GOOGLE
+        try {
+            const google = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
+            );
+            const googleRes = await google.json();
 
-            if (author && author.name) setAuthor(author.name.trim());
+            const titleGoogle = googleRes.items[0].volumeInfo.title;
+            const authorGoogle = googleRes.items[0].volumeInfo.authors[0];
+            const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
+            const descriptionGoogle = googleRes.items[0].volumeInfo.description;
+            const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
 
-            if (book) {
+            if (google.ok) {
                 setRemoteSuccess(true);
 
-                if (
-                    book.identifiers &&
-                    book.identifiers.goodreads &&
-                    book.identifiers.goodreads[0]
-                )
-                    setGoodreadsLink(
-                        `https://www.goodreads.com/book/show/${book.identifiers.goodreads[0]}`
-                    );
+                // ✅ GOODREADS
+                setGoodreadsLink(goodreads);
 
-                const bookCovers = book.covers || [];
-                const workCovers = work.covers || [];
+                // ✅ TITLE
+                setTitle(titleGoogle);
 
-                const cover =
-                    (bookCovers.length > 0 && bookCovers[0]) ||
-                    (workCovers.length > 0 && workCovers[0]);
+                // ✅ AUTHOR
+                authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
 
-                if (cover) {
-                    setImageUrl(
-                        `https://covers.openlibrary.org/b/id/${cover}-L.jpg`
-                    );
-                }
+                // ✅ PAGES
+                pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
 
-                work.title && setTitle(capitaliseTitle(work.title));
+                // ✅ YEAR
+                yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
 
-                book.publish_date && setYear(extractYear(book.publish_date));
-                work.first_publish_date &&
-                    setYear(extractYear(work.first_publish_date));
+                // ✅ COVER
+                setImageUrl(cover);
 
-                book.pagination && setPageCount(book.pagination);
-                book.number_of_pages && setPageCount(book.number_of_pages);
-
-                if (work.description && work.description.value) {
-                    setBlurb(
-                        limitString(removeQuotes(work.description.value), 255)
-                    );
-                } else if (work.description) {
-                    setBlurb(limitString(removeQuotes(work.description), 255));
-                } else if (book.description && book.description.value) {
-                    setBlurb(
-                        limitString(removeQuotes(book.description.value), 255)
-                    );
-                }
+                // ✅ BLURB
+                descriptionGoogle && descriptionGoogle.length > 0
+                    ? setBlurb(descriptionGoogle)
+                    : setBlurb(blurb);
             }
         } catch (error) {
             setIsbnError('No book found');
-            console.error('Error fetching book data: ' + error);
         }
     }
 
@@ -277,7 +305,7 @@ function AddBookForm() {
                 requestBody.year = year;
             }
 
-            const res = await fetch('http://localhost:8000/api/books', {
+            const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
                 method: 'POST',
                 headers: {
@@ -290,11 +318,11 @@ function AddBookForm() {
             const data = await res.json();
 
             if (res.ok) {
+                setAlert(['Book added']);
+
                 resetForm();
-                setAlert('Book added');
             } else {
-                const errorContainer =
-                    document.getElementById('error-container');
+                const errorContainer = document.getElementById('error-container');
                 errorContainer.innerHTML = Object.keys(data.errors)
                     .map((error) => {
                         const serverError = data.errors[error][0];
@@ -323,186 +351,161 @@ function AddBookForm() {
     }
 
     return (
-        <div className='form-container md:w-2/3 lg:w-1/2'>
-            <form
-                onSubmit={validateForm}
-                className='flex flex-col gap-4 w-3/4 '
-            >
-                <h1>Add New Book</h1>
-                <div
-                    className={`p-8 rounded-2xl border-4 
+        <div className=' sm:pt-24'>
+            <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
+                <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
+                    <h1>Add New Book</h1>
+                    <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
+                        Search by ISBN
+                    </label>
+                    <div
+                        className={`pb-2   rounded-b      bg-violet-100
                     ${
                         isValidISBN(isbn) &&
                         !remoteSuccess &&
                         !isbnError &&
-                        'bg-gradient-to-r from-blue-300 via-teal-200 to-blue-300 background-animate'
+                        'bg-gradient-to-r from-orange-100 via-violet-300 to-orange-100 background-animate border-none rounded-t'
                     }
-                    ${remoteSuccess && 'success-isbn'}
-                    ${
-                        isbnError
-                            ? 'bg-rose-200 border-rose-300'
-                            : 'border-zinc-300'
-                    }`}
-                >
-                    <label htmlFor='title' className='text-center'>
-                        Search by ISBN
-                    </label>
-                    <input
-                        type='text'
-                        id='isbn'
-                        className='form-text'
-                        value={isbn}
-                        onChange={changeISBN}
-                    ></input>
-                    {isbnError &&
-                        !title &&
-                        displayErrorMessage(
-                            'Oops, book not found. Please fill in the form below manually.'
+                    ${remoteSuccess && 'success-isbn border-none'}
+                    ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
+                    >
+                        <input
+                            type='text'
+                            id='isbn'
+                            className='form-text'
+                            value={isbn}
+                            onChange={changeISBN}
+                        ></input>
+                        {isbnError &&
+                            !title &&
+                            displayErrorMessage(
+                                'Oops, book not found. Please fill in the form below manually.'
+                            )}
+                        {goodreadsLink && (
+                            <a
+                                href={goodreadsLink}
+                                target='_blank'
+                                rel='noreferrer'
+                                className=' text-xs text-green-800 px-2'
+                            >
+                                Check "{title}" on <span className='font-bold'>Goodreads</span>
+                            </a>
                         )}
-                    {goodreadsLink && (
-                        <a
-                            href={goodreadsLink}
-                            target='_blank'
-                            rel='noreferrer'
-                            className=' text-xs text-green-800'
-                        >
-                            Check "{title}" on{' '}
-                            <span className='font-bold'>Goodreads</span>
-                        </a>
-                    )}
-                </div>
-                <div>
-                    <label htmlFor='title'>
-                        Title <span className='text-rose-700'>*</span>
-                    </label>
-                    <br />
-                    <input
-                        type='text'
-                        id='title'
-                        name='title'
-                        value={title}
-                        onChange={changeTitle}
-                        className={
-                            titleError ? 'input-error form-text' : 'form-text'
-                        }
-                    />
-                    {titleError && displayErrorMessage('Title is required')}
-                </div>
-
-                <div>
-                    <label htmlFor='author'>
-                        Author <span className='text-rose-700'>*</span>
-                    </label>
-                    <br />
-
-                    <input
-                        type='text'
-                        id='author'
-                        name='author'
-                        value={author}
-                        onChange={changeAuthor}
-                        className={
-                            authorError ? 'input-error form-text' : ' form-text'
-                        }
-                    />
-                    {authorError && displayErrorMessage('Author is required')}
-                </div>
-
-                <div>
-                    <label htmlFor='genreId'>
-                        Genre <span className='text-rose-700'>*</span>
-                    </label>
-                    <GenresSelector
-                        onGenreChangeID={changeGenre}
-                        className={genreError ? 'select-error' : 'null'}
-                        defaultString='Select'
-                        isDisabled={true}
-                    />
-                    {genreError &&
-                        displayErrorMessage('Genre selection is required')}
-                </div>
-
-                <div>
-                    <label htmlFor='pageCount'>Page count</label>
-                    <br />
-                    <input
-                        type='number'
-                        id='pageCount'
-                        name='pageCount'
-                        value={pageCount}
-                        onChange={changePageCount}
-                        className={
-                            pageCountError
-                                ? 'input-error form-text'
-                                : 'form-text'
-                        }
-                    />
-                    {pageCountError &&
-                        displayErrorMessage('Page count has to be more than 0')}
-                </div>
-
-                <div>
-                    <label htmlFor='year'>Year</label>
-                    <br />
-                    <input
-                        type='number'
-                        id='year'
-                        name='year'
-                        value={year}
-                        onChange={changeYear}
-                        className={
-                            yearError ? 'input-error form-text' : ' form-text'
-                        }
-                    />
-                    {yearError && displayErrorMessage('Incorrect year format')}
-                </div>
-                {imageUrl && (
-                    <div>
-                        <img
-                            src={imageUrl}
-                            alt={`${title} cover`}
-                            width='200px'
-                            className='mx-auto rounded-md'
-                        ></img>
                     </div>
-                )}
-                <div>
-                    <label htmlFor='image'>Image URL</label>
-                    <br />
-                    <input
-                        type='text'
-                        id='image'
-                        name='image'
-                        value={imageUrl}
-                        onChange={changeImageUrl}
-                        className={
-                            imageUrlError
-                                ? 'input-error form-text'
-                                : 'form-text'
-                        }
-                    />
-                    {imageUrlError && displayErrorMessage('Invalid URL')}
-                </div>
+                    <div>
+                        <label htmlFor='title'>
+                            Title <span className='text-rose-700'>*</span>
+                        </label>
+                        <br />
+                        <input
+                            type='text'
+                            id='title'
+                            name='title'
+                            value={title}
+                            onChange={changeTitle}
+                            className={titleError ? 'input-error form-text' : 'form-text'}
+                        />
+                        {titleError && displayErrorMessage('Title is required')}
+                    </div>
 
-                <div>
-                    <label htmlFor='blurb'>Blurb</label>
-                    <br />
-                    <textarea
-                        id='blurb'
-                        rows='5'
-                        maxLength='255'
-                        value={blurb}
-                        onChange={changeBlurb}
-                        className={
-                            blurbError ? 'input-error form-text' : 'form-text'
-                        }
-                    ></textarea>
-                    {blurbError &&
-                        displayErrorMessage('Must be less than 255 characters')}
-                </div>
-                <div id='error-container' className='error'></div>
-                <input type='submit' value='Add Book' className='button py-3' />
-            </form>
+                    <div>
+                        <label htmlFor='author'>
+                            Author <span className='text-rose-700'>*</span>
+                        </label>
+                        <br />
+
+                        <input
+                            type='text'
+                            id='author'
+                            name='author'
+                            value={author}
+                            onChange={changeAuthor}
+                            className={authorError ? 'input-error form-text' : ' form-text'}
+                        />
+                        {authorError && displayErrorMessage('Author is required')}
+                    </div>
+
+                    <div>
+                        <label htmlFor='genreId'>
+                            Genre <span className='text-rose-700'>*</span>
+                        </label>
+                        <GenresSelector
+                            onGenreChangeID={changeGenre}
+                            className={genreError ? 'select-error' : null}
+                            defaultString='Select'
+                            isDisabled={true}
+                        />
+                        {genreError && displayErrorMessage('Genre selection is required')}
+                    </div>
+
+                    <div>
+                        <label htmlFor='pageCount'>Page count</label>
+                        <br />
+                        <input
+                            type='number'
+                            id='pageCount'
+                            name='pageCount'
+                            value={pageCount}
+                            onChange={changePageCount}
+                            className={pageCountError ? 'input-error form-text' : 'form-text'}
+                        />
+                        {pageCountError && displayErrorMessage('Page count has to be more than 0')}
+                    </div>
+
+                    <div>
+                        <label htmlFor='year'>Year</label>
+                        <br />
+                        <input
+                            type='text'
+                            id='year'
+                            name='year'
+                            value={year}
+                            onChange={changeYear}
+                            className={yearError ? 'input-error form-text' : ' form-text'}
+                        />
+                        {yearError && displayErrorMessage('Incorrect year format')}
+                    </div>
+                    {imageUrl && (
+                        <div>
+                            <img
+                                src={imageUrl}
+                                alt={`${title} cover`}
+                                width='200px'
+                                className='mx-auto rounded-md'
+                            ></img>
+                        </div>
+                    )}
+                    <div>
+                        <label htmlFor='image'>Image URL</label>
+                        <br />
+                        <input
+                            type='text'
+                            id='image'
+                            name='image'
+                            value={imageUrl}
+                            onChange={changeImageUrl}
+                            className={imageUrlError ? 'input-error form-text' : 'form-text'}
+                        />
+                        {imageUrlError && displayErrorMessage('Invalid URL')}
+                    </div>
+
+                    <div>
+                        <label htmlFor='blurb'>Blurb</label>
+                        <br />
+                        <textarea
+                            id='blurb'
+                            rows='5'
+                            maxLength='255'
+                            value={blurb}
+                            onChange={changeBlurb}
+                            className={blurbError ? 'input-error form-text' : 'form-text'}
+                        ></textarea>
+                        {blurbError && displayErrorMessage('Must be less than 255 characters')}
+                    </div>
+                    <div id='error-container' className='error'></div>
+                    <input type='submit' value='Add Book' className='button py-3' />
+                </form>
+            </div>
         </div>
     );
 }
