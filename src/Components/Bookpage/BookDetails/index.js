@@ -123,7 +123,6 @@ function BookDetails({
                         <br />
                         <p>Genre: {genre.name}</p>
                         <p>{year}</p>
-
                         {pageCount && <p>{pageCount} pages</p>}
                         <div className='mt-6 border-zinc-300'>
                             <h2

@@ -38,6 +38,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     };
 
     function showFilter() {
+        setScrollPosition(0);
         isFilterVisible === '-translate-y-full'
             ? setIsFilterVisible('translate-y-0')
             : setIsFilterVisible('-translate-y-full');
