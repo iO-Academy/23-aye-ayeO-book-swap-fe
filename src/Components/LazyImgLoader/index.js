@@ -39,7 +39,11 @@ const LazyImgLoader = ({ src, alt, dimensions, rounded }) => {
                 alt={alt}
                 onLoad={handleImageLoad}
                 className={`object-cover object-top ${dimensions} ${rounded}`}
-                style={{ visibility: isImageLoaded || !inView ? 'visible' : 'hidden' }}
+                style={{
+                    opacity: isImageLoaded || !inView ? 1 : 0,
+                    visibility: isImageLoaded || !inView ? 'visible' : 'hidden',
+                    transition: 'opacity 0.5s ease-in-out',
+                }}
                 loading={inView ? 'auto' : 'lazy'}
             />
         </div>
