@@ -5,6 +5,8 @@ const LazyImgLoader = ({ src, alt, dimensions, rounded }) => {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [ref, inView] = useInView({
         triggerOnce: true,
+        // rootMargin pushes the bottom margin to 200px below the viewport
+        rootMargin: '0px 0px 200px 0px',
     });
 
     const handleImageLoad = () => {
