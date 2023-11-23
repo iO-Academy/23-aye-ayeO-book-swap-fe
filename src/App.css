@@ -1,5 +1,4 @@
 * {
-    transition: 0.1s;
     scroll-behavior: smooth;
     overscroll-behavior-y: none;
 }
@@ -71,10 +70,7 @@ h4 {
 }
 
 .success-isbn {
-    /* background-color: rgb(193, 214, 193); */
     background-color: #7bf7723d;
-    /* background-color: rgb(216, 231, 216);*/
-    /* background-color: rgb(196, 208, 196); */
 }
 
 .background-animate {
