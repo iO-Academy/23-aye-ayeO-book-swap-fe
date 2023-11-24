@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import {
     displayErrorMessage,
     isValidUrl,
@@ -17,27 +17,33 @@ import {
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
+
     useEffect(() => {
-        const scanner = new Html5QrcodeScanner('reader', {
-            qrbox: {
-                width: 250,
-                height: 250,
-            },
-            fps: 5,
-        });
+        const html5QrCode = new Html5Qrcode('reader');
 
-        scanner.render(success, error);
-
-        function success(result) {
-            scanner.clear();
+        const qrCodeSuccessCallback = (result, decodedResult) => {
+            /* handle success */
+            resetForm();
+            setIsbnError('');
+            setRemoteSuccess(false);
             setISBN(result);
             isValidISBN(isbn) && getBookData(isbn);
-        }
+            // scanner.clear();
+            html5QrCode
+                .stop()
+                .then((ignore) => {
+                    // QR Code scanning is stopped.
+                })
+                .catch((err) => {
+                    // Stop failed, handle it.
+                });
+        };
 
-        function error(err) {
-            console.warn(err);
-        }
+        const config = { fps: 120, qrbox: { width: 250, height: 250 } };
 
+        setTimeout(() => {
+            html5QrCode.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
+        }, 3000);
         // Create an 'input' event
         const inputEvent = new Event('input', { bubbles: true });
 
@@ -46,10 +52,10 @@ function AddBookForm() {
         if (isbnInput) {
             isbnInput.dispatchEvent(inputEvent);
         }
-
         // Validate and fetch book data if needed
         isValidISBN(isbn) && getBookData(isbn);
     }, [isbn]);
+
     // AddBookForm Fields States
     const [remoteSuccess, setRemoteSuccess] = useState(false);
     const [goodreadsLink, setGoodreadsLink] = useState('');
@@ -393,10 +399,12 @@ function AddBookForm() {
                 <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
                     <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
                         <h1>Add New Book</h1>
-                        <div id='reader'></div>
+
+                        <div id='reader' width='600px'></div>
                         <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
                             Search by ISBN
                         </label>
+                        {/* <button className='button'>Start Scanner</button> */}
                         <div
                             className={`pb-2 rounded-md bg-slate-300
                             ${
