@@ -13,7 +13,10 @@ import {
     limitString,
     scrollToTop,
     getYearFromDateString,
+    playSound,
 } from '../../utilities';
+
+import blip from '../../blip.mp3';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
@@ -23,7 +26,7 @@ function AddBookForm() {
 
     const config = {
         fps: 60,
-        qrbox: { width: 1280, height: 720 },
+        qrbox: { width: 450, height: 255 },
         aspectRatio: 1.777778,
     };
 
@@ -46,6 +49,8 @@ function AddBookForm() {
 
     const qrCodeSuccessCallback = (result) => {
         // handle success
+        playSound(blip);
+
         resetForm();
         setIsbnError('');
         setRemoteSuccess(false);

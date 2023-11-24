@@ -96,3 +96,8 @@ export function getYearFromDateString(dateString) {
     const date = new Date(dateString);
     return date.getFullYear();
 }
+
+export function playSound(sound) {
+    const successSound = new Audio(sound);
+    successSound.play();
+}
