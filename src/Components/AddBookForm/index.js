@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import {
     displayErrorMessage,
     isValidUrl,
@@ -15,9 +16,42 @@ import {
 } from '../../utilities';
 
 function AddBookForm() {
+    const [isbn, setISBN] = useState('');
+    useEffect(() => {
+        const scanner = new Html5QrcodeScanner('reader', {
+            qrbox: {
+                width: 250,
+                height: 250,
+            },
+            fps: 5,
+        });
+
+        scanner.render(success, error);
+
+        function success(result) {
+            scanner.clear();
+            setISBN(result);
+            isValidISBN(isbn) && getBookData(isbn);
+        }
+
+        function error(err) {
+            console.warn(err);
+        }
+
+        // Create an 'input' event
+        const inputEvent = new Event('input', { bubbles: true });
+
+        // Dispatch the 'input' event to the input field
+        const isbnInput = document.getElementById('isbn');
+        if (isbnInput) {
+            isbnInput.dispatchEvent(inputEvent);
+        }
+
+        // Validate and fetch book data if needed
+        isValidISBN(isbn) && getBookData(isbn);
+    }, [isbn]);
     // AddBookForm Fields States
     const [remoteSuccess, setRemoteSuccess] = useState(false);
-    const [isbn, setISBN] = useState('');
     const [goodreadsLink, setGoodreadsLink] = useState('');
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
@@ -359,6 +393,7 @@ function AddBookForm() {
                 <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
                     <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
                         <h1>Add New Book</h1>
+                        <div id='reader'></div>
                         <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
                             Search by ISBN
                         </label>
@@ -380,7 +415,7 @@ function AddBookForm() {
                                 id='isbn'
                                 className='form-text !rounded-b-none'
                                 value={isbn}
-                                onChange={changeISBN}
+                                onInput={changeISBN}
                             ></input>
                             <div className='px-2'>
                                 {isbnError &&
