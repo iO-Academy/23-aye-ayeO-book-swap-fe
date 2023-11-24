@@ -18,43 +18,50 @@ import {
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
 
+    const [scanner, setScanner] = useState();
+    const [isScannerOn, setIsScannerOn] = useState(false);
+
+    const config = {
+        fps: 60,
+        qrbox: { width: 1280, height: 720 },
+        aspectRatio: 1.777778,
+    };
+
     useEffect(() => {
-        const html5QrCode = new Html5Qrcode('reader');
+        const newScanner = new Html5Qrcode('reader');
+        setScanner(newScanner);
+    }, []);
 
-        const qrCodeSuccessCallback = (result, decodedResult) => {
-            /* handle success */
-            resetForm();
-            setIsbnError('');
-            setRemoteSuccess(false);
-            setISBN(result);
-            isValidISBN(isbn) && getBookData(isbn);
-            // scanner.clear();
-            html5QrCode
-                .stop()
-                .then((ignore) => {
-                    // QR Code scanning is stopped.
-                })
-                .catch((err) => {
-                    // Stop failed, handle it.
-                });
-        };
+    function closeScanner() {
+        scanner
+            .stop()
+            .then((ignore) => {
+                // QR Code scanning is stopped.
+            })
+            .catch((err) => {
+                // Stop failed, handle it.
+            });
+        setIsScannerOn(false);
+    }
 
-        const config = { fps: 120, qrbox: { width: 250, height: 250 } };
+    const qrCodeSuccessCallback = (result) => {
+        // handle success
+        resetForm();
+        setIsbnError('');
+        setRemoteSuccess(false);
+        setISBN(result);
+        isValidISBN(result) && getBookData(result);
+        closeScanner();
+    };
 
-        setTimeout(() => {
-            html5QrCode.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
-        }, 3000);
-        // Create an 'input' event
-        const inputEvent = new Event('input', { bubbles: true });
-
-        // Dispatch the 'input' event to the input field
-        const isbnInput = document.getElementById('isbn');
-        if (isbnInput) {
-            isbnInput.dispatchEvent(inputEvent);
+    function handleStartScanner() {
+        if (!isScannerOn) {
+            scanner.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
+            setIsScannerOn(true);
+        } else {
+            closeScanner();
         }
-        // Validate and fetch book data if needed
-        isValidISBN(isbn) && getBookData(isbn);
-    }, [isbn]);
+    }
 
     // AddBookForm Fields States
     const [remoteSuccess, setRemoteSuccess] = useState(false);
@@ -400,11 +407,16 @@ function AddBookForm() {
                     <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
                         <h1>Add New Book</h1>
 
-                        <div id='reader' width='600px'></div>
                         <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
                             Search by ISBN
                         </label>
-                        {/* <button className='button'>Start Scanner</button> */}
+
+                        <div id='reader'></div>
+
+                        <span className='button' onClick={handleStartScanner}>
+                            Start scanner
+                        </span>
+
                         <div
                             className={`pb-2 rounded-md bg-slate-300
                             ${
@@ -425,7 +437,12 @@ function AddBookForm() {
                                 value={isbn}
                                 onInput={changeISBN}
                             ></input>
+
                             <div className='px-2'>
+                                {!isValidISBN(isbn) &&
+                                    !remoteSuccess &&
+                                    !isbnError &&
+                                    'ISBN is 10-13 characters'}
                                 {isbnError &&
                                     !title &&
                                     displayErrorMessage(
