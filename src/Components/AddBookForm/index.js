@@ -11,60 +11,95 @@ import {
     removeQuotes,
     extractYear,
     limitString,
-    scrollToTop,
     getYearFromDateString,
     playSound,
 } from '../../utilities';
 
-import blip from '../../blip.mp3';
+import scanSound from '../../sounds/click.mp3';
+import successSound from '../../sounds/success.mp3';
+import notFoundSound from '../../sounds/blip.mp3';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
 
+    const [cameraPermission, setCameraPermission] = useState(null);
     const [scanner, setScanner] = useState();
     const [isScannerOn, setIsScannerOn] = useState(false);
+
+    const requestCameraPermission = async () => {
+        try {
+            // Request camera permission
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+            // Permission granted
+            console.log('Camera permission granted');
+            setCameraPermission(true);
+
+            // Don't forget to stop the stream after checking permission
+            stream.getTracks().forEach((track) => track.stop());
+        } catch (error) {
+            // Permission denied or error
+            console.error('Error requesting camera permission:', error);
+            setCameraPermission(false);
+        }
+    };
 
     const config = {
         fps: 60,
         qrbox: { width: 450, height: 255 },
-        aspectRatio: 1.777778,
+        aspectRatio: 1.777778, // 16:9
     };
 
     useEffect(() => {
-        const newScanner = new Html5Qrcode('reader');
+        const newScanner = new Html5Qrcode('scanner');
         setScanner(newScanner);
     }, []);
 
     function closeScanner() {
-        scanner
-            .stop()
-            .then((ignore) => {
-                // QR Code scanning is stopped.
-            })
-            .catch((err) => {
-                // Stop failed, handle it.
-            });
-        setIsScannerOn(false);
+        if (scanner) {
+            scanner
+                .stop()
+                .then(() => {
+                    console.log('Scanner stopped. ');
+                })
+                .catch((err) => {
+                    console.warn(err);
+                });
+            setIsScannerOn(false);
+        }
     }
 
     const qrCodeSuccessCallback = (result) => {
-        // handle success
-        playSound(blip);
-
-        resetForm();
-        setIsbnError('');
-        setRemoteSuccess(false);
-        setISBN(result);
-        isValidISBN(result) && getBookData(result);
-        closeScanner();
+        try {
+            if (isValidISBN(result)) {
+                playSound(scanSound);
+                resetForm();
+                setIsbnError('');
+                setRemoteSuccess(false);
+                setISBN(result);
+                getBookData(result);
+                closeScanner();
+            }
+        } catch (error) {
+            console.error('Error in qrCodeSuccessCallback:', error);
+        }
     };
 
     function handleStartScanner() {
-        if (!isScannerOn) {
-            scanner.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
-            setIsScannerOn(true);
-        } else {
-            closeScanner();
+        if (!cameraPermission) {
+        }
+
+        try {
+            if (scanner && !isScannerOn) {
+                requestCameraPermission();
+                !cameraPermission && requestCameraPermission();
+                scanner.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
+                setIsScannerOn(true);
+            } else {
+                closeScanner();
+            }
+        } catch (error) {
+            console.error('Scanner error:', error);
         }
     }
 
@@ -206,6 +241,21 @@ function AddBookForm() {
             blurbError = false;
         }
 
+        function scrollToFirstError() {
+            const firstErrorElement = document.querySelector('.input-error');
+
+            // Offset sticky nav
+            if (firstErrorElement) {
+                const navHeight = document.querySelector('.nav').offsetHeight;
+                const scrollPosition = firstErrorElement.offsetTop - navHeight;
+
+                window.scrollTo({
+                    top: scrollPosition,
+                    behavior: 'smooth',
+                });
+            }
+        }
+
         // If no errors...
         if (
             !titleError &&
@@ -218,7 +268,8 @@ function AddBookForm() {
         ) {
             handleSubmit(e);
         } else {
-            scrollToTop();
+            // scrollToTop();
+            scrollToFirstError();
         }
     }
 
@@ -307,6 +358,8 @@ function AddBookForm() {
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
 
             if (google.ok) {
+                playSound(successSound);
+
                 setRemoteSuccess(true);
 
                 // ✅ GOODREADS
@@ -333,6 +386,7 @@ function AddBookForm() {
                     : setBlurb(blurb);
             }
         } catch (error) {
+            playSound(notFoundSound);
             setIsbnError('No book found');
         }
     }
@@ -412,46 +466,89 @@ function AddBookForm() {
                     <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
                         <h1>Add New Book</h1>
 
-                        <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
+                        <div id='scanner'></div>
+                        {/* <span className='button' onClick={handleStartScanner}>
+                            Start scanner
+                        </span> */}
+                        <label htmlFor='isbn' className='sr-only'>
                             Search by ISBN
                         </label>
-
-                        <div id='reader'></div>
-
-                        <span className='button' onClick={handleStartScanner}>
-                            Start scanner
-                        </span>
-
                         <div
-                            className={`pb-2 rounded-md bg-slate-300
-                            ${
-                                isValidISBN(isbn) &&
-                                !remoteSuccess &&
-                                !isbnError &&
-                                'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
-                            }
-                            ${remoteSuccess && 'success-isbn border-none'}
-                            ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
-                            
-                            `}
-                        >
-                            <input
-                                type='text'
-                                id='isbn'
-                                className='form-text !rounded-b-none'
-                                value={isbn}
-                                onInput={changeISBN}
-                            ></input>
+                            className={`pb-2 rounded-md bg-slate-300 overflow-hidden
+                        ${
+                            isValidISBN(isbn) &&
+                            !remoteSuccess &&
+                            !isbnError &&
+                            'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
+                        }
+                        ${remoteSuccess && 'success-isbn border-none'}
+                        ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
 
-                            <div className='px-2'>
-                                {!isValidISBN(isbn) &&
-                                    !remoteSuccess &&
-                                    !isbnError &&
-                                    'ISBN is 10-13 characters'}
+                        `}
+                        >
+                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600   border-slate-300'>
+                                <input
+                                    type='text'
+                                    id='isbn'
+                                    className='w-full p-5 text-xl focus:outline-none h-full align-middle'
+                                    value={isbn}
+                                    onInput={changeISBN}
+                                    placeholder='Search by ISBN'
+                                    aria-placeholder='Search by ISBN'
+                                ></input>
+                                <div
+                                    role='button'
+                                    tabIndex={0}
+                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5   text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
+                                    onClick={handleStartScanner}
+                                    title='Start ISBN barcode scanner'
+                                    aria-label='Start ISBN barcode scanner'
+                                >
+                                    <svg
+                                        xmlns='http://www.w3.org/2000/svg'
+                                        height='35'
+                                        viewBox='0 -960 960 960'
+                                        width='35'
+                                        fill='currentColor'
+                                        className='align-middle'
+                                    >
+                                        <path d='M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z' />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div className='pb-0 py-2 flex flex-row  text-slate-600 gap-3 items-center justify-center'>
+                                {!isValidISBN(isbn) && !remoteSuccess && !isbnError && (
+                                    <>
+                                        <div className='w-8 sm:w-0 px-3'>
+                                            <svg
+                                                xmlns='http://www.w3.org/2000/svg'
+                                                height='18'
+                                                viewBox='0 -960 960 960'
+                                                width='18'
+                                                fill='currentColor'
+                                                className='align-middle'
+                                            >
+                                                <path d='M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z' />
+                                            </svg>
+                                        </div>
+                                        <p className='text-xs align-middle'>
+                                            <a
+                                                href='https://en.wikipedia.org/wiki/ISBN'
+                                                target='_blank'
+                                                rel='noreferrer'
+                                                className='font-bold underline decoration-dotted decoration-slate-400 decoration-[1px] underline-offset-2'
+                                            >
+                                                ISBN
+                                            </a>{' '}
+                                            is either 10 or 13 digits, usually printed alongside a
+                                            barcode on the back of books
+                                        </p>
+                                    </>
+                                )}
                                 {isbnError &&
                                     !title &&
                                     displayErrorMessage(
-                                        'Oops, book not found. Please fill in the form below manually.'
+                                        "Sorry, we couldn't find this book. Please fill in the form below manually."
                                     )}
                             </div>
                             {goodreadsLink && (
@@ -459,12 +556,13 @@ function AddBookForm() {
                                     href={goodreadsLink}
                                     target='_blank'
                                     rel='noreferrer'
-                                    className='px-2 text-xs text-green-800'
+                                    className='mx-2 text-xs text-green-800'
                                 >
                                     Check "{title}" on <span className='font-bold'>Goodreads</span>
                                 </a>
                             )}
                         </div>
+                        <hr className='border-zinc-300 my-4' />
                         <div>
                             <label htmlFor='title'>
                                 Title <span className='text-rose-700'>*</span>
@@ -500,7 +598,7 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='genreId'>
-                                Genre <span className='text-rose-700'>*</span>
+                                Gategory <span className='text-rose-700'>*</span>
                             </label>
                             <GenresSelector
                                 onGenreChangeID={changeGenre}
@@ -512,7 +610,7 @@ function AddBookForm() {
                         </div>
 
                         <div>
-                            <label htmlFor='pageCount'>Page count</label>
+                            <label htmlFor='pageCount'>Pages</label>
                             <br />
                             <input
                                 type='number'
