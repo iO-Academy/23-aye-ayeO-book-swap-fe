@@ -234,7 +234,7 @@ function AddBookForm() {
         }
 
         // blurb
-        if (blurb && blurb.length > 255) {
+        if (blurb && blurb.length > 10000) {
             setBlurbError(true);
         } else {
             setBlurbError(false);
@@ -329,6 +329,10 @@ function AddBookForm() {
 
             if (cover) {
                 cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
+            }
+
+            if (cover === false) {
+                cover = '';
             }
 
             // 🟨 BLURB
@@ -553,7 +557,7 @@ function AddBookForm() {
                             </div>
                             {goodreadsLink && (
                                 <a
-                                    href={goodreadsLink}
+                                    href={`https://goodreads.com/book/show/${goodreadsLink}`}
                                     target='_blank'
                                     rel='noreferrer'
                                     className='mx-2 text-xs text-green-800'
@@ -667,12 +671,13 @@ function AddBookForm() {
                             <textarea
                                 id='blurb'
                                 rows='5'
-                                maxLength='255'
+                                maxLength='10000'
                                 value={blurb}
                                 onChange={changeBlurb}
                                 className={blurbError ? 'input-error form-text' : 'form-text'}
                             ></textarea>
-                            {blurbError && displayErrorMessage('Must be less than 255 characters')}
+                            {blurbError &&
+                                displayErrorMessage('Must be less than 10,000 characters')}
                         </div>
                         <div id='error-container' className='error'></div>
                         <input type='submit' value='Add Book' className='button py-3' />
