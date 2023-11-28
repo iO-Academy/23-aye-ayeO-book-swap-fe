@@ -13,7 +13,7 @@ function GenresSelector({
         fetch(`${process.env.REACT_APP_API_URI}/genres`)
             .then((res) => res.json())
             .then((genres) => {
-                setGenres(genres.data);
+                genres.data && setGenres(genres.data);
             });
     }, []);
 
