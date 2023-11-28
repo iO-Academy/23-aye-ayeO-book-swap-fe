@@ -101,3 +101,15 @@ export function playSound(sound) {
     const successSound = new Audio(sound);
     successSound.play();
 }
+
+export function renderWithLineBreaks(text) {
+    const lines = text.split('\n');
+
+    return lines.map((line, index) => (
+        <React.Fragment key={index}>
+            {line}
+            {/* Add <br> except for the last line */}
+            {index < lines.length - 1 && <br />}
+        </React.Fragment>
+    ));
+}
