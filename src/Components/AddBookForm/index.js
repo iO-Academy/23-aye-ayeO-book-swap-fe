@@ -359,6 +359,7 @@ function AddBookForm() {
             const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
             const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
             const descriptionGoogle = googleRes.items[0].volumeInfo.description;
+            const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
 
             if (google.ok) {
@@ -382,7 +383,7 @@ function AddBookForm() {
                 yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
 
                 // ✅ COVER
-                setImageUrl(cover);
+                cover ? setImageUrl(cover) : setImageUrl(coverGoogle);
 
                 // ✅ BLURB
                 descriptionGoogle && descriptionGoogle.length > 0
