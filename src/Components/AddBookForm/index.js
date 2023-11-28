@@ -356,7 +356,7 @@ function AddBookForm() {
             const googleRes = await google.json();
 
             const titleGoogle = googleRes.items[0].volumeInfo.title;
-            const authorGoogle = googleRes.items[0].volumeInfo.authors[0];
+            const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
             const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
             const descriptionGoogle = googleRes.items[0].volumeInfo.description;
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
