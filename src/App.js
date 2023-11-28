@@ -10,6 +10,7 @@ import AlertBubble from './Components/AlertBubble';
 import { Context } from './Context';
 import { useEffect, useState } from 'react';
 import SplashScreen from './Components/SplashScreen';
+import Footer from './Components/Footer';
 
 function App() {
     const [alert, setAlert] = useState();
@@ -70,6 +71,7 @@ function App() {
                             </Routes>
                             <AlertBubble message={alert} />
                         </Context.Provider>
+                        <Footer />
                     </>
                 )}
             </BrowserRouter>
