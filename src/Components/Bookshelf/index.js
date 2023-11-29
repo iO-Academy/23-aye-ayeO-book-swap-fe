@@ -38,6 +38,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     };
 
     function showFilter() {
+        setScrollPosition(0);
         isFilterVisible === '-translate-y-full'
             ? setIsFilterVisible('translate-y-0')
             : setIsFilterVisible('-translate-y-full');
@@ -49,7 +50,16 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 onClick={showFilter}
                 className='sm:hidden text-center bg-rose-100 py-4 cursor-pointer text-zinc-600 font-semibold text-sm flex justify-center items-center gap-1 z-20 relative'
             >
-                <span className='material-symbols-outlined'>filter_list</span>
+                <svg
+                    onClick={showFilter}
+                    xmlns='http://www.w3.org/2000/svg'
+                    height='24'
+                    viewBox='0 -960 960 960'
+                    width='24'
+                    fill='currentColor'
+                >
+                    <path d='M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z' />
+                </svg>
                 {' Filter'}
             </div>
             <div

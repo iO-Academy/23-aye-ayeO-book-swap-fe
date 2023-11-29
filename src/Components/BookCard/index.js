@@ -1,6 +1,6 @@
 import './bookcard.css';
 import { Link } from 'react-router-dom';
-import ImgLoader from '../ImgLoader';
+import LazyImgLoader from '../LazyImgLoader';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
     return (
@@ -21,7 +21,11 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                 overflow-hidden
                 '
                 >
-                    <ImgLoader src={bookCover} alt={title + ' cover'} dimensions='w-full h-full' />
+                    <LazyImgLoader
+                        src={bookCover}
+                        alt={title + ' cover'}
+                        dimensions='w-full h-full'
+                    />
                 </div>
                 <div className='flex flex-col justify-center sm:flex-none sm:p-5 p-5 w-2/3 sm:w-full'>
                     <h2 className='text-xl pb-3 pt-0 '>{title}</h2>

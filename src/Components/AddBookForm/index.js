@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
+import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
 import {
     displayErrorMessage,
@@ -188,7 +189,7 @@ function AddBookForm() {
         let pageCount = '';
         let year = '';
 
-        // OPEN LIBRARY
+        // OPEN LIBRARY API
         try {
             openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
             book = await openLibraryRes.json();
@@ -199,23 +200,23 @@ function AddBookForm() {
             authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
             author = await authorRes.json();
 
-            // ****************** GOODREADS
+            // 🟨 GOODREADS
             if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
                 goodreads = book.identifiers.goodreads[0];
             }
 
-            // ****************** AUTHOR
+            // 🟨 AUTHOR
             author && author.name && (author = author.name.trim());
 
-            // ****************** PAGES
+            // 🟨 PAGES
             book.pagination && (pageCount = book.pagination);
             book.number_of_pages && (pageCount = book.number_of_pages);
 
-            // ****************** YEAR
+            // 🟨 YEAR
             work.first_publish_date && (year = extractYear(work.first_publish_date));
             book.publish_date && (year = extractYear(book.publish_date));
 
-            // ****************** COVER
+            // 🟨 COVER
             const bookCovers = book.covers || [];
             const workCovers = work.covers || [];
 
@@ -227,7 +228,7 @@ function AddBookForm() {
                 cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
             }
 
-            // ****************** BLURB
+            // 🟨 BLURB
             if (work.description && work.description.value) {
                 blurb = limitString(removeQuotes(work.description.value), 255);
             } else if (work.description) {
@@ -237,9 +238,10 @@ function AddBookForm() {
             }
         } catch (error) {
             // Log errors
+            // Some books missing in OL, so failure here is disregarded for GUI indication of success
         }
 
-        // GOOGLE
+        // GOOGLE BOOKS API
         try {
             const google = await fetch(
                 `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
@@ -351,162 +353,170 @@ function AddBookForm() {
     }
 
     return (
-        <div className=' sm:pt-24'>
-            <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
-                <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
-                    <h1>Add New Book</h1>
-                    <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
-                        Search by ISBN
-                    </label>
-                    <div
-                        className={`pb-2   rounded-b      bg-violet-100
-                    ${
-                        isValidISBN(isbn) &&
-                        !remoteSuccess &&
-                        !isbnError &&
-                        'bg-gradient-to-r from-orange-100 via-violet-300 to-orange-100 background-animate border-none rounded-t'
-                    }
-                    ${remoteSuccess && 'success-isbn border-none'}
-                    ${isbnError ? 'bg-rose-200 border-rose-300' : 'border-zinc-300'}`}
-                    >
-                        <input
-                            type='text'
-                            id='isbn'
-                            className='form-text'
-                            value={isbn}
-                            onChange={changeISBN}
-                        ></input>
-                        {isbnError &&
-                            !title &&
-                            displayErrorMessage(
-                                'Oops, book not found. Please fill in the form below manually.'
+        <>
+            <ScrollToTop />
+            <div className=' sm:pt-24'>
+                <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
+                    <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
+                        <h1>Add New Book</h1>
+                        <label htmlFor='isbn' className='text-center font-semibold text-zinc-600'>
+                            Search by ISBN
+                        </label>
+                        <div
+                            className={`pb-2 rounded-md bg-slate-300
+                            ${
+                                isValidISBN(isbn) &&
+                                !remoteSuccess &&
+                                !isbnError &&
+                                'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
+                            }
+                            ${remoteSuccess && 'success-isbn border-none'}
+                            ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
+                            
+                            `}
+                        >
+                            <input
+                                type='text'
+                                id='isbn'
+                                className='form-text !rounded-b-none'
+                                value={isbn}
+                                onChange={changeISBN}
+                            ></input>
+                            <div className='px-2'>
+                                {isbnError &&
+                                    !title &&
+                                    displayErrorMessage(
+                                        'Oops, book not found. Please fill in the form below manually.'
+                                    )}
+                            </div>
+                            {goodreadsLink && (
+                                <a
+                                    href={goodreadsLink}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className='px-2 text-xs text-green-800'
+                                >
+                                    Check "{title}" on <span className='font-bold'>Goodreads</span>
+                                </a>
                             )}
-                        {goodreadsLink && (
-                            <a
-                                href={goodreadsLink}
-                                target='_blank'
-                                rel='noreferrer'
-                                className=' text-xs text-green-800 px-2'
-                            >
-                                Check "{title}" on <span className='font-bold'>Goodreads</span>
-                            </a>
-                        )}
-                    </div>
-                    <div>
-                        <label htmlFor='title'>
-                            Title <span className='text-rose-700'>*</span>
-                        </label>
-                        <br />
-                        <input
-                            type='text'
-                            id='title'
-                            name='title'
-                            value={title}
-                            onChange={changeTitle}
-                            className={titleError ? 'input-error form-text' : 'form-text'}
-                        />
-                        {titleError && displayErrorMessage('Title is required')}
-                    </div>
-
-                    <div>
-                        <label htmlFor='author'>
-                            Author <span className='text-rose-700'>*</span>
-                        </label>
-                        <br />
-
-                        <input
-                            type='text'
-                            id='author'
-                            name='author'
-                            value={author}
-                            onChange={changeAuthor}
-                            className={authorError ? 'input-error form-text' : ' form-text'}
-                        />
-                        {authorError && displayErrorMessage('Author is required')}
-                    </div>
-
-                    <div>
-                        <label htmlFor='genreId'>
-                            Genre <span className='text-rose-700'>*</span>
-                        </label>
-                        <GenresSelector
-                            onGenreChangeID={changeGenre}
-                            className={genreError ? 'select-error' : null}
-                            defaultString='Select'
-                            isDisabled={true}
-                        />
-                        {genreError && displayErrorMessage('Genre selection is required')}
-                    </div>
-
-                    <div>
-                        <label htmlFor='pageCount'>Page count</label>
-                        <br />
-                        <input
-                            type='number'
-                            id='pageCount'
-                            name='pageCount'
-                            value={pageCount}
-                            onChange={changePageCount}
-                            className={pageCountError ? 'input-error form-text' : 'form-text'}
-                        />
-                        {pageCountError && displayErrorMessage('Page count has to be more than 0')}
-                    </div>
-
-                    <div>
-                        <label htmlFor='year'>Year</label>
-                        <br />
-                        <input
-                            type='text'
-                            id='year'
-                            name='year'
-                            value={year}
-                            onChange={changeYear}
-                            className={yearError ? 'input-error form-text' : ' form-text'}
-                        />
-                        {yearError && displayErrorMessage('Incorrect year format')}
-                    </div>
-                    {imageUrl && (
-                        <div>
-                            <img
-                                src={imageUrl}
-                                alt={`${title} cover`}
-                                width='200px'
-                                className='mx-auto rounded-md'
-                            ></img>
                         </div>
-                    )}
-                    <div>
-                        <label htmlFor='image'>Image URL</label>
-                        <br />
-                        <input
-                            type='text'
-                            id='image'
-                            name='image'
-                            value={imageUrl}
-                            onChange={changeImageUrl}
-                            className={imageUrlError ? 'input-error form-text' : 'form-text'}
-                        />
-                        {imageUrlError && displayErrorMessage('Invalid URL')}
-                    </div>
+                        <div>
+                            <label htmlFor='title'>
+                                Title <span className='text-rose-700'>*</span>
+                            </label>
+                            <br />
+                            <input
+                                type='text'
+                                id='title'
+                                name='title'
+                                value={title}
+                                onChange={changeTitle}
+                                className={titleError ? 'input-error form-text' : 'form-text'}
+                            />
+                            {titleError && displayErrorMessage('Title is required')}
+                        </div>
 
-                    <div>
-                        <label htmlFor='blurb'>Blurb</label>
-                        <br />
-                        <textarea
-                            id='blurb'
-                            rows='5'
-                            maxLength='255'
-                            value={blurb}
-                            onChange={changeBlurb}
-                            className={blurbError ? 'input-error form-text' : 'form-text'}
-                        ></textarea>
-                        {blurbError && displayErrorMessage('Must be less than 255 characters')}
-                    </div>
-                    <div id='error-container' className='error'></div>
-                    <input type='submit' value='Add Book' className='button py-3' />
-                </form>
+                        <div>
+                            <label htmlFor='author'>
+                                Author <span className='text-rose-700'>*</span>
+                            </label>
+                            <br />
+
+                            <input
+                                type='text'
+                                id='author'
+                                name='author'
+                                value={author}
+                                onChange={changeAuthor}
+                                className={authorError ? 'input-error form-text' : ' form-text'}
+                            />
+                            {authorError && displayErrorMessage('Author is required')}
+                        </div>
+
+                        <div>
+                            <label htmlFor='genreId'>
+                                Genre <span className='text-rose-700'>*</span>
+                            </label>
+                            <GenresSelector
+                                onGenreChangeID={changeGenre}
+                                className={genreError ? 'select-error' : null}
+                                defaultString='Select'
+                                isDisabled={true}
+                            />
+                            {genreError && displayErrorMessage('Genre selection is required')}
+                        </div>
+
+                        <div>
+                            <label htmlFor='pageCount'>Page count</label>
+                            <br />
+                            <input
+                                type='number'
+                                id='pageCount'
+                                name='pageCount'
+                                value={pageCount}
+                                onChange={changePageCount}
+                                className={pageCountError ? 'input-error form-text' : 'form-text'}
+                            />
+                            {pageCountError &&
+                                displayErrorMessage('Page count has to be more than 0')}
+                        </div>
+
+                        <div>
+                            <label htmlFor='year'>Year</label>
+                            <br />
+                            <input
+                                type='text'
+                                id='year'
+                                name='year'
+                                value={year}
+                                onChange={changeYear}
+                                className={yearError ? 'input-error form-text' : ' form-text'}
+                            />
+                            {yearError && displayErrorMessage('Incorrect year format')}
+                        </div>
+                        {imageUrl && (
+                            <div>
+                                <img
+                                    src={imageUrl}
+                                    alt={`${title} cover`}
+                                    width='200px'
+                                    className='mx-auto rounded-md'
+                                ></img>
+                            </div>
+                        )}
+                        <div>
+                            <label htmlFor='image'>Image URL</label>
+                            <br />
+                            <input
+                                type='text'
+                                id='image'
+                                name='image'
+                                value={imageUrl}
+                                onChange={changeImageUrl}
+                                className={imageUrlError ? 'input-error form-text' : 'form-text'}
+                            />
+                            {imageUrlError && displayErrorMessage('Invalid URL')}
+                        </div>
+
+                        <div>
+                            <label htmlFor='blurb'>Blurb</label>
+                            <br />
+                            <textarea
+                                id='blurb'
+                                rows='5'
+                                maxLength='255'
+                                value={blurb}
+                                onChange={changeBlurb}
+                                className={blurbError ? 'input-error form-text' : 'form-text'}
+                            ></textarea>
+                            {blurbError && displayErrorMessage('Must be less than 255 characters')}
+                        </div>
+                        <div id='error-container' className='error'></div>
+                        <input type='submit' value='Add Book' className='button py-3' />
+                    </form>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

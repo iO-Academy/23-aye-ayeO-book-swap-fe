@@ -4,9 +4,10 @@ import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
 import './bookdetails.css';
 import { useState } from 'react';
-import ImgLoader from '../../ImgLoader';
 import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
+import LazyImgLoader from '../../LazyImgLoader';
+import Spinner from '../../Spinner';
 
 function BookDetails({
     image,
@@ -45,7 +46,7 @@ function BookDetails({
                 <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
                     <div className='w-[400px] flex justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
-                            <ImgLoader
+                            <LazyImgLoader
                                 src={image}
                                 alt={'Cover of ' + title}
                                 dimensions='
@@ -62,19 +63,21 @@ function BookDetails({
                                 rounded='rounded-md'
                             />
                             <div className='w-full mx-auto mt-3 text-sm'>
-                                {claimed && (
-                                    <p className='text-xs text-zinc-600'>
-                                        Claimed by: <span className='italic'>{claimed}</span>
-                                    </p>
-                                )}
-                                {claimed ? (
-                                    <button
-                                        data-element='return'
-                                        onClick={toggleReturn}
-                                        className='underline text-center text-md text-rose-400 font-bold'
-                                    >
-                                        Return Book
-                                    </button>
+                                {claimed === null ? (
+                                    <Spinner />
+                                ) : claimed ? (
+                                    <>
+                                        <p className='text-xs text-zinc-600'>
+                                            Claimed by: <span className='italic'>{claimed}</span>
+                                        </p>
+                                        <button
+                                            data-element='return'
+                                            onClick={toggleReturn}
+                                            className='underline text-center text-md text-rose-400 font-bold'
+                                        >
+                                            Return Book
+                                        </button>
+                                    </>
                                 ) : (
                                     <button
                                         data-element='claim'
@@ -112,7 +115,7 @@ function BookDetails({
                         <div className='flex gap-2 items-baseline m-2 self-center lg:self-start pb-4 lg:pb-0'>
                             <p className='text-2xl'>{avgScore.toFixed(1)}</p>
                             <StarRating rating={avgScore} />
-                            <a href='#reviews' className='underline text-zinc-500'>
+                            <a href='#reviews' className='underline text-zinc-600'>
                                 {reviews?.length} reviews
                             </a>
                         </div>
@@ -120,7 +123,6 @@ function BookDetails({
                         <br />
                         <p>Genre: {genre.name}</p>
                         <p>{year}</p>
-
                         {pageCount && <p>{pageCount} pages</p>}
                         <div className='mt-6 border-zinc-300'>
                             <h2

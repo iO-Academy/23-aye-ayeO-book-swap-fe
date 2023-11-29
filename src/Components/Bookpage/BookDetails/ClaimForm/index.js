@@ -96,9 +96,18 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
             <div className='form-container w-[500px] relative'>
                 <button
                     onClick={backdropClick}
-                    className='absolute top-5 right-5 text-3xl text-zinc-600 material-symbols-outlined'
+                    className='absolute top-5 right-5 text-3xl text-zinc-600'
                 >
-                    close
+                    <svg
+                        onClick={backdropClick}
+                        xmlns='http://www.w3.org/2000/svg'
+                        height='30'
+                        viewBox='0 -960 960 960'
+                        width='30'
+                        fill='currentColor'
+                    >
+                        <path d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z' />
+                    </svg>
                 </button>
                 <form onSubmit={validateForm}>
                     <h3>Claim "{bookTitle}"?</h3>

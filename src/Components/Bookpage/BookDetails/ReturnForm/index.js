@@ -84,7 +84,16 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
                     onClick={backdropClick}
                     className='absolute top-5 right-5 text-3xl text-zinc-600 material-symbols-outlined'
                 >
-                    close
+                    <svg
+                        onClick={backdropClick}
+                        xmlns='http://www.w3.org/2000/svg'
+                        height='30'
+                        viewBox='0 -960 960 960'
+                        width='30'
+                        fill='currentColor'
+                    >
+                        <path d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z' />
+                    </svg>
                 </button>
                 <form className='claim-form'>
                     <h3>Return "{bookTitle}"?</h3>

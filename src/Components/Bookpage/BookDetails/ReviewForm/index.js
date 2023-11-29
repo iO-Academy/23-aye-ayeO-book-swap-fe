@@ -131,6 +131,7 @@ function ReviewForm({ refreshReviewsList }) {
                         <legend>Rating</legend>
 
                         <div
+                            role='radiogroup'
                             id='rate'
                             onChange={changeRating}
                             className={

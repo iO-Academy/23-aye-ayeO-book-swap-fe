@@ -30,7 +30,7 @@ function Bookpage() {
                 setGenre(book.data.genre);
                 setBlurb(book.data.blurb);
                 setReviews(book.data.reviews);
-                setClaimed(book.data.claimed_by_name);
+                setClaimed(book.data.claimed_by_name || '');
             } else {
                 throw new Error(book.message);
             }
