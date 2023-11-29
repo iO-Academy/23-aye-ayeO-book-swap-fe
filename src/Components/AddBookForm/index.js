@@ -491,6 +491,9 @@ function AddBookForm() {
         setImageUrl('');
         setBlurb('');
         setIsbnError('');
+        setISBN10('');
+        setISBN13('');
+        setLanguage('');
         document.getElementById('error-container').innerHTML = '';
     }
 
