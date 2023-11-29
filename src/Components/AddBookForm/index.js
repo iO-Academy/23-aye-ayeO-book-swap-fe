@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
@@ -16,14 +16,17 @@ import {
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
-import successSound from '../../sounds/success.mp3';
-import notFoundSound from '../../sounds/blip.mp3';
+// import successSound from '../../sounds/success.mp3';
+// import notFoundSound from '../../sounds/blip.mp3';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
+    const [isbn10, setISBN10] = useState('');
+    const [isbn13, setISBN13] = useState('');
+    const [language, setLanguage] = useState('');
 
     const [cameraPermission, setCameraPermission] = useState(null);
-    const [scanner, setScanner] = useState();
+    const [scanner, setScanner] = useState('');
     const [isScannerOn, setIsScannerOn] = useState(false);
 
     const requestCameraPermission = async () => {
@@ -109,6 +112,7 @@ function AddBookForm() {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [genre, setGenre] = useState('');
+    const [genreId, setGenreId] = useState('');
     const [pageCount, setPageCount] = useState('');
     const [year, setYear] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -130,6 +134,8 @@ function AddBookForm() {
     function changeISBN(e) {
         resetForm();
         setISBN(e.target.value);
+        setISBN10('');
+        setISBN13('');
         setIsbnError('');
         setRemoteSuccess(false);
         const isbn = e.target.value;
@@ -201,7 +207,7 @@ function AddBookForm() {
         }
 
         // genre
-        if (genre <= 0 || isNaN(genre)) {
+        if (genre <= 0) {
             setGenreError(true);
             setGenre(0);
         } else {
@@ -337,11 +343,11 @@ function AddBookForm() {
 
             // 🟨 BLURB
             if (work.description && work.description.value) {
-                blurb = limitString(removeQuotes(work.description.value), 255);
+                blurb = limitString(removeQuotes(work.description.value), 10000);
             } else if (work.description) {
-                blurb = limitString(removeQuotes(work.description), 255);
+                blurb = limitString(removeQuotes(work.description), 10000);
             } else if (book.description && book.description.value) {
-                blurb = limitString(removeQuotes(book.description.value), 255);
+                blurb = limitString(removeQuotes(book.description.value), 10000);
             }
         } catch (error) {
             // Log errors
@@ -356,14 +362,30 @@ function AddBookForm() {
             const googleRes = await google.json();
 
             const titleGoogle = googleRes.items[0].volumeInfo.title;
+            const isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
+            const isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
             const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
+
+            const categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
+            const languageGoogle = googleRes.items[0].volumeInfo.language;
             const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
             const descriptionGoogle = googleRes.items[0].volumeInfo.description;
             const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
+            const previewGoogle = googleRes.items[0].accessInfo.embeddable;
+
+            // Working values
+
+            setISBN10(isbn10Google);
+            setISBN13(isbn13Google);
+            setLanguage(languageGoogle);
+
+            console.log(languageGoogle);
+            console.log(categoryGoogle);
+            console.log('Preview: ' + previewGoogle);
 
             if (google.ok) {
-                playSound(successSound);
+                // playSound(successSound);
 
                 setRemoteSuccess(true);
 
@@ -375,6 +397,10 @@ function AddBookForm() {
 
                 // ✅ AUTHOR
                 authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
+
+                // ✅ CATEGORY
+
+                categoryGoogle && setGenre(categoryGoogle);
 
                 // ✅ PAGES
                 pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
@@ -389,9 +415,11 @@ function AddBookForm() {
                 descriptionGoogle && descriptionGoogle.length > 0
                     ? setBlurb(descriptionGoogle)
                     : setBlurb(blurb);
+
+                // ✅ LANGUAGE
             }
         } catch (error) {
-            playSound(notFoundSound);
+            // playSound(notFoundSound);
             setIsbnError('No book found');
         }
     }
@@ -403,7 +431,10 @@ function AddBookForm() {
             // Required values
             requestBody.title = title;
             requestBody.author = author;
-            requestBody.genre_id = genre;
+            requestBody.genre_id = genreId;
+            requestBody.isbn10 = isbn10;
+            requestBody.isbn13 = isbn13;
+            requestBody.language = language;
 
             // Optional values
             if (blurb) {
@@ -456,11 +487,13 @@ function AddBookForm() {
         setTitle('');
         setAuthor('');
         setGenre('');
+        setGenreId('');
         setYear('');
         setPageCount('');
         setImageUrl('');
         setBlurb('');
         setIsbnError('');
+        document.getElementById('error-container').innerHTML = '';
     }
 
     return (
@@ -568,6 +601,12 @@ function AddBookForm() {
                             )}
                         </div>
                         <hr className='border-zinc-300 my-4' />
+                        {isbn13 && (
+                            <p className='text-sm'>
+                                {`ISBN13: ${isbn13}`}{' '}
+                                <span className='text-zinc-500'>{`(ISBN10: ${isbn10})`}</span>
+                            </p>
+                        )}
                         <div>
                             <label htmlFor='title'>
                                 Title <span className='text-rose-700'>*</span>
@@ -603,14 +642,32 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='genreId'>
-                                Gategory <span className='text-rose-700'>*</span>
+                                Category <span className='text-rose-700'>*</span>
                             </label>
-                            <GenresSelector
-                                onGenreChangeID={changeGenre}
-                                className={genreError ? 'select-error' : null}
-                                defaultString='Select'
-                                isDisabled={true}
-                            />
+
+                            <div className='flex items-start sm:items-center flex-col-reverse sm:flex-row gap-1'>
+                                <GenresSelector
+                                    onGenreChangeID={changeGenre}
+                                    className={genreError ? 'select-error' : null}
+                                    defaultString='Select'
+                                    isDisabled={true}
+                                    selectedGenre={genre}
+                                    setGenreId={setGenreId}
+                                />
+                                <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
+                                    <svg
+                                        xmlns='http://www.w3.org/2000/svg'
+                                        height='30'
+                                        viewBox='0 -960 960 960'
+                                        width='30'
+                                        fill='currentColor'
+                                        className='align-middle'
+                                    >
+                                        <path d='M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z' />
+                                    </svg>
+                                    <span className='tooltiptext'>BISAC Subject Headings</span>
+                                </div>
+                            </div>
                             {genreError && displayErrorMessage('Genre selection is required')}
                         </div>
 
