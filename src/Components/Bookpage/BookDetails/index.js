@@ -8,6 +8,7 @@ import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
+import { renderWithLineBreaks } from '../../../utilities';
 
 function BookDetails({
     image,
@@ -119,7 +120,7 @@ function BookDetails({
                                 {reviews?.length} reviews
                             </a>
                         </div>
-                        <p>{blurb}</p>
+                        <p>{renderWithLineBreaks(blurb)}</p>
                         <br />
                         <p>Genre: {genre.name}</p>
                         <p>{year}</p>

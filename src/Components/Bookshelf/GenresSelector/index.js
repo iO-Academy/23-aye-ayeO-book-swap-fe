@@ -6,6 +6,8 @@ function GenresSelector({
     label = null,
     defaultString = 'All',
     isDisabled = false,
+    selectedGenre,
+    setGenreId,
 }) {
     const [genres, setGenres] = useState([]);
 
@@ -13,13 +15,22 @@ function GenresSelector({
         fetch(`${process.env.REACT_APP_API_URI}/genres`)
             .then((res) => res.json())
             .then((genres) => {
-                setGenres(genres.data);
+                genres.data && setGenres(genres.data);
             });
     }, []);
 
     function onGenreChange(genreId) {
         onGenreChangeID(genreId);
+        setGenreId(genreId); // Move this inside onGenreChangeID if needed
     }
+
+    // Add this effect to update the genre ID when selectedGenre changes
+    useEffect(() => {
+        const selectedGenreId = genres.find((genre) => genre.name === selectedGenre)?.id;
+        if (selectedGenreId !== undefined) {
+            setGenreId(selectedGenreId);
+        }
+    }, [selectedGenre, genres, setGenreId]);
 
     return (
         <div className='flex items-center gap-3 flex-row pr-3 text-slate-600'>
@@ -28,7 +39,9 @@ function GenresSelector({
                 id='genreId'
                 className={`rounded-md p-2 text-lg bg-zinc-50 text-slate-600 ${className} focus:outline-none`}
                 onChange={(e) => onGenreChange(e.target.value)}
-                defaultValue='0'
+                value={
+                    selectedGenre ? genres.find((genre) => genre.name === selectedGenre)?.id : '0'
+                }
             >
                 <option key='0' value='0' disabled={isDisabled}>
                     {defaultString}
