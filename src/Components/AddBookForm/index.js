@@ -80,7 +80,7 @@ function AddBookForm() {
                 setIsbnError('');
                 setRemoteSuccess(false);
                 setISBN(result);
-                getBookData(result);
+                checkIfIsbnExists(result);
                 closeScanner();
             }
         } catch (error) {
@@ -139,7 +139,7 @@ function AddBookForm() {
         setIsbnError('');
         setRemoteSuccess(false);
         const isbn = e.target.value;
-        isValidISBN(isbn) && getBookData(isbn);
+        isValidISBN(isbn) && checkIfIsbnExists(isbn);
     }
 
     function changeTitle(e) {
@@ -207,7 +207,7 @@ function AddBookForm() {
         }
 
         // genre
-        if (genre <= 0) {
+        if (genreId <= 0) {
             setGenreError(true);
             setGenre(0);
         } else {
@@ -276,6 +276,23 @@ function AddBookForm() {
         } else {
             // scrollToTop();
             scrollToFirstError();
+        }
+    }
+
+    async function checkIfIsbnExists(isbn) {
+        // Check if ISBN exists in Swapp DB
+
+        const cleanIsbn = isbn.replace(/[- ]/g, '');
+
+        try {
+            const swappRes = await fetch(
+                `${process.env.REACT_APP_API_URI}/books/check-isbn/${cleanIsbn}`
+            );
+            const isbnCheck = await swappRes.json();
+
+            isbnCheck.exists ? setIsbnError('Book already exists') : getBookData(isbn);
+        } catch (error) {
+            //error
         }
     }
 
@@ -418,7 +435,9 @@ function AddBookForm() {
             }
         } catch (error) {
             // playSound(notFoundSound);
-            setIsbnError('No book found');
+            setIsbnError(
+                "Sorry, we couldn't find this book. Please fill in the form below manually."
+            );
         }
     }
 
@@ -474,12 +493,14 @@ function AddBookForm() {
                 throw new Error(data.message);
             }
         } catch (error) {
-            // Log errors
+            console.log(error.message);
         }
     }
 
     function resetForm() {
         setISBN('');
+        setISBN10('');
+        setISBN13('');
         setGoodreadsLink('');
         setRemoteSuccess(false);
         setTitle('');
@@ -491,9 +512,6 @@ function AddBookForm() {
         setImageUrl('');
         setBlurb('');
         setIsbnError('');
-        setISBN10('');
-        setISBN13('');
-        setLanguage('');
         document.getElementById('error-container').innerHTML = '';
     }
 
@@ -584,11 +602,7 @@ function AddBookForm() {
                                         </p>
                                     </>
                                 )}
-                                {isbnError &&
-                                    !title &&
-                                    displayErrorMessage(
-                                        "Sorry, we couldn't find this book. Please fill in the form below manually."
-                                    )}
+                                {isbnError && !title && displayErrorMessage(isbnError)}
                             </div>
                             {goodreadsLink && (
                                 <a
