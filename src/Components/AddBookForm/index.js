@@ -372,7 +372,6 @@ function AddBookForm() {
             const descriptionGoogle = googleRes.items[0].volumeInfo.description;
             const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
-            const previewGoogle = googleRes.items[0].accessInfo.embeddable;
 
             // Working values
 
@@ -382,7 +381,6 @@ function AddBookForm() {
 
             console.log(languageGoogle);
             console.log(categoryGoogle);
-            console.log('Preview: ' + previewGoogle);
 
             if (google.ok) {
                 // playSound(successSound);
