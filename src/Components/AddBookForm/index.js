@@ -13,7 +13,9 @@ import {
     limitString,
     getYearFromDateString,
     playSound,
+    removeHtmlTags,
 } from '../../utilities';
+import parse from 'html-react-parser';
 
 import scanSound from '../../sounds/click.mp3';
 
@@ -299,26 +301,75 @@ function AddBookForm() {
     }
 
     async function getBookData(isbn) {
-        // Fetch bookData from Google and Open Library to populate Add Book form
+        // Fetch errors
+        let errorGoogle;
+        let errorOpenLibrary;
 
-        // Local values for getBookData used to set corresponding state values
+        // Google Books API
+        let googleRes;
+        let googleSelfLinkRes;
+        let isbn10Google;
+        let isbn13Google;
+        let titleGoogle;
+        let authorGoogle;
+        let categoryGoogle;
+        let languageGoogle;
+        let pageCountGoogle;
+        let descriptionGoogle;
+        let coverGoogle;
+        let yearGoogle;
+
+        // Open Library API
         let openLibraryRes;
         let book;
-
         let workRes;
         let work;
-
+        let title;
         let authorRes;
         let author;
+        let goodreads;
+        let cover;
+        let blurb;
+        let pageCount;
+        let year;
 
-        let goodreads = '';
-        let cover = '';
-        let blurb = '';
-        let pageCount = '';
-        let year = '';
-
-        // OPEN LIBRARY API
+        // GOOGLE BOOKS FETCH
         try {
+            const google = await fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
+            );
+            googleRes = await google.json();
+
+            // Secondary fetch for missing data in googleRes
+            const googleSelfLink = await fetch(`${googleRes.items[0].selfLink}`);
+            googleSelfLinkRes = await googleSelfLink.json();
+
+            titleGoogle = googleRes.items[0].volumeInfo?.title;
+            authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
+            categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
+            languageGoogle = googleRes.items[0]?.volumeInfo?.language;
+            pageCountGoogle = googleRes.items[0]?.volumeInfo?.pageCount;
+            googleSelfLinkRes.volumeInfo.description &&
+                (descriptionGoogle = removeHtmlTags(googleSelfLinkRes.volumeInfo.description));
+            coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
+            googleRes.items[0].volumeInfo.publishedDate &&
+                (yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate));
+
+            // ISBN - API indices are not consistent
+            if (googleSelfLinkRes.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
+                isbn10Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[0]?.identifier;
+                isbn13Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[1]?.identifier;
+            } else {
+                isbn10Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[1]?.identifier;
+                isbn13Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[0]?.identifier;
+            }
+        } catch (error) {
+            errorGoogle = true;
+        }
+
+        // OPEN LIBRARY FETCH
+        try {
+            // Collecting necessary data requires various endpoint requests
             openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
             book = await openLibraryRes.json();
 
@@ -332,6 +383,9 @@ function AddBookForm() {
             if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
                 goodreads = book.identifiers.goodreads[0];
             }
+
+            // 🟨 TITLE
+            book && (title = book.title);
 
             // 🟨 AUTHOR
             author && author.name && (author = author.name.trim());
@@ -369,81 +423,50 @@ function AddBookForm() {
                 blurb = limitString(removeQuotes(book.description.value), 10000);
             }
         } catch (error) {
-            // Log errors
-            // Some books missing in OL, so failure here is disregarded for GUI indication of success
+            errorOpenLibrary = true;
         }
 
-        // GOOGLE BOOKS API
-        try {
-            const google = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
-            );
-            const googleRes = await google.json();
-
-            let isbn10Google;
-            let isbn13Google;
-            const titleGoogle = googleRes.items[0].volumeInfo.title;
-            const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
-            const categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
-            const languageGoogle = googleRes.items[0].volumeInfo.language;
-            const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
-            const descriptionGoogle = googleRes.items[0].volumeInfo.description;
-            const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
-            const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
-
-            // ISBN - API indices are not consistent
-            if (googleRes.items[0].volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
-                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
-                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
-            } else {
-                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
-                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
-            }
-
-            // Working values
-            setISBN10(isbn10Google);
-            setISBN13(isbn13Google);
-            setLanguage(languageGoogle);
-
-            if (google.ok) {
-                // playSound(successSound);
-
-                setRemoteSuccess(true);
-
-                // ✅ GOODREADS
-                setGoodreadsLink(goodreads);
-
-                // ✅ TITLE
-                setTitle(titleGoogle);
-
-                // ✅ AUTHOR
-                authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
-
-                // ✅ CATEGORY
-
-                categoryGoogle && setGenre(categoryGoogle);
-
-                // ✅ PAGES
-                pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
-
-                // ✅ YEAR
-                yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
-
-                // ✅ COVER
-                cover ? setImageUrl(cover) : setImageUrl(coverGoogle);
-
-                // ✅ BLURB
-                descriptionGoogle && descriptionGoogle.length > 0
-                    ? setBlurb(descriptionGoogle)
-                    : setBlurb(blurb);
-
-                // ✅ LANGUAGE
-            }
-        } catch (error) {
-            // playSound(notFoundSound);
+        if (errorGoogle && errorOpenLibrary) {
             setIsbnError(
                 "Sorry, we couldn't find this book. Please fill in the form below manually."
             );
+        } else {
+            setRemoteSuccess(true);
+
+            // ✅ GOODREADS
+            setGoodreadsLink(goodreads);
+
+            // ✅ TITLE
+            titleGoogle ? setTitle(titleGoogle) : setTitle(title);
+
+            // ✅ AUTHOR
+            authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
+
+            // ✅ ISBN10
+            isbn10Google && setISBN10(isbn10Google);
+
+            // ✅ ISBN13
+            isbn13Google && setISBN13(isbn13Google);
+
+            // ✅ LANGUAGE
+            languageGoogle && setLanguage(languageGoogle);
+
+            // ✅ CATEGORY
+            categoryGoogle && setGenre(categoryGoogle);
+
+            // ✅ PAGES
+            pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
+
+            // ✅ YEAR
+            yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
+
+            // ✅ COVER
+            cover ? setImageUrl(cover) : setImageUrl(coverGoogle);
+
+            // ✅ BLURB
+            descriptionGoogle && descriptionGoogle.length > 0
+                ? setBlurb(descriptionGoogle)
+                : setBlurb(blurb);
         }
     }
 
@@ -549,7 +572,7 @@ function AddBookForm() {
 
                         `}
                         >
-                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600   border-slate-300'>
+                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600 border-slate-300'>
                                 <input
                                     type='text'
                                     id='isbn'
@@ -562,7 +585,7 @@ function AddBookForm() {
                                 <div
                                     role='button'
                                     tabIndex={0}
-                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5   text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
+                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5 text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
                                     onClick={handleStartScanner}
                                     title='Start ISBN barcode scanner'
                                     aria-label='Start ISBN barcode scanner'

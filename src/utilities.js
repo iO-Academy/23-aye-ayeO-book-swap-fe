@@ -116,3 +116,7 @@ export function renderWithLineBreaks(text) {
         ));
     }
 }
+
+export function removeHtmlTags(text) {
+    return text.replace(/<\/?[^>]+(>|$)/g, '');
+}
