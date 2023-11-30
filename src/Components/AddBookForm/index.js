@@ -214,7 +214,7 @@ function AddBookForm() {
         }
 
         // year
-        if (year && !isValidYear(year)) {
+        if (!isValidYear(year)) {
             setYearError(true);
         } else {
             setYearError(false);
@@ -222,7 +222,7 @@ function AddBookForm() {
         }
 
         // page count
-        if (pageCount && (isNaN(pageCount) || pageCount <= 0)) {
+        if (isNaN(pageCount) || pageCount <= 0) {
             setPageCountError(true);
         } else {
             setPageCountError(false);
@@ -230,7 +230,7 @@ function AddBookForm() {
         }
 
         // image url
-        if (imageUrl && !isValidUrl(imageUrl)) {
+        if (!isValidUrl(imageUrl)) {
             setImageUrlError(true);
         } else {
             setImageUrlError(false);
@@ -238,7 +238,7 @@ function AddBookForm() {
         }
 
         // blurb
-        if (blurb && blurb.length > 10000) {
+        if (blurb.length < 10 || blurb.length > 10000) {
             setBlurbError(true);
         } else {
             setBlurbError(false);
@@ -630,13 +630,14 @@ function AddBookForm() {
                         )}
                         <div>
                             <label htmlFor='title'>
-                                Title <span className='text-rose-700'>*</span>
+                                Title <span className='text-rose-600'>*</span>
                             </label>
                             <br />
                             <input
                                 type='text'
                                 id='title'
                                 name='title'
+                                aria-required='true'
                                 value={title}
                                 onChange={changeTitle}
                                 className={titleError ? 'input-error form-text' : 'form-text'}
@@ -646,7 +647,7 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='author'>
-                                Author <span className='text-rose-700'>*</span>
+                                Author <span className='text-rose-600'>*</span>
                             </label>
                             <br />
 
@@ -654,6 +655,7 @@ function AddBookForm() {
                                 type='text'
                                 id='author'
                                 name='author'
+                                aria-required='true'
                                 value={author}
                                 onChange={changeAuthor}
                                 className={authorError ? 'input-error form-text' : ' form-text'}
@@ -663,7 +665,7 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='genreId'>
-                                Category <span className='text-rose-700'>*</span>
+                                Category <span className='text-rose-600'>*</span>
                             </label>
 
                             <div className='flex items-start sm:items-center flex-col-reverse sm:flex-row gap-1'>
@@ -674,6 +676,7 @@ function AddBookForm() {
                                     isDisabled={true}
                                     selectedGenre={genre}
                                     setGenreId={setGenreId}
+                                    aria-required='true'
                                 />
                                 <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
                                     <svg
@@ -693,34 +696,39 @@ function AddBookForm() {
                         </div>
 
                         <div>
-                            <label htmlFor='pageCount'>Pages</label>
+                            <label htmlFor='pageCount'>
+                                Pages <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <input
                                 type='number'
                                 id='pageCount'
                                 name='pageCount'
+                                aria-required='true'
                                 value={pageCount}
                                 onChange={changePageCount}
                                 className={pageCountError ? 'input-error form-text' : 'form-text'}
                             />
-                            {pageCountError &&
-                                displayErrorMessage('Page count has to be more than 0')}
+                            {pageCountError && displayErrorMessage('Page count is required')}
                         </div>
 
                         <div>
-                            <label htmlFor='year'>Year</label>
+                            <label htmlFor='year'>
+                                Year <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <input
                                 type='text'
                                 id='year'
                                 name='year'
+                                aria-required='true'
                                 value={year}
                                 onChange={changeYear}
                                 className={yearError ? 'input-error form-text' : ' form-text'}
                             />
-                            {yearError && displayErrorMessage('Incorrect year format')}
+                            {yearError && displayErrorMessage('Incorrect year format (e.g. 1997)')}
                         </div>
-                        {imageUrl && (
+                        {isValidUrl(imageUrl) && (
                             <div>
                                 <img
                                     src={imageUrl}
@@ -731,24 +739,30 @@ function AddBookForm() {
                             </div>
                         )}
                         <div>
-                            <label htmlFor='image'>Image URL</label>
+                            <label htmlFor='image'>
+                                Image URL <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <input
                                 type='text'
                                 id='image'
                                 name='image'
+                                aria-required='true'
                                 value={imageUrl}
                                 onChange={changeImageUrl}
                                 className={imageUrlError ? 'input-error form-text' : 'form-text'}
                             />
-                            {imageUrlError && displayErrorMessage('Invalid URL')}
+                            {imageUrlError && displayErrorMessage('Valid cover URL is required')}
                         </div>
 
                         <div>
-                            <label htmlFor='blurb'>Blurb</label>
+                            <label htmlFor='blurb'>
+                                Blurb <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <textarea
                                 id='blurb'
+                                aria-required='true'
                                 rows='5'
                                 maxLength='10000'
                                 value={blurb}
@@ -756,7 +770,9 @@ function AddBookForm() {
                                 className={blurbError ? 'input-error form-text' : 'form-text'}
                             ></textarea>
                             {blurbError &&
-                                displayErrorMessage('Must be less than 10,000 characters')}
+                                displayErrorMessage(
+                                    'The blurb must be between 10 and 10,000 characters'
+                                )}
                         </div>
                         <div id='error-container' className='error'></div>
                         <input type='submit' value='Add Book' className='button py-3' />
