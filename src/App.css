@@ -24,15 +24,15 @@ h4 {
 }
 
 h1 {
-    @apply text-4xl py-12 text-center;
+    @apply text-3xl py-12 text-center;
 }
 
 h2 {
-    @apply py-5 text-3xl;
+    @apply py-5 text-2xl;
 }
 
 h3 {
-    @apply py-5 text-2xl font-semibold;
+    @apply py-5 text-xl font-semibold;
 }
 
 h4 {

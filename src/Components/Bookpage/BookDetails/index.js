@@ -109,7 +109,7 @@ function BookDetails({
                         </div>
                     </div>
                     <div className='flex flex-col w-full gap-2 lg:max-w-2xl'>
-                        <h1 className='text-center lg:text-left p-0 sm:text-5xl text-[7vw] leading-tight'>
+                        <h1 className='text-center lg:text-left p-0 sm:text-4xl text-[7vw] leading-tight'>
                             {title}
                         </h1>
                         <p className='text-center lg:text-left'>{author}</p>

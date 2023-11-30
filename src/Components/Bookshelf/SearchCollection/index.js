@@ -23,7 +23,7 @@ function SearchCollection(props) {
                 onChange={(e) => onSearch(e.target.value)}
                 id='search-bar'
                 type='text'
-                className='p-2 pl-0  text-lg bg-zinc-50 focus:outline-none'
+                className='p-2 pl-0  text-md bg-zinc-50 focus:outline-none'
                 placeholder='Search books'
             ></input>
         </div>
