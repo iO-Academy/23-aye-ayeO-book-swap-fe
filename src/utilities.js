@@ -1,4 +1,5 @@
 import React from 'react';
+import parse from 'html-react-parser';
 
 // Render error messages, prevent page jump
 
@@ -7,7 +8,7 @@ export function displayErrorMessage(error = ' ') {
         <div>
             <p className={error ? 'error' : 'hidden'}>
                 {/* <span class="material-symbols-outlined">warning</span> */}
-                {error}
+                {parse(error)}
             </p>
         </div>
     );

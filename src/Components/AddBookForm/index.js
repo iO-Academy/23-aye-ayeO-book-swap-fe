@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
@@ -16,8 +16,6 @@ import {
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
-// import successSound from '../../sounds/success.mp3';
-// import notFoundSound from '../../sounds/blip.mp3';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
@@ -35,14 +33,14 @@ function AddBookForm() {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
             // Permission granted
-            console.log('Camera permission granted');
+            // console.log('Camera permission granted');
             setCameraPermission(true);
 
             // Don't forget to stop the stream after checking permission
             stream.getTracks().forEach((track) => track.stop());
         } catch (error) {
             // Permission denied or error
-            console.error('Error requesting camera permission:', error);
+            // console.error('Error requesting camera permission:', error);
             setCameraPermission(false);
         }
     };
@@ -80,7 +78,7 @@ function AddBookForm() {
                 setIsbnError('');
                 setRemoteSuccess(false);
                 setISBN(result);
-                getBookData(result);
+                checkIfIsbnExists(result);
                 closeScanner();
             }
         } catch (error) {
@@ -139,7 +137,7 @@ function AddBookForm() {
         setIsbnError('');
         setRemoteSuccess(false);
         const isbn = e.target.value;
-        isValidISBN(isbn) && getBookData(isbn);
+        isValidISBN(isbn) && checkIfIsbnExists(isbn);
     }
 
     function changeTitle(e) {
@@ -207,7 +205,7 @@ function AddBookForm() {
         }
 
         // genre
-        if (genre <= 0) {
+        if (genreId <= 0) {
             setGenreError(true);
             setGenre(0);
         } else {
@@ -276,6 +274,27 @@ function AddBookForm() {
         } else {
             // scrollToTop();
             scrollToFirstError();
+        }
+    }
+
+    async function checkIfIsbnExists(isbn) {
+        // Check if ISBN exists in Swapp DB
+
+        const cleanIsbn = isbn.replace(/[- ]/g, '');
+
+        try {
+            const swappRes = await fetch(
+                `${process.env.REACT_APP_API_URI}/books/check-isbn/${cleanIsbn}`
+            );
+            const isbnCheck = await swappRes.json();
+
+            isbnCheck.exists
+                ? setIsbnError(
+                      `<span><a href="/books/${isbnCheck.id}" className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</a> is already on Swapp.</span>`
+                  )
+                : getBookData(isbn);
+        } catch (error) {
+            //error
         }
     }
 
@@ -361,11 +380,10 @@ function AddBookForm() {
             );
             const googleRes = await google.json();
 
+            let isbn10Google;
+            let isbn13Google;
             const titleGoogle = googleRes.items[0].volumeInfo.title;
-            const isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
-            const isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
             const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
-
             const categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
             const languageGoogle = googleRes.items[0].volumeInfo.language;
             const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
@@ -373,14 +391,19 @@ function AddBookForm() {
             const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
             const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
 
-            // Working values
+            // ISBN - API indices are not consistent
+            if (googleRes.items[0].volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
+                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
+                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
+            } else {
+                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
+                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
+            }
 
+            // Working values
             setISBN10(isbn10Google);
             setISBN13(isbn13Google);
             setLanguage(languageGoogle);
-
-            console.log(languageGoogle);
-            console.log(categoryGoogle);
 
             if (google.ok) {
                 // playSound(successSound);
@@ -418,7 +441,9 @@ function AddBookForm() {
             }
         } catch (error) {
             // playSound(notFoundSound);
-            setIsbnError('No book found');
+            setIsbnError(
+                "Sorry, we couldn't find this book. Please fill in the form below manually."
+            );
         }
     }
 
@@ -480,6 +505,8 @@ function AddBookForm() {
 
     function resetForm() {
         setISBN('');
+        setISBN10('');
+        setISBN13('');
         setGoodreadsLink('');
         setRemoteSuccess(false);
         setTitle('');
@@ -581,11 +608,7 @@ function AddBookForm() {
                                         </p>
                                     </>
                                 )}
-                                {isbnError &&
-                                    !title &&
-                                    displayErrorMessage(
-                                        "Sorry, we couldn't find this book. Please fill in the form below manually."
-                                    )}
+                                {isbnError && !title && displayErrorMessage(isbnError)}
                             </div>
                             {goodreadsLink && (
                                 <a

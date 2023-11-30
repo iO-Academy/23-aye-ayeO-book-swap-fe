@@ -9,6 +9,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
+    const [genre, setGenre] = useState('');
 
     // Restore scroll position from state in App.js
     window.scrollTo(0, scrollPosition);
@@ -32,6 +33,9 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const handleGenreChange = (genre) => {
         setSelectedGenreId(genre);
     };
+
+    console.log('Genre: ' + genre);
+    console.log('GenreID: ' + selectedGenreId);
 
     const handleSearchChange = (string) => {
         setSearchedString(string);
@@ -67,7 +71,21 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 id='filter'
             >
                 <div className='flex p-4 gap-3  justify-between items-center m-auto w-full max-w-7xl flex-col sm:flex-row '>
-                    <GenresSelector onGenreChangeID={handleGenreChange} label='Filter by genre ' />
+                    <GenresSelector
+                        onGenreChangeID={handleGenreChange}
+                        label='Filter by genre'
+                        setGenreId={setSelectedGenreId}
+                        // selectedGenre={genre}
+                    />
+                    {/* <GenresSelector
+                                    onGenreChangeID={changeGenre}
+                                    className={genreError ? 'select-error' : null}
+                                    defaultString='Select'
+                                    isDisabled={true}
+                                    selectedGenre={genre}
+                                    setGenreId={setGenreId}
+                                /> */}
+
                     <SearchCollection onSearchChange={handleSearchChange} />
                 </div>
             </div>
