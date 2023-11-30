@@ -28,7 +28,7 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                     />
                 </div>
                 <div className='flex flex-col justify-center sm:flex-none sm:p-5 p-5 w-2/3 sm:w-full'>
-                    <h2 className='text-xl pb-3 pt-0 '>{title}</h2>
+                    <h2 className='text-lg pb-3 pt-0 '>{title}</h2>
                     <p className='text-slate-600 text-sm'>by {author}</p>
                     <p className='text-slate-600 text-xs font-light'>{genre}</p>
                 </div>

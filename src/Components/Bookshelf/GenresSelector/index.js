@@ -37,7 +37,7 @@ function GenresSelector({
             {label && <label htmlFor='genreId'>{label}</label>}
             <select
                 id='genreId'
-                className={`rounded-md p-2 text-lg bg-zinc-50 text-slate-600 ${className} focus:outline-none`}
+                className={`rounded-md p-2 text-md bg-zinc-50 text-slate-600 ${className} focus:outline-none`}
                 onChange={(e) => onGenreChange(e.target.value)}
                 value={
                     selectedGenre ? genres.find((genre) => genre.name === selectedGenre)?.id : '0'
