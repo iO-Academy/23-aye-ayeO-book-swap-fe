@@ -93,7 +93,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
             className='dialog w-full fixed inset-0 flex items-center justify-center h-full'
             onClick={backdropClick}
         >
-            <div className='form-container w-[500px] relative'>
+            <div className='form-container w-[500px] relative '>
                 <button
                     onClick={backdropClick}
                     className='absolute top-5 right-5 text-3xl text-zinc-600'
@@ -109,12 +109,17 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                         <path d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z' />
                     </svg>
                 </button>
-                <form onSubmit={validateForm}>
-                    <h3>Claim "{bookTitle}"?</h3>
+                <form onSubmit={validateForm} className='pb-6 w-full max-w-xs'>
+                    <h3 className='text-base text-center text-zinc-500'>
+                        You are claiming:
+                        <br />
+                        <span className='text-lg text-zinc-600'>{bookTitle}</span>
+                    </h3>
                     <br />
-
                     <div>
-                        <label htmlFor='name'>Name</label>
+                        <label htmlFor='name'>
+                            Name <span className='text-rose-600'>*</span>
+                        </label>
 
                         <input
                             autoComplete='name'
@@ -129,7 +134,9 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                     </div>
                     <br />
                     <div>
-                        <label htmlFor='email'>Email</label>
+                        <label htmlFor='email'>
+                            Email <span className='text-rose-600'>*</span>
+                        </label>
 
                         <input
                             autoComplete='email'
@@ -143,7 +150,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                         {emailError && displayErrorMessage('Valid email is required')}
                     </div>
                     <br />
-                    <input type='submit' value='Claim Book' className='button py-3' />
+                    <input type='submit' value='Claim Book' className='button py-3 ' />
                 </form>
             </div>
         </dialog>
