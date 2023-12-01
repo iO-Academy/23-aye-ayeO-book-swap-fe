@@ -278,7 +278,6 @@ function AddBookForm() {
         ) {
             handleSubmit(e);
         } else {
-            // scrollToTop();
             scrollToFirstError();
         }
     }
@@ -305,240 +304,213 @@ function AddBookForm() {
     }
 
     async function getBookData(isbn) {
-        // Fetch errors
-        let errorGoogle;
-        let errorOpenLibrary;
+        let google;
+        let openLibrary;
 
-        // Google Books API
-        let googleRes;
-        let googleSelfLinkRes;
-        let isbn10Google;
-        let isbn13Google;
-        let titleGoogle;
-        let authorGoogle;
-        let categoryGoogle;
-        let languageGoogle;
-        let pageCountGoogle;
-        let descriptionGoogle;
-        let coverGoogle;
-        let yearGoogle;
-
-        // Open Library API
-        let openLibraryRes;
-        let book;
-        let workRes;
-        let work;
-        let title;
-        let isbn10;
-        let isbn13;
-        // let language;
-        let authorRes;
-        let author;
-        let goodreads;
-        let cover;
-        let blurb;
-        let pageCount;
-        let year;
-
-        // GOOGLE BOOKS FETCH
         try {
-            const google = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
-            );
-            googleRes = await google.json();
+            google = await fetchGoogleBookData(isbn);
+        } catch (googleError) {}
 
-            // Secondary fetch for missing data in googleRes
-            const googleSelfLink = await fetch(`${googleRes.items[0].selfLink}`);
-            googleSelfLinkRes = await googleSelfLink.json();
-
-            titleGoogle = googleRes.items[0].volumeInfo?.title;
-            authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
-            categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
-            languageGoogle = googleRes.items[0]?.volumeInfo?.language;
-            pageCountGoogle = googleRes.items[0]?.volumeInfo?.pageCount;
-            googleSelfLinkRes.volumeInfo.description &&
-                (descriptionGoogle = removeHtmlTags(googleSelfLinkRes.volumeInfo.description));
-            coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
-            googleRes.items[0].volumeInfo.publishedDate &&
-                (yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate));
-
-            // ISBN - API indices are not consistent
-            if (googleSelfLinkRes.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
-                isbn10Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[0]?.identifier;
-                isbn13Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[1]?.identifier;
-            } else {
-                isbn10Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[1]?.identifier;
-                isbn13Google = googleSelfLinkRes.volumeInfo?.industryIdentifiers[0]?.identifier;
-            }
-        } catch (error) {
-            errorGoogle = true;
-        }
-
-        // OPEN LIBRARY FETCH
         try {
-            // Collecting necessary data requires various endpoint requests
-            openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
-            book = await openLibraryRes.json();
+            openLibrary = await fetchOpenLibraryBookData(isbn);
+        } catch (openLibraryError) {}
 
-            workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
-            work = await workRes.json();
-
-            authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
-            author = await authorRes.json();
-
-            // 🟨 GOODREADS
-            if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
-                goodreads = book.identifiers.goodreads[0];
-            }
-
-            // 🟨 TITLE
-            book && (title = book.title);
-
-            // 🟨 AUTHOR
-            author && author.name && (author = author.name.trim());
-
-            // 🟨 ISBN10
-            book && (isbn10 = book.isbn_10[0]);
-
-            // 🟨 ISBN13
-            book && (isbn13 = book.isbn_13[0]);
-
-            // 🟨 LANGUAGE
-            // languageGoogle && setLanguage(languageGoogle);
-            // console.log(book.languages[0].key);
-            setLanguage('es');
-
-            // 🟨 PAGES
-            book.pagination && (pageCount = book.pagination);
-            book.number_of_pages && (pageCount = book.number_of_pages);
-
-            // 🟨 YEAR
-            work.first_publish_date && (year = extractYear(work.first_publish_date));
-            book.publish_date && (year = extractYear(book.publish_date));
-
-            // 🟨 COVER
-            const bookCovers = book.covers;
-            const workCovers = work.covers;
-
-            if (bookCovers || (workCovers && bookCovers[0] !== -1 && workCovers[0] !== -1)) {
-                cover =
-                    (bookCovers.length > 0 && bookCovers[0]) ||
-                    (workCovers.length > 0 && workCovers[0]);
-            }
-
-            if (cover) {
-                cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
-            } else {
-                cover = '';
-            }
-
-            // 🟨 BLURB
-            if (work.description && work.description.value) {
-                blurb = limitString(removeQuotes(work.description.value), 10000);
-            } else if (work.description) {
-                blurb = limitString(removeQuotes(work.description), 10000);
-            } else if (book.description && book.description.value) {
-                blurb = limitString(removeQuotes(book.description.value), 10000);
-            }
-        } catch (error) {
-            errorOpenLibrary = true;
-        }
-
-        if (errorGoogle && errorOpenLibrary) {
+        if (google || openLibrary) {
+            handleSuccess(google, openLibrary);
+        } else {
             setIsbnError(
                 "Sorry, we couldn't find this book. Please fill in the form below manually."
             );
-        } else {
-            setRemoteSuccess(true);
-
-            // ✅ GOODREADS
-            setGoodreadsLink(goodreads);
-
-            // ✅ TITLE
-            titleGoogle ? setTitle(titleGoogle) : setTitle(title);
-
-            // ✅ AUTHOR
-            authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
-
-            // ✅ ISBN10
-            isbn10Google ? setISBN10(isbn10Google) : setISBN10(isbn10);
-
-            // ✅ ISBN13
-            isbn13Google ? setISBN13(isbn13Google) : setISBN13(isbn13);
-
-            // ✅ LANGUAGE
-            languageGoogle && setLanguage(languageGoogle);
-
-            // ✅ CATEGORY
-            categoryGoogle && setGenre(categoryGoogle);
-
-            // ✅ PAGES
-            pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
-
-            // ✅ YEAR
-            yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
-
-            // ✅ COVER
-            cover ? setImageUrl(cover) : setImageUrl(coverGoogle);
-
-            // ✅ BLURB
-            descriptionGoogle && descriptionGoogle.length > 0
-                ? setBlurb(descriptionGoogle)
-                : setBlurb(blurb);
         }
+    }
+
+    async function fetchGoogleBookData(isbn) {
+        const google = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+        const googleRes = await google.json();
+
+        // Secondary fetch for missing data in googleRes
+        const googleSelfLink = await fetch(`${googleRes.items[0].selfLink}`);
+        const googleSelfLinkRes = await googleSelfLink.json();
+
+        return { googleRes, googleSelfLinkRes };
+    }
+
+    async function fetchOpenLibraryBookData(isbn) {
+        const openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+        const book = await openLibraryRes.json();
+
+        const workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+        const work = await workRes.json();
+
+        const authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
+        const author = await authorRes.json();
+
+        return { book, work, author };
+    }
+
+    function handleSuccess(g, ol) {
+        setRemoteSuccess(true);
+
+        // Open Library API
+        const bk = ol.book;
+        const wk = ol.work;
+        const au = ol.author;
+
+        let isbn10OL;
+        let isbn13OL;
+        let titleOL;
+        let authorOL;
+        let pageCountOL;
+        let yearOL;
+        let coverOL;
+        let blurbOL;
+        let goodreadsOL;
+        // let languageOL;
 
         // Google Books API
-        // console.log('Google Books API Results:');
-        // console.log('googleRes:', googleRes);
-        // console.log('googleSelfLinkRes:', googleSelfLinkRes);
-        // console.log('isbn10Google:', isbn10Google);
-        // console.log('isbn13Google:', isbn13Google);
-        // console.log('titleGoogle:', titleGoogle);
-        // console.log('authorGoogle:', authorGoogle);
-        // console.log('categoryGoogle:', categoryGoogle);
-        // console.log('languageGoogle:', languageGoogle);
-        // console.log('pageCountGoogle:', pageCountGoogle);
-        // console.log('descriptionGoogle:', descriptionGoogle);
-        // console.log('coverGoogle:', coverGoogle);
-        // console.log('yearGoogle:', yearGoogle);
+        const g1 = g.googleRes;
+        const g2 = g.googleSelfLinkRes;
 
-        // // Open Library API
-        // console.log('\nOpen Library API Results:');
-        // console.log('openLibraryRes:', openLibraryRes);
-        // console.log('book:', book);
-        // console.log('workRes:', workRes);
-        // console.log('work:', work);
-        // console.log('title:', title);
-        // console.log('isbn10:', isbn10);
-        // console.log('isbn13:', isbn13);
-        // // console.log('language:', language);
-        // console.log('authorRes:', authorRes);
-        // console.log('author:', author);
-        // console.log('goodreads:', goodreads);
-        // console.log('cover:', cover);
-        // console.log('blurb:', blurb);
-        // console.log('pageCount:', pageCount);
-        // console.log('year:', year);
+        let isbn10G;
+        let isbn13G;
+        let titleG;
+        let authorG;
+        let categoryG;
+        let pageCountG;
+        let yearG;
+        let coverG;
+        let blurbG;
+        let languageG;
+
+        ////////////////// OPEN LIBRARY //////////////////////
+
+        // 🟨 GOODREADS
+        if (bk.identifiers && bk.identifiers.goodreads && bk.identifiers.goodreads[0]) {
+            goodreadsOL = bk.identifiers.goodreads[0];
+        }
+
+        // 🟨 ISBN10
+        bk.isbn_10 && (isbn10OL = bk.isbn_10[0]);
+
+        // 🟨 ISBN13
+        bk.isbn_13 && (isbn13OL = bk.isbn_13[0]);
+
+        // 🟨 TITLE
+        bk.title && (titleOL = bk.title);
+
+        // 🟨 AUTHOR
+        au && au.name && (authorOL = au.name.trim());
+
+        // 🟨 PAGES
+        bk.pagination && (pageCountOL = bk.pagination);
+        bk.number_of_pages && (pageCountOL = bk.number_of_pages);
+
+        // 🟨 YEAR
+        wk.first_publish_date && (yearOL = extractYear(wk.first_publish_date));
+        bk.publish_date && (yearOL = extractYear(bk.publish_date));
+
+        // 🟨 COVER
+        const bookCover = bk.covers && bk.covers[0];
+        const workCover = wk.covers && wk.covers[0];
+
+        if (bookCover || workCover) {
+            if (bookCover !== -1 && workCover !== -1) {
+                coverOL = bookCover || workCover;
+            }
+        }
+
+        if (coverOL) {
+            coverOL = `https://covers.openlibrary.org/b/id/${coverOL}-L.jpg`;
+        } else {
+            coverOL = '';
+        }
+
+        // 🟨 BLURB
+        if (wk.description && wk.description.value) {
+            blurbOL = limitString(removeQuotes(wk.description.value), 10000);
+        } else if (wk.description) {
+            blurbOL = limitString(removeQuotes(wk.description), 10000);
+        } else if (bk.description && bk.description.value) {
+            blurbOL = limitString(removeQuotes(bk.description.value), 10000);
+        }
+
+        // 🟨 LANGUAGE
+        //  setLanguage('es');
+
+        ////////////////// GOOGLE //////////////////////
+
+        // 🟨 TITLE
+        titleG = g1.items[0].volumeInfo?.title;
+
+        // 🟨 AUTHOR
+        authorG = g1.items[0]?.volumeInfo?.authors?.[0];
+
+        // 🟨 CATEGORY
+        categoryG = g1.items[0]?.volumeInfo?.categories?.[0];
+
+        // 🟨 PAGES
+        pageCountG = g1.items[0]?.volumeInfo?.pageCount;
+
+        // 🟨 BLURB
+        g2.volumeInfo.description && (blurbG = removeHtmlTags(g2.volumeInfo.description));
+
+        // 🟨 COVER
+        coverG = g1.items[0]?.volumeInfo?.imageLinks?.thumbnail;
+
+        // 🟨 YEAR
+        g1.items[0].volumeInfo.publishedDate &&
+            (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
+
+        // 🟨 ISBN
+        if (g2.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
+            isbn10G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+            isbn13G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+        } else {
+            isbn10G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+            isbn13G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+        }
+
+        // 🟨 LANGUAGE
+        languageG = g1.items[0]?.volumeInfo?.language;
+
+        /////////////////  SETTING STATE  ///////////////////
+
+        // ✅ GOODREADS
+        setGoodreadsLink(goodreadsOL);
+
+        // ✅ TITLE
+        titleG ? setTitle(titleG) : setTitle(titleOL);
+
+        // ✅ AUTHOR
+        authorG ? setAuthor(authorG) : setAuthor(authorOL);
+
+        // ✅ ISBN10
+        isbn10G ? setISBN10(isbn10G) : setISBN10(isbn10OL);
+
+        // ✅ ISBN13
+        isbn13G ? setISBN13(isbn13G) : setISBN13(isbn13OL);
+
+        // ✅ LANGUAGE
+        languageG && setLanguage(languageG);
+
+        // ✅ CATEGORY
+        categoryG && setGenre(categoryG);
+
+        // ✅ PAGES
+        pageCountG > 0 ? setPageCount(pageCountG) : setPageCount(pageCountOL);
+
+        // ✅ YEAR
+        yearG > 0 ? setYear(yearG) : setYear(yearOL);
+
+        // ✅ COVER
+        coverOL ? setImageUrl(coverOL) : setImageUrl(coverG);
+
+        // ✅ BLURB
+        blurbG && blurbG.length > 0 ? setBlurb(blurbG) : setBlurb(blurbOL);
     }
 
     async function handleSubmit() {
         try {
-            // const requestBody = {};
-
-            // // Required values
-            // requestBody.title = title;
-            // requestBody.author = author;
-            // requestBody.genre_id = genreId;
-            // requestBody.isbn10 = isbn10;
-            // requestBody.isbn13 = isbn13;
-            // requestBody.language = language;
-            // requestBody.page_count = pageCount;
-            // requestBody.year = year;
-            // requestBody.blurb = blurb;
-            // requestBody.image =
-            //     imageUrl ||
-            //     `https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon`;
-
             const requestBody = {
                 title,
                 author,
@@ -554,7 +526,6 @@ function AddBookForm() {
                     'https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon',
             };
 
-            // console.log(requestBody);
             const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
                 method: 'POST',
