@@ -15,7 +15,6 @@ import {
     playSound,
     removeHtmlTags,
 } from '../../utilities';
-import parse from 'html-react-parser';
 
 import scanSound from '../../sounds/click.mp3';
 
@@ -130,6 +129,11 @@ function AddBookForm() {
 
     const { setAlert } = useContext(Context);
 
+    function updateGenre(passedGenreId) {
+        changeGenre(passedGenreId);
+        setGenreId(passedGenreId);
+    }
+
     // State setters for form values + form reset
     function changeISBN(e) {
         resetForm();
@@ -199,7 +203,7 @@ function AddBookForm() {
         }
 
         // author
-        if (author.length <= 0 || author.length > 255) {
+        if (!author || author.length <= 0 || author.length > 255) {
             setAuthorError(true);
         } else {
             setAuthorError(false);
@@ -207,7 +211,7 @@ function AddBookForm() {
         }
 
         // genre
-        if (genreId <= 0) {
+        if (!genreId || genreId <= 0) {
             setGenreError(true);
             setGenre(0);
         } else {
@@ -240,7 +244,7 @@ function AddBookForm() {
         }
 
         // blurb
-        if (blurb.length < 10 || blurb.length > 10000) {
+        if (!blurb || blurb.length < 10 || blurb.length > 10000) {
             setBlurbError(true);
         } else {
             setBlurbError(false);
@@ -325,6 +329,9 @@ function AddBookForm() {
         let workRes;
         let work;
         let title;
+        let isbn10;
+        let isbn13;
+        // let language;
         let authorRes;
         let author;
         let goodreads;
@@ -390,6 +397,17 @@ function AddBookForm() {
             // 🟨 AUTHOR
             author && author.name && (author = author.name.trim());
 
+            // 🟨 ISBN10
+            book && (isbn10 = book.isbn_10[0]);
+
+            // 🟨 ISBN13
+            book && (isbn13 = book.isbn_13[0]);
+
+            // 🟨 LANGUAGE
+            // languageGoogle && setLanguage(languageGoogle);
+            // console.log(book.languages[0].key);
+            setLanguage('es');
+
             // 🟨 PAGES
             book.pagination && (pageCount = book.pagination);
             book.number_of_pages && (pageCount = book.number_of_pages);
@@ -399,18 +417,18 @@ function AddBookForm() {
             book.publish_date && (year = extractYear(book.publish_date));
 
             // 🟨 COVER
-            const bookCovers = book.covers || [];
-            const workCovers = work.covers || [];
+            const bookCovers = book.covers;
+            const workCovers = work.covers;
 
-            cover =
-                (bookCovers.length > 0 && bookCovers[0]) ||
-                (workCovers.length > 0 && workCovers[0]);
+            if (bookCovers || (workCovers && bookCovers[0] !== -1 && workCovers[0] !== -1)) {
+                cover =
+                    (bookCovers.length > 0 && bookCovers[0]) ||
+                    (workCovers.length > 0 && workCovers[0]);
+            }
 
             if (cover) {
                 cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
-            }
-
-            if (cover === false) {
+            } else {
                 cover = '';
             }
 
@@ -443,10 +461,10 @@ function AddBookForm() {
             authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
 
             // ✅ ISBN10
-            isbn10Google && setISBN10(isbn10Google);
+            isbn10Google ? setISBN10(isbn10Google) : setISBN10(isbn10);
 
             // ✅ ISBN13
-            isbn13Google && setISBN13(isbn13Google);
+            isbn13Google ? setISBN13(isbn13Google) : setISBN13(isbn13);
 
             // ✅ LANGUAGE
             languageGoogle && setLanguage(languageGoogle);
@@ -468,33 +486,75 @@ function AddBookForm() {
                 ? setBlurb(descriptionGoogle)
                 : setBlurb(blurb);
         }
+
+        // Google Books API
+        // console.log('Google Books API Results:');
+        // console.log('googleRes:', googleRes);
+        // console.log('googleSelfLinkRes:', googleSelfLinkRes);
+        // console.log('isbn10Google:', isbn10Google);
+        // console.log('isbn13Google:', isbn13Google);
+        // console.log('titleGoogle:', titleGoogle);
+        // console.log('authorGoogle:', authorGoogle);
+        // console.log('categoryGoogle:', categoryGoogle);
+        // console.log('languageGoogle:', languageGoogle);
+        // console.log('pageCountGoogle:', pageCountGoogle);
+        // console.log('descriptionGoogle:', descriptionGoogle);
+        // console.log('coverGoogle:', coverGoogle);
+        // console.log('yearGoogle:', yearGoogle);
+
+        // // Open Library API
+        // console.log('\nOpen Library API Results:');
+        // console.log('openLibraryRes:', openLibraryRes);
+        // console.log('book:', book);
+        // console.log('workRes:', workRes);
+        // console.log('work:', work);
+        // console.log('title:', title);
+        // console.log('isbn10:', isbn10);
+        // console.log('isbn13:', isbn13);
+        // // console.log('language:', language);
+        // console.log('authorRes:', authorRes);
+        // console.log('author:', author);
+        // console.log('goodreads:', goodreads);
+        // console.log('cover:', cover);
+        // console.log('blurb:', blurb);
+        // console.log('pageCount:', pageCount);
+        // console.log('year:', year);
     }
 
     async function handleSubmit() {
         try {
-            const requestBody = {};
+            // const requestBody = {};
 
-            // Required values
-            requestBody.title = title;
-            requestBody.author = author;
-            requestBody.genre_id = genreId;
-            requestBody.isbn10 = isbn10;
-            requestBody.isbn13 = isbn13;
-            requestBody.language = language;
+            // // Required values
+            // requestBody.title = title;
+            // requestBody.author = author;
+            // requestBody.genre_id = genreId;
+            // requestBody.isbn10 = isbn10;
+            // requestBody.isbn13 = isbn13;
+            // requestBody.language = language;
+            // requestBody.page_count = pageCount;
+            // requestBody.year = year;
+            // requestBody.blurb = blurb;
+            // requestBody.image =
+            //     imageUrl ||
+            //     `https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon`;
 
-            // Optional values
-            if (blurb) {
-                requestBody.blurb = blurb;
-            }
+            const requestBody = {
+                title,
+                author,
+                genre_id: genreId,
+                isbn10,
+                isbn13,
+                language,
+                page_count: pageCount,
+                year,
+                blurb,
+                image:
+                    imageUrl ||
+                    'https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon',
+            };
 
-            requestBody.image =
-                imageUrl ||
-                `https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon`;
-
-            if (year) {
-                requestBody.year = year;
-            }
-
+            // console.log(requestBody);
             const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
                 method: 'POST',
@@ -523,6 +583,7 @@ function AddBookForm() {
             }
         } catch (error) {
             // Log errors
+            console.log(error);
         }
     }
 
@@ -579,6 +640,7 @@ function AddBookForm() {
                                     className='w-full p-5 text-xl focus:outline-none h-full align-middle'
                                     value={isbn}
                                     onInput={changeISBN}
+                                    autoFocus={true}
                                     placeholder='Search by ISBN'
                                     aria-placeholder='Search by ISBN'
                                 ></input>
@@ -690,15 +752,15 @@ function AddBookForm() {
                             <label htmlFor='genreId'>
                                 Category <span className='text-rose-600'>*</span>
                             </label>
-
                             <div className='flex items-start sm:items-center flex-col-reverse sm:flex-row gap-1'>
+                                {}
                                 <GenresSelector
-                                    onGenreChangeID={changeGenre}
+                                    updateGenre={updateGenre}
                                     className={genreError ? 'select-error' : null}
                                     defaultString='Select'
                                     isDisabled={true}
                                     selectedGenre={genre}
-                                    setGenreId={setGenreId}
+                                    isControlled={true}
                                     aria-required='true'
                                 />
                                 <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
