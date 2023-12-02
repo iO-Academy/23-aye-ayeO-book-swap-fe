@@ -9,11 +9,11 @@ import {
     isValidYear,
     isValidISBN,
     removeQuotes,
-    extractYear,
     limitString,
     getYearFromDateString,
     playSound,
     removeHtmlTags,
+    removeEdgeCurl,
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
@@ -208,7 +208,6 @@ function AddBookForm() {
         // genre
         if (!genre || genreId <= 0) {
             setGenreError(true);
-            console.log(genreError);
             setGenre(0);
         } else {
             setGenreError(false);
@@ -232,7 +231,7 @@ function AddBookForm() {
         }
 
         // image url
-        if (!isValidUrl(imageUrl)) {
+        if (imageUrl && !isValidUrl(imageUrl)) {
             setImageUrlError(true);
         } else {
             setImageUrlError(false);
@@ -403,8 +402,8 @@ function AddBookForm() {
         bk.number_of_pages && (pageCountOL = bk.number_of_pages);
 
         // 🟨 YEAR
-        wk.first_publish_date && (yearOL = extractYear(wk.first_publish_date));
-        bk.publish_date && (yearOL = extractYear(bk.publish_date));
+        wk.first_publish_date && (yearOL = getYearFromDateString(wk.first_publish_date));
+        bk.publish_date && (yearOL = getYearFromDateString(bk.publish_date));
 
         // 🟨 COVER
         const bookCover = bk.covers && bk.covers[0];
@@ -432,7 +431,7 @@ function AddBookForm() {
         }
 
         // 🟨 LANGUAGE
-        //  setLanguage('es');
+        setLanguage('es');
 
         ////////////////// GOOGLE //////////////////////
 
@@ -452,7 +451,7 @@ function AddBookForm() {
         g2.volumeInfo && (blurbG = removeHtmlTags(g2.volumeInfo.description));
 
         // 🟨 COVER
-        g1.items && (coverG = g1.items[0]?.volumeInfo?.imageLinks?.thumbnail);
+        g1.items && (coverG = removeEdgeCurl(g1.items[0]?.volumeInfo?.imageLinks?.thumbnail));
 
         // 🟨 YEAR
         g1.items && (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
@@ -507,6 +506,43 @@ function AddBookForm() {
         blurbG && blurbG.length > 0 ? setBlurb(blurbG) : setBlurb(blurbOL);
     }
 
+    ////////////////////// RESET VALIDATION ERRORS ON FETCH FILL ////////////////////////////
+
+    useEffect(() => {
+        title && setTitleError(false);
+    }, [title]);
+
+    useEffect(() => {
+        author && setAuthorError(false);
+    }, [author]);
+
+    useEffect(() => {
+        pageCount && setPageCountError(false);
+    }, [pageCount]);
+
+    useEffect(() => {
+        year && setYearError(false);
+    }, [year]);
+
+    useEffect(() => {
+        imageUrl && setImageUrlError(false);
+    }, [imageUrl]);
+
+    useEffect(() => {
+        blurb && setBlurbError(false);
+    }, [blurb]);
+
+    useEffect(() => {
+        setTitleError(false);
+        setAuthorError(false);
+        setGenreError(false);
+        setPageCountError(false);
+        setYearError(false);
+        setImageUrlError(false);
+        setBlurbError(false);
+    }, [isbnError]);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
     async function handleSubmit() {
         try {
             const requestBody = {
@@ -609,7 +645,6 @@ function AddBookForm() {
                                     className='w-full p-5 text-xl focus:outline-none h-full align-middle'
                                     value={isbn}
                                     onInput={changeISBN}
-                                    autoFocus={true}
                                     placeholder='Search by ISBN'
                                     aria-placeholder='Search by ISBN'
                                 ></input>
@@ -781,7 +816,7 @@ function AddBookForm() {
                                 onChange={changeYear}
                                 className={yearError ? 'input-error form-text' : ' form-text'}
                             />
-                            {yearError && displayErrorMessage('Incorrect year format (e.g. 1997)')}
+                            {yearError && displayErrorMessage('Year is required (e.g. 1997)')}
                         </div>
                         {isValidUrl(imageUrl) && (
                             <div>
@@ -794,9 +829,7 @@ function AddBookForm() {
                             </div>
                         )}
                         <div>
-                            <label htmlFor='image'>
-                                Image URL <span className='text-rose-600'>*</span>
-                            </label>
+                            <label htmlFor='image'>Image URL</label>
                             <br />
                             <input
                                 type='text'
