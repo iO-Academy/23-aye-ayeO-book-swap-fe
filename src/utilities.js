@@ -120,3 +120,12 @@ export function renderWithLineBreaks(text) {
 export function removeHtmlTags(text) {
     return text?.replace(/<\/?[^>]+(>|$)/g, '') || '';
 }
+
+// Removes a decoration from Google Books API covers
+export function removeEdgeCurl(url) {
+    if (url?.includes('&edge=curl')) {
+        return url.replace('&edge=curl', '');
+    } else {
+        return url;
+    }
+}
