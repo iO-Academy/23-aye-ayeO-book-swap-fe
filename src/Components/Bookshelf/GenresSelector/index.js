@@ -31,6 +31,7 @@ function GenresSelector({
     selectedGenre, // used when component is controlled
     isControlled,
     updateGenre,
+    setGenreError,
 }) {
     const [genres, setGenres] = useState([]);
 
@@ -59,7 +60,10 @@ function GenresSelector({
             <select
                 id='genreId'
                 className={`rounded-md p-2 text-md bg-zinc-50 text-slate-600 ${className} focus:outline-none`}
-                onChange={(e) => updateGenre(e.target.value)}
+                onChange={(e) => {
+                    updateGenre(e.target.value);
+                    isControlled && setGenreError(false);
+                }}
                 value={
                     !isControlled
                         ? selectedGenre

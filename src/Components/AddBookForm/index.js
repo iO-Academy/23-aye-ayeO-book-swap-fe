@@ -129,11 +129,6 @@ function AddBookForm() {
 
     const { setAlert } = useContext(Context);
 
-    function updateGenre(passedGenreId) {
-        changeGenre(passedGenreId);
-        setGenreId(passedGenreId);
-    }
-
     // State setters for form values + form reset
     function changeISBN(e) {
         resetForm();
@@ -156,9 +151,9 @@ function AddBookForm() {
         setAuthorError(false);
     }
 
-    function changeGenre(string) {
-        setGenre(string);
-        setGenreError(false);
+    function updateGenre(passedGenreId) {
+        setGenre(passedGenreId);
+        setGenreId(passedGenreId);
     }
 
     function changePageCount(e) {
@@ -211,8 +206,9 @@ function AddBookForm() {
         }
 
         // genre
-        if (!genreId || genreId <= 0) {
+        if (!genre || genreId <= 0) {
             setGenreError(true);
+            console.log(genreError);
             setGenre(0);
         } else {
             setGenreError(false);
@@ -285,7 +281,8 @@ function AddBookForm() {
     async function checkIfIsbnExists(isbn) {
         // Check if ISBN exists in Swapp DB
 
-        const cleanIsbn = isbn.replace(/[- ]/g, '');
+        const cleanIsbn = isbn?.replace(/[- ]/g, '') || '';
+        // const cleanIsbn = typeof isbn === 'string' ? isbn.replace(/[- ]/g, '') : '';
 
         try {
             const swappRes = await fetch(
@@ -352,9 +349,9 @@ function AddBookForm() {
         setRemoteSuccess(true);
 
         // Open Library API
-        const bk = ol.book;
-        const wk = ol.work;
-        const au = ol.author;
+        const bk = ol?.book ?? {};
+        const wk = ol?.work ?? {};
+        const au = ol?.author ?? {};
 
         let isbn10OL;
         let isbn13OL;
@@ -368,8 +365,8 @@ function AddBookForm() {
         // let languageOL;
 
         // Google Books API
-        const g1 = g.googleRes;
-        const g2 = g.googleSelfLinkRes;
+        const g1 = g?.googleRes ?? {};
+        const g2 = g?.googleSelfLinkRes ?? {};
 
         let isbn10G;
         let isbn13G;
@@ -440,38 +437,39 @@ function AddBookForm() {
         ////////////////// GOOGLE //////////////////////
 
         // 🟨 TITLE
-        titleG = g1.items[0].volumeInfo?.title;
+        g1.items && (titleG = g1.items[0].volumeInfo?.title);
 
         // 🟨 AUTHOR
-        authorG = g1.items[0]?.volumeInfo?.authors?.[0];
+        g1.items && (authorG = g1.items[0]?.volumeInfo?.authors?.[0]);
 
         // 🟨 CATEGORY
-        categoryG = g1.items[0]?.volumeInfo?.categories?.[0];
+        g1.items && (categoryG = g1.items[0]?.volumeInfo?.categories?.[0]);
 
         // 🟨 PAGES
-        pageCountG = g1.items[0]?.volumeInfo?.pageCount;
+        g1.items && (pageCountG = g1.items[0]?.volumeInfo?.pageCount);
 
         // 🟨 BLURB
-        g2.volumeInfo.description && (blurbG = removeHtmlTags(g2.volumeInfo.description));
+        g2.volumeInfo && (blurbG = removeHtmlTags(g2.volumeInfo.description));
 
         // 🟨 COVER
-        coverG = g1.items[0]?.volumeInfo?.imageLinks?.thumbnail;
+        g1.items && (coverG = g1.items[0]?.volumeInfo?.imageLinks?.thumbnail);
 
         // 🟨 YEAR
-        g1.items[0].volumeInfo.publishedDate &&
-            (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
+        g1.items && (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
 
         // 🟨 ISBN
-        if (g2.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
-            isbn10G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
-            isbn13G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
-        } else {
-            isbn10G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
-            isbn13G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+        if (g2?.volumeInfo?.industryIdentifiers) {
+            if (g2.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
+                isbn10G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+                isbn13G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+            } else {
+                isbn10G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+                isbn13G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+            }
         }
 
         // 🟨 LANGUAGE
-        languageG = g1.items[0]?.volumeInfo?.language;
+        g1.items && (languageG = g1.items[0]?.volumeInfo?.language);
 
         /////////////////  SETTING STATE  ///////////////////
 
@@ -733,6 +731,7 @@ function AddBookForm() {
                                     selectedGenre={genre}
                                     isControlled={true}
                                     aria-required='true'
+                                    setGenreError={setGenreError}
                                 />
                                 <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
                                     <svg
