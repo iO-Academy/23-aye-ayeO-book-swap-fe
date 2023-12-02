@@ -57,7 +57,15 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
                 throw new Error(data.message);
             }
         } catch (error) {
-            setServerError(error.message);
+            if (
+                error.message === `Book ${id} was not returned. ${email} did not claim this book.`
+            ) {
+                setServerError(
+                    `<span className='font-semibold'>${email}</span> has not claimed this book`
+                );
+            } else {
+                setServerError(error.message);
+            }
         }
     }
 
