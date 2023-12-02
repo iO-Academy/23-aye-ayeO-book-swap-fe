@@ -9,10 +9,11 @@ import {
     isValidYear,
     isValidISBN,
     removeQuotes,
-    extractYear,
     limitString,
     getYearFromDateString,
     playSound,
+    removeHtmlTags,
+    removeEdgeCurl,
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
@@ -150,9 +151,9 @@ function AddBookForm() {
         setAuthorError(false);
     }
 
-    function changeGenre(string) {
-        setGenre(string);
-        setGenreError(false);
+    function updateGenre(passedGenreId) {
+        setGenre(passedGenreId);
+        setGenreId(passedGenreId);
     }
 
     function changePageCount(e) {
@@ -197,7 +198,7 @@ function AddBookForm() {
         }
 
         // author
-        if (author.length <= 0 || author.length > 255) {
+        if (!author || author.length <= 0 || author.length > 255) {
             setAuthorError(true);
         } else {
             setAuthorError(false);
@@ -205,7 +206,7 @@ function AddBookForm() {
         }
 
         // genre
-        if (genreId <= 0) {
+        if (!genre || genreId <= 0) {
             setGenreError(true);
             setGenre(0);
         } else {
@@ -214,7 +215,7 @@ function AddBookForm() {
         }
 
         // year
-        if (year && !isValidYear(year)) {
+        if (!isValidYear(year)) {
             setYearError(true);
         } else {
             setYearError(false);
@@ -222,7 +223,7 @@ function AddBookForm() {
         }
 
         // page count
-        if (pageCount && (isNaN(pageCount) || pageCount <= 0)) {
+        if (isNaN(pageCount) || pageCount <= 0) {
             setPageCountError(true);
         } else {
             setPageCountError(false);
@@ -238,7 +239,7 @@ function AddBookForm() {
         }
 
         // blurb
-        if (blurb && blurb.length > 10000) {
+        if (!blurb || blurb.length < 10 || blurb.length > 10000) {
             setBlurbError(true);
         } else {
             setBlurbError(false);
@@ -272,7 +273,6 @@ function AddBookForm() {
         ) {
             handleSubmit(e);
         } else {
-            // scrollToTop();
             scrollToFirstError();
         }
     }
@@ -280,7 +280,8 @@ function AddBookForm() {
     async function checkIfIsbnExists(isbn) {
         // Check if ISBN exists in Swapp DB
 
-        const cleanIsbn = isbn.replace(/[- ]/g, '');
+        const cleanIsbn = isbn?.replace(/[- ]/g, '') || '';
+        // const cleanIsbn = typeof isbn === 'string' ? isbn.replace(/[- ]/g, '') : '';
 
         try {
             const swappRes = await fetch(
@@ -299,178 +300,265 @@ function AddBookForm() {
     }
 
     async function getBookData(isbn) {
-        // Fetch bookData from Google and Open Library to populate Add Book form
+        let google;
+        let openLibrary;
 
-        // Local values for getBookData used to set corresponding state values
-        let openLibraryRes;
-        let book;
-
-        let workRes;
-        let work;
-
-        let authorRes;
-        let author;
-
-        let goodreads = '';
-        let cover = '';
-        let blurb = '';
-        let pageCount = '';
-        let year = '';
-
-        // OPEN LIBRARY API
         try {
-            openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
-            book = await openLibraryRes.json();
+            google = await fetchGoogleBookData(isbn);
+        } catch (googleError) {}
 
-            workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
-            work = await workRes.json();
-
-            authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
-            author = await authorRes.json();
-
-            // 🟨 GOODREADS
-            if (book.identifiers && book.identifiers.goodreads && book.identifiers.goodreads[0]) {
-                goodreads = book.identifiers.goodreads[0];
-            }
-
-            // 🟨 AUTHOR
-            author && author.name && (author = author.name.trim());
-
-            // 🟨 PAGES
-            book.pagination && (pageCount = book.pagination);
-            book.number_of_pages && (pageCount = book.number_of_pages);
-
-            // 🟨 YEAR
-            work.first_publish_date && (year = extractYear(work.first_publish_date));
-            book.publish_date && (year = extractYear(book.publish_date));
-
-            // 🟨 COVER
-            const bookCovers = book.covers || [];
-            const workCovers = work.covers || [];
-
-            cover =
-                (bookCovers.length > 0 && bookCovers[0]) ||
-                (workCovers.length > 0 && workCovers[0]);
-
-            if (cover) {
-                cover = `https://covers.openlibrary.org/b/id/${cover}-L.jpg`;
-            }
-
-            if (cover === false) {
-                cover = '';
-            }
-
-            // 🟨 BLURB
-            if (work.description && work.description.value) {
-                blurb = limitString(removeQuotes(work.description.value), 10000);
-            } else if (work.description) {
-                blurb = limitString(removeQuotes(work.description), 10000);
-            } else if (book.description && book.description.value) {
-                blurb = limitString(removeQuotes(book.description.value), 10000);
-            }
-        } catch (error) {
-            // Log errors
-            // Some books missing in OL, so failure here is disregarded for GUI indication of success
-        }
-
-        // GOOGLE BOOKS API
         try {
-            const google = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
-            );
-            const googleRes = await google.json();
+            openLibrary = await fetchOpenLibraryBookData(isbn);
+        } catch (openLibraryError) {}
 
-            let isbn10Google;
-            let isbn13Google;
-            const titleGoogle = googleRes.items[0].volumeInfo.title;
-            const authorGoogle = googleRes.items[0]?.volumeInfo?.authors?.[0];
-            const categoryGoogle = googleRes.items[0]?.volumeInfo?.categories?.[0];
-            const languageGoogle = googleRes.items[0].volumeInfo.language;
-            const pageCountGoogle = googleRes.items[0].volumeInfo.pageCount;
-            const descriptionGoogle = googleRes.items[0].volumeInfo.description;
-            const coverGoogle = googleRes.items[0]?.volumeInfo?.imageLinks?.thumbnail;
-            const yearGoogle = getYearFromDateString(googleRes.items[0].volumeInfo.publishedDate);
-
-            // ISBN - API indices are not consistent
-            if (googleRes.items[0].volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
-                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
-                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
-            } else {
-                isbn10Google = googleRes.items[0].volumeInfo.industryIdentifiers[1].identifier;
-                isbn13Google = googleRes.items[0].volumeInfo.industryIdentifiers[0].identifier;
-            }
-
-            // Working values
-            setISBN10(isbn10Google);
-            setISBN13(isbn13Google);
-            setLanguage(languageGoogle);
-
-            if (google.ok) {
-                // playSound(successSound);
-
-                setRemoteSuccess(true);
-
-                // ✅ GOODREADS
-                setGoodreadsLink(goodreads);
-
-                // ✅ TITLE
-                setTitle(titleGoogle);
-
-                // ✅ AUTHOR
-                authorGoogle ? setAuthor(authorGoogle) : setAuthor(author);
-
-                // ✅ CATEGORY
-
-                categoryGoogle && setGenre(categoryGoogle);
-
-                // ✅ PAGES
-                pageCountGoogle > 0 ? setPageCount(pageCountGoogle) : setPageCount(pageCount);
-
-                // ✅ YEAR
-                yearGoogle > 0 ? setYear(yearGoogle) : setYear(year);
-
-                // ✅ COVER
-                cover ? setImageUrl(cover) : setImageUrl(coverGoogle);
-
-                // ✅ BLURB
-                descriptionGoogle && descriptionGoogle.length > 0
-                    ? setBlurb(descriptionGoogle)
-                    : setBlurb(blurb);
-
-                // ✅ LANGUAGE
-            }
-        } catch (error) {
-            // playSound(notFoundSound);
+        if (google || openLibrary) {
+            handleSuccess(google, openLibrary);
+        } else {
             setIsbnError(
                 "Sorry, we couldn't find this book. Please fill in the form below manually."
             );
         }
     }
 
+    async function fetchGoogleBookData(isbn) {
+        const google = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+        const googleRes = await google.json();
+
+        // Secondary fetch for missing data in googleRes
+        const googleSelfLink = await fetch(`${googleRes.items[0].selfLink}`);
+        const googleSelfLinkRes = await googleSelfLink.json();
+
+        return { googleRes, googleSelfLinkRes };
+    }
+
+    async function fetchOpenLibraryBookData(isbn) {
+        const openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+        const book = await openLibraryRes.json();
+
+        const workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+        const work = await workRes.json();
+
+        const authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
+        const author = await authorRes.json();
+
+        return { book, work, author };
+    }
+
+    function handleSuccess(g, ol) {
+        setRemoteSuccess(true);
+
+        // Open Library API
+        const bk = ol?.book ?? {};
+        const wk = ol?.work ?? {};
+        const au = ol?.author ?? {};
+
+        let isbn10OL;
+        let isbn13OL;
+        let titleOL;
+        let authorOL;
+        let pageCountOL;
+        let yearOL;
+        let coverOL;
+        let blurbOL;
+        let goodreadsOL;
+        // let languageOL;
+
+        // Google Books API
+        const g1 = g?.googleRes ?? {};
+        const g2 = g?.googleSelfLinkRes ?? {};
+
+        let isbn10G;
+        let isbn13G;
+        let titleG;
+        let authorG;
+        let categoryG;
+        let pageCountG;
+        let yearG;
+        let coverG;
+        let blurbG;
+        let languageG;
+
+        ////////////////// OPEN LIBRARY //////////////////////
+
+        // 🟨 GOODREADS
+        if (bk.identifiers && bk.identifiers.goodreads && bk.identifiers.goodreads[0]) {
+            goodreadsOL = bk.identifiers.goodreads[0];
+        }
+
+        // 🟨 ISBN10
+        bk.isbn_10 && (isbn10OL = bk.isbn_10[0]);
+
+        // 🟨 ISBN13
+        bk.isbn_13 && (isbn13OL = bk.isbn_13[0]);
+
+        // 🟨 TITLE
+        bk.title && (titleOL = bk.title);
+
+        // 🟨 AUTHOR
+        au && au.name && (authorOL = au.name.trim());
+
+        // 🟨 PAGES
+        bk.pagination && (pageCountOL = bk.pagination);
+        bk.number_of_pages && (pageCountOL = bk.number_of_pages);
+
+        // 🟨 YEAR
+        wk.first_publish_date && (yearOL = getYearFromDateString(wk.first_publish_date));
+        bk.publish_date && (yearOL = getYearFromDateString(bk.publish_date));
+
+        // 🟨 COVER
+        const bookCover = bk.covers && bk.covers[0];
+        const workCover = wk.covers && wk.covers[0];
+
+        if (bookCover || workCover) {
+            if (bookCover !== -1 && workCover !== -1) {
+                coverOL = bookCover || workCover;
+            }
+        }
+
+        if (coverOL) {
+            coverOL = `https://covers.openlibrary.org/b/id/${coverOL}-L.jpg`;
+        } else {
+            coverOL = '';
+        }
+
+        // 🟨 BLURB
+        if (wk.description && wk.description.value) {
+            blurbOL = limitString(removeQuotes(wk.description.value), 10000);
+        } else if (wk.description) {
+            blurbOL = limitString(removeQuotes(wk.description), 10000);
+        } else if (bk.description && bk.description.value) {
+            blurbOL = limitString(removeQuotes(bk.description.value), 10000);
+        }
+
+        // 🟨 LANGUAGE
+        setLanguage('es');
+
+        ////////////////// GOOGLE //////////////////////
+
+        // 🟨 TITLE
+        g1.items && (titleG = g1.items[0].volumeInfo?.title);
+
+        // 🟨 AUTHOR
+        g1.items && (authorG = g1.items[0]?.volumeInfo?.authors?.[0]);
+
+        // 🟨 CATEGORY
+        g1.items && (categoryG = g1.items[0]?.volumeInfo?.categories?.[0]);
+
+        // 🟨 PAGES
+        g1.items && (pageCountG = g1.items[0]?.volumeInfo?.pageCount);
+
+        // 🟨 BLURB
+        g2.volumeInfo && (blurbG = removeHtmlTags(g2.volumeInfo.description));
+
+        // 🟨 COVER
+        g1.items && (coverG = removeEdgeCurl(g1.items[0]?.volumeInfo?.imageLinks?.thumbnail));
+
+        // 🟨 YEAR
+        g1.items && (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
+
+        // 🟨 ISBN
+        if (g2?.volumeInfo?.industryIdentifiers) {
+            if (g2.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
+                isbn10G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+                isbn13G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+            } else {
+                isbn10G = g2.volumeInfo?.industryIdentifiers[1]?.identifier;
+                isbn13G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
+            }
+        }
+
+        // 🟨 LANGUAGE
+        g1.items && (languageG = g1.items[0]?.volumeInfo?.language);
+
+        /////////////////  SETTING STATE  ///////////////////
+
+        // ✅ GOODREADS
+        setGoodreadsLink(goodreadsOL);
+
+        // ✅ TITLE
+        titleG ? setTitle(titleG) : setTitle(titleOL);
+
+        // ✅ AUTHOR
+        authorG ? setAuthor(authorG) : setAuthor(authorOL);
+
+        // ✅ ISBN10
+        isbn10G ? setISBN10(isbn10G) : setISBN10(isbn10OL);
+
+        // ✅ ISBN13
+        isbn13G ? setISBN13(isbn13G) : setISBN13(isbn13OL);
+
+        // ✅ LANGUAGE
+        languageG && setLanguage(languageG);
+
+        // ✅ CATEGORY
+        categoryG && setGenre(categoryG);
+
+        // ✅ PAGES
+        pageCountG > 0 ? setPageCount(pageCountG) : setPageCount(pageCountOL);
+
+        // ✅ YEAR
+        yearG > 0 ? setYear(yearG) : setYear(yearOL);
+
+        // ✅ COVER
+        coverOL ? setImageUrl(coverOL) : setImageUrl(coverG);
+
+        // ✅ BLURB
+        blurbG && blurbG.length > 0 ? setBlurb(blurbG) : setBlurb(blurbOL);
+    }
+
+    ////////////////////// RESET VALIDATION ERRORS ON FETCH FILL ////////////////////////////
+
+    useEffect(() => {
+        title && setTitleError(false);
+    }, [title]);
+
+    useEffect(() => {
+        author && setAuthorError(false);
+    }, [author]);
+
+    useEffect(() => {
+        pageCount && setPageCountError(false);
+    }, [pageCount]);
+
+    useEffect(() => {
+        year && setYearError(false);
+    }, [year]);
+
+    useEffect(() => {
+        imageUrl && setImageUrlError(false);
+    }, [imageUrl]);
+
+    useEffect(() => {
+        blurb && setBlurbError(false);
+    }, [blurb]);
+
+    useEffect(() => {
+        setTitleError(false);
+        setAuthorError(false);
+        setGenreError(false);
+        setPageCountError(false);
+        setYearError(false);
+        setImageUrlError(false);
+        setBlurbError(false);
+    }, [isbnError]);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
     async function handleSubmit() {
         try {
-            const requestBody = {};
-
-            // Required values
-            requestBody.title = title;
-            requestBody.author = author;
-            requestBody.genre_id = genreId;
-            requestBody.isbn10 = isbn10;
-            requestBody.isbn13 = isbn13;
-            requestBody.language = language;
-
-            // Optional values
-            if (blurb) {
-                requestBody.blurb = blurb;
-            }
-
-            requestBody.image =
-                imageUrl ||
-                `https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon`;
-
-            if (year) {
-                requestBody.year = year;
-            }
+            const requestBody = {
+                title,
+                author,
+                genre_id: genreId,
+                isbn10,
+                isbn13,
+                language,
+                page_count: pageCount,
+                year,
+                blurb,
+                image:
+                    imageUrl ||
+                    'https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon',
+            };
 
             const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
@@ -500,6 +588,7 @@ function AddBookForm() {
             }
         } catch (error) {
             // Log errors
+            console.log(error);
         }
     }
 
@@ -549,7 +638,7 @@ function AddBookForm() {
 
                         `}
                         >
-                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600   border-slate-300'>
+                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600 border-slate-300'>
                                 <input
                                     type='text'
                                     id='isbn'
@@ -562,7 +651,7 @@ function AddBookForm() {
                                 <div
                                     role='button'
                                     tabIndex={0}
-                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5   text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
+                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5 text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
                                     onClick={handleStartScanner}
                                     title='Start ISBN barcode scanner'
                                     aria-label='Start ISBN barcode scanner'
@@ -630,13 +719,14 @@ function AddBookForm() {
                         )}
                         <div>
                             <label htmlFor='title'>
-                                Title <span className='text-rose-700'>*</span>
+                                Title <span className='text-rose-600'>*</span>
                             </label>
                             <br />
                             <input
                                 type='text'
                                 id='title'
                                 name='title'
+                                aria-required='true'
                                 value={title}
                                 onChange={changeTitle}
                                 className={titleError ? 'input-error form-text' : 'form-text'}
@@ -646,7 +736,7 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='author'>
-                                Author <span className='text-rose-700'>*</span>
+                                Author <span className='text-rose-600'>*</span>
                             </label>
                             <br />
 
@@ -654,6 +744,7 @@ function AddBookForm() {
                                 type='text'
                                 id='author'
                                 name='author'
+                                aria-required='true'
                                 value={author}
                                 onChange={changeAuthor}
                                 className={authorError ? 'input-error form-text' : ' form-text'}
@@ -663,17 +754,19 @@ function AddBookForm() {
 
                         <div>
                             <label htmlFor='genreId'>
-                                Category <span className='text-rose-700'>*</span>
+                                Category <span className='text-rose-600'>*</span>
                             </label>
-
                             <div className='flex items-start sm:items-center flex-col-reverse sm:flex-row gap-1'>
+                                {}
                                 <GenresSelector
-                                    onGenreChangeID={changeGenre}
+                                    updateGenre={updateGenre}
                                     className={genreError ? 'select-error' : null}
                                     defaultString='Select'
                                     isDisabled={true}
                                     selectedGenre={genre}
-                                    setGenreId={setGenreId}
+                                    isControlled={true}
+                                    aria-required='true'
+                                    setGenreError={setGenreError}
                                 />
                                 <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
                                     <svg
@@ -693,34 +786,39 @@ function AddBookForm() {
                         </div>
 
                         <div>
-                            <label htmlFor='pageCount'>Pages</label>
+                            <label htmlFor='pageCount'>
+                                Pages <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <input
                                 type='number'
                                 id='pageCount'
                                 name='pageCount'
+                                aria-required='true'
                                 value={pageCount}
                                 onChange={changePageCount}
                                 className={pageCountError ? 'input-error form-text' : 'form-text'}
                             />
-                            {pageCountError &&
-                                displayErrorMessage('Page count has to be more than 0')}
+                            {pageCountError && displayErrorMessage('Page count is required')}
                         </div>
 
                         <div>
-                            <label htmlFor='year'>Year</label>
+                            <label htmlFor='year'>
+                                Year <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <input
                                 type='text'
                                 id='year'
                                 name='year'
+                                aria-required='true'
                                 value={year}
                                 onChange={changeYear}
                                 className={yearError ? 'input-error form-text' : ' form-text'}
                             />
-                            {yearError && displayErrorMessage('Incorrect year format')}
+                            {yearError && displayErrorMessage('Year is required (e.g. 1997)')}
                         </div>
-                        {imageUrl && (
+                        {isValidUrl(imageUrl) && (
                             <div>
                                 <img
                                     src={imageUrl}
@@ -737,18 +835,22 @@ function AddBookForm() {
                                 type='text'
                                 id='image'
                                 name='image'
+                                aria-required='true'
                                 value={imageUrl}
                                 onChange={changeImageUrl}
                                 className={imageUrlError ? 'input-error form-text' : 'form-text'}
                             />
-                            {imageUrlError && displayErrorMessage('Invalid URL')}
+                            {imageUrlError && displayErrorMessage('Valid cover URL is required')}
                         </div>
 
                         <div>
-                            <label htmlFor='blurb'>Blurb</label>
+                            <label htmlFor='blurb'>
+                                Blurb <span className='text-rose-600'>*</span>
+                            </label>
                             <br />
                             <textarea
                                 id='blurb'
+                                aria-required='true'
                                 rows='5'
                                 maxLength='10000'
                                 value={blurb}
@@ -756,7 +858,9 @@ function AddBookForm() {
                                 className={blurbError ? 'input-error form-text' : 'form-text'}
                             ></textarea>
                             {blurbError &&
-                                displayErrorMessage('Must be less than 10,000 characters')}
+                                displayErrorMessage(
+                                    'The blurb must be between 10 and 10,000 characters'
+                                )}
                         </div>
                         <div id='error-container' className='error'></div>
                         <input type='submit' value='Add Book' className='button py-3' />

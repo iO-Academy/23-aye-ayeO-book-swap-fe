@@ -66,7 +66,7 @@ export function isValidISBN(isbn) {
 }
 
 export function removeQuotes(str) {
-    return str.replace(/^['"]|['"]$/g, '');
+    return str?.replace(/^['"]|['"]$/g, '') || '';
 }
 
 export function limitString(str, limiter) {
@@ -85,7 +85,7 @@ export function extractYear(dateString) {
     } else {
         // If it's in a format like 'Month day, year', extract the year from the last element
         const year = dateArray[dateArray.length - 1];
-        return year.replace(/[^0-9]/g, ''); // Extract only the digits (the year)
+        return year?.replace(/[^0-9]/g, '') || ''; // Extract only the digits (the year)
     }
 }
 
@@ -114,5 +114,18 @@ export function renderWithLineBreaks(text) {
                 {index < lines.length - 1 && <br />}
             </React.Fragment>
         ));
+    }
+}
+
+export function removeHtmlTags(text) {
+    return text?.replace(/<\/?[^>]+(>|$)/g, '') || '';
+}
+
+// Removes a decoration from Google Books API covers
+export function removeEdgeCurl(url) {
+    if (url?.includes('&edge=curl')) {
+        return url.replace('&edge=curl', '');
+    } else {
+        return url;
     }
 }
