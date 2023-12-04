@@ -8,7 +8,7 @@ import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
-import { renderWithLineBreaks } from '../../../utilities';
+import { renderWithLineBreaks, truncate } from '../../../utilities';
 
 function BookDetails({
     image,
@@ -39,6 +39,11 @@ function BookDetails({
         openReturn ? setOpenReturn(false) : setOpenReturn(true);
         document.body.style.overflow = !openReturn ? 'hidden' : 'auto';
     }
+
+    function toggleBlurb() {
+        openBlurb ? setOpenBlurb(false) : setOpenBlurb(true);
+    }
+    const [openBlurb, setOpenBlurb] = useState(false);
 
     return (
         <>
@@ -108,7 +113,7 @@ function BookDetails({
                             </div>
                         </div>
                     </div>
-                    <div className='flex flex-col w-full gap-2 lg:max-w-2xl'>
+                    <div className='flex flex-col w-full gap-2 lg:max-w-2xl transition'>
                         <h1 className='text-center lg:text-left p-0 sm:text-4xl text-[7vw] leading-tight'>
                             {title}
                         </h1>
@@ -120,7 +125,22 @@ function BookDetails({
                                 {reviews?.length} reviews
                             </a>
                         </div>
-                        <p>{renderWithLineBreaks(blurb)}</p>
+                        <div className={openBlurb ? null : 'fade max-h-60'}>
+                            <p>{renderWithLineBreaks(blurb)}</p>
+                        </div>
+
+                        <button
+                            className='font-bold flex flex-row self-center'
+                            onClick={toggleBlurb}
+                        >
+                            {openBlurb ? 'Show less' : 'Show more '}
+                            <svg height='25' width='25' viewBox='0 0 24 24'>
+                                <path
+                                    d='M8.70710678,9.27397892 C8.31658249,8.90867369 7.68341751,8.90867369 7.29289322,9.27397892 C6.90236893,9.63928415 6.90236893,10.2315609 7.29289322,10.5968662 L12,15 L16.7071068,10.5968662 C17.0976311,10.2315609 17.0976311,9.63928415 16.7071068,9.27397892 C16.3165825,8.90867369 15.6834175,8.90867369 15.2928932,9.27397892 L12,12.3542255 L8.70710678,9.27397892 Z'
+                                    transform={openBlurb ? 'rotate(180 12 12)' : 'rotate(0 12 12)'}
+                                ></path>
+                            </svg>
+                        </button>
                         <br />
                         <p>Genre: {genre.name}</p>
                         <p>{year}</p>
