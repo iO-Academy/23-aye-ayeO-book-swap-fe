@@ -20,8 +20,6 @@ import scanSound from '../../sounds/click.mp3';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
-    const [isbn10, setISBN10] = useState('');
-    const [isbn13, setISBN13] = useState('');
     const [language, setLanguage] = useState('');
 
     const [cameraPermission, setCameraPermission] = useState(null);
@@ -112,6 +110,8 @@ function AddBookForm() {
     const [author, setAuthor] = useState('');
     const [genre, setGenre] = useState('');
     const [genreId, setGenreId] = useState('');
+    const [isbn10, setISBN10] = useState('');
+    const [isbn13, setISBN13] = useState('');
     const [pageCount, setPageCount] = useState('');
     const [year, setYear] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -122,6 +122,8 @@ function AddBookForm() {
     const [titleError, setTitleError] = useState('');
     const [authorError, setAuthorError] = useState('');
     const [genreError, setGenreError] = useState('');
+    const [isbn10Error, setISBN10Error] = useState('');
+    const [isbn13Error, setISBN13Error] = useState('');
     const [pageCountError, setPageCountError] = useState(false);
     const [yearError, setYearError] = useState(false);
     const [imageUrlError, setImageUrlError] = useState(false);
@@ -156,6 +158,17 @@ function AddBookForm() {
         setGenreId(passedGenreId);
     }
 
+    function changeISBN10(e) {
+        setISBN10(e.target.value);
+
+        setISBN10Error(false);
+    }
+
+    function changeISBN13(e) {
+        setISBN13(e.target.value);
+        setISBN13Error(false);
+    }
+
     function changePageCount(e) {
         setPageCount(e.target.value);
         setPageCountError(false);
@@ -183,6 +196,8 @@ function AddBookForm() {
         let titleError = true;
         let authorError = true;
         let genreError = true;
+        let isbn10Error = true;
+        let isbn13Error = true;
         let yearError = true;
         let pageCountError = true;
         let imageUrlError = true;
@@ -212,6 +227,22 @@ function AddBookForm() {
         } else {
             setGenreError(false);
             genreError = false;
+        }
+
+        // isbn10
+        if (!isbn10 || !isValidISBN(isbn10) || isbn10.length !== 10) {
+            setISBN10Error(true);
+        } else {
+            setISBN10Error(false);
+            isbn10Error = false;
+        }
+
+        // isbn-13
+        if (!isbn13 || !isValidISBN(isbn13) || isbn13.length !== 13) {
+            setISBN13Error(true);
+        } else {
+            setISBN13Error(false);
+            isbn13Error = false;
         }
 
         // year
@@ -265,11 +296,13 @@ function AddBookForm() {
         if (
             !titleError &&
             !authorError &&
+            !blurbError &&
+            !isbn10Error &&
+            !isbn13Error &&
             !genreError &&
             !pageCountError &&
             !yearError &&
-            !imageUrlError &&
-            !blurbError
+            !imageUrlError
         ) {
             handleSubmit(e);
         } else {
@@ -281,7 +314,6 @@ function AddBookForm() {
         // Check if ISBN exists in Swapp DB
 
         const cleanIsbn = isbn?.replace(/[- ]/g, '') || '';
-        // const cleanIsbn = typeof isbn === 'string' ? isbn.replace(/[- ]/g, '') : '';
 
         try {
             const swappRes = await fetch(
@@ -517,6 +549,14 @@ function AddBookForm() {
     }, [author]);
 
     useEffect(() => {
+        isbn10 && setISBN10Error(false);
+    }, [isbn10]);
+
+    useEffect(() => {
+        isbn13 && setISBN13Error(false);
+    }, [isbn13]);
+
+    useEffect(() => {
         pageCount && setPageCountError(false);
     }, [pageCount]);
 
@@ -536,6 +576,9 @@ function AddBookForm() {
         setTitleError(false);
         setAuthorError(false);
         setGenreError(false);
+        setIsbnError(false);
+        setISBN10Error(false);
+        setISBN13Error(false);
         setPageCountError(false);
         setYearError(false);
         setImageUrlError(false);
@@ -711,12 +754,6 @@ function AddBookForm() {
                             )}
                         </div>
                         <hr className='border-zinc-300 my-4' />
-                        {isbn13 && (
-                            <p className='text-sm'>
-                                {`ISBN13: ${isbn13}`}{' '}
-                                <span className='text-zinc-500'>{`(ISBN10: ${isbn10})`}</span>
-                            </p>
-                        )}
                         <div>
                             <label htmlFor='title'>
                                 Title <span className='text-rose-600'>*</span>
@@ -782,7 +819,46 @@ function AddBookForm() {
                                     <span className='tooltiptext'>BISAC Subject Headings</span>
                                 </div>
                             </div>
-                            {genreError && displayErrorMessage('Genre selection is required')}
+                            {genreError && displayErrorMessage('Category selection is required')}
+                        </div>
+                        <div className='flex sm:flex-row flex-col justify-between gap-3'>
+                            {' '}
+                            {/* ISBN-13 */}
+                            <div className='sm:w-1/2'>
+                                <label htmlFor='isbn13'>
+                                    ISBN13 <span className='text-rose-600'>*</span>
+                                </label>
+
+                                <br />
+                                <input
+                                    type='text'
+                                    id='isbn13'
+                                    name='isbn13'
+                                    aria-required='true'
+                                    value={isbn13}
+                                    onChange={changeISBN13}
+                                    className={isbn13Error ? 'input-error form-text' : 'form-text'}
+                                />
+                                {isbn13Error && displayErrorMessage('ISBN13 is required')}
+                            </div>
+                            {/* ISBN-10 */}
+                            <div className='sm:w-1/2'>
+                                <label htmlFor='isbn10'>
+                                    ISBN10 <span className='text-rose-600'>*</span>
+                                </label>
+
+                                <br />
+                                <input
+                                    type='text'
+                                    id='isbn10'
+                                    name='isbn10'
+                                    aria-required='true'
+                                    value={isbn10}
+                                    onChange={changeISBN10}
+                                    className={isbn10Error ? 'input-error form-text' : 'form-text'}
+                                />
+                                {isbn10Error && displayErrorMessage('ISBN10 is required')}
+                            </div>
                         </div>
 
                         <div>
