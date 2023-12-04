@@ -136,8 +136,8 @@ function ReviewForm({ refreshReviewsList }) {
                             onChange={changeRating}
                             className={
                                 ratingError
-                                    ? 'rate flex flex-row-reverse justify-end'
-                                    : 'rate flex flex-row-reverse justify-end'
+                                    ? 'rate flex flex-row-reverse justify-end items-center'
+                                    : 'rate flex flex-row-reverse justify-end items-center'
                             }
                         >
                             <input type='radio' id='star5' name='rate' value='5' />
