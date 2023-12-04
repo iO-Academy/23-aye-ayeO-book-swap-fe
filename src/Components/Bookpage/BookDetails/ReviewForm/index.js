@@ -178,7 +178,7 @@ function ReviewForm({ refreshReviewsList }) {
                         ></textarea>
                         {reviewError &&
                             displayErrorMessage('Review is required (Min. 10 characters)')}
-                        <div>{review.length} / 255 characters</div>
+                        <div>{review.length} / 10000</div>
                     </div>
                     <span className='error'>{serverError}</span>
                     <input type='submit' value='Post Review' className='button py-2' />
