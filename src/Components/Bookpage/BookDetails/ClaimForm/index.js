@@ -14,10 +14,12 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
 
     function changeName(e) {
         setName(e.target.value);
+        setNameError(false);
     }
 
     function changeEmail(e) {
         setEmail(e.target.value);
+        setEmailError(false);
     }
 
     function validateForm(e) {
@@ -96,7 +98,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
             <div className='form-container w-[500px] relative '>
                 <button
                     onClick={backdropClick}
-                    className='absolute top-5 right-5 text-3xl text-zinc-600'
+                    className='absolute top-0 right-0 text-3xl text-zinc-600 p-4'
                 >
                     <svg
                         onClick={backdropClick}
@@ -122,6 +124,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                         </label>
 
                         <input
+                            autoFocus
                             autoComplete='name'
                             type='text'
                             id='name'

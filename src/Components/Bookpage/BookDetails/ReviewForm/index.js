@@ -136,8 +136,8 @@ function ReviewForm({ refreshReviewsList }) {
                             onChange={changeRating}
                             className={
                                 ratingError
-                                    ? 'rate flex flex-row-reverse justify-end'
-                                    : 'rate flex flex-row-reverse justify-end'
+                                    ? 'rate flex flex-row-reverse justify-end items-center'
+                                    : 'rate flex flex-row-reverse justify-end items-center'
                             }
                         >
                             <input type='radio' id='star5' name='rate' value='5' />
@@ -171,14 +171,14 @@ function ReviewForm({ refreshReviewsList }) {
                             id='review'
                             name='review'
                             rows='4'
-                            maxLength='255'
+                            maxLength='10000'
                             cols='50'
                             onChange={changeReview}
                             className={reviewError ? 'input-error form-text' : 'form-text'}
                         ></textarea>
                         {reviewError &&
                             displayErrorMessage('Review is required (Min. 10 characters)')}
-                        <div>{review.length} / 255 characters</div>
+                        <div>{review.length} / 10000</div>
                     </div>
                     <span className='error'>{serverError}</span>
                     <input type='submit' value='Post Review' className='button py-2' />
