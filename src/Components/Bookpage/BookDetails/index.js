@@ -25,6 +25,8 @@ function BookDetails({
     getBookData,
     refreshReviewsList,
 }) {
+    const [openBlurb, setOpenBlurb] = useState(false);
+
     const totalScore = reviews?.reduce((ratingSum, review) => ratingSum + review.rating, 0);
 
     const avgScore = totalScore ? totalScore / reviews?.length : 0;
@@ -43,9 +45,8 @@ function BookDetails({
     }
 
     function toggleBlurb() {
-        openBlurb ? setOpenBlurb(false) : setOpenBlurb(true);
+        setOpenBlurb(!openBlurb);
     }
-    const [openBlurb, setOpenBlurb] = useState(false);
 
     return (
         <>

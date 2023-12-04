@@ -171,7 +171,7 @@ function ReviewForm({ refreshReviewsList }) {
                             id='review'
                             name='review'
                             rows='4'
-                            maxLength='255'
+                            maxLength='10000'
                             cols='50'
                             onChange={changeReview}
                             className={reviewError ? 'input-error form-text' : 'form-text'}
