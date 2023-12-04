@@ -8,7 +8,7 @@ import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
-import { renderWithLineBreaks, truncate } from '../../../utilities';
+import { renderWithLineBreaks } from '../../../utilities';
 
 function BookDetails({
     image,
@@ -50,7 +50,7 @@ function BookDetails({
     return (
         <>
             <ScrollToTop />
-            <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto bg-zinc-100'>
+            <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto'>
                 <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
                     <div className='w-[400px] flex justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
@@ -127,25 +127,30 @@ function BookDetails({
                                 {reviews?.length} reviews
                             </a>
                         </div>
-                        <div className={openBlurb ? null : 'fade max-h-60'}>
+                        <div className={openBlurb || blurb.length < 600 ? null : 'fade max-h-60'}>
                             <p>{renderWithLineBreaks(blurb)}</p>
                         </div>
 
-                        <button
-                            className='font-bold flex flex-row self-center'
-                            onClick={toggleBlurb}
-                        >
-                            {openBlurb ? 'Show less' : 'Show more '}
-                            <svg height='25' width='25' viewBox='0 0 24 24'>
-                                <path
-                                    d='M8.70710678,9.27397892 C8.31658249,8.90867369 7.68341751,8.90867369 7.29289322,9.27397892 C6.90236893,9.63928415 6.90236893,10.2315609 7.29289322,10.5968662 L12,15 L16.7071068,10.5968662 C17.0976311,10.2315609 17.0976311,9.63928415 16.7071068,9.27397892 C16.3165825,8.90867369 15.6834175,8.90867369 15.2928932,9.27397892 L12,12.3542255 L8.70710678,9.27397892 Z'
-                                    transform={openBlurb ? 'rotate(180 12 12)' : 'rotate(0 12 12)'}
-                                ></path>
-                            </svg>
-                        </button>
+                        {blurb.length > 600 && (
+                            <button
+                                className='font-bold flex flex-row self-center'
+                                onClick={toggleBlurb}
+                            >
+                                {openBlurb ? 'Show less' : 'Show more '}
+                                <svg height='25' width='25' viewBox='0 0 24 24'>
+                                    <path
+                                        d='M8.70710678,9.27397892 C8.31658249,8.90867369 7.68341751,8.90867369 7.29289322,9.27397892 C6.90236893,9.63928415 6.90236893,10.2315609 7.29289322,10.5968662 L12,15 L16.7071068,10.5968662 C17.0976311,10.2315609 17.0976311,9.63928415 16.7071068,9.27397892 C16.3165825,8.90867369 15.6834175,8.90867369 15.2928932,9.27397892 L12,12.3542255 L8.70710678,9.27397892 Z'
+                                        transform={
+                                            openBlurb ? 'rotate(180 12 12)' : 'rotate(0 12 12)'
+                                        }
+                                    ></path>
+                                </svg>
+                            </button>
+                        )}
+
                         <br />
                         <div>
-                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-4'>
+                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-3'>
                                 {genre.name && (
                                     <>
                                         <p className='text-zinc-600 col-span-1'>Category</p>{' '}
@@ -173,7 +178,6 @@ function BookDetails({
                                         <p className='col-span-3 sm:col-span-5'>{pageCount} </p>
                                     </>
                                 )}
-                                {/* <p>{year}</p> */}
                                 <div className='mt-6 border-zinc-300'></div>
                             </div>
                             <h2
