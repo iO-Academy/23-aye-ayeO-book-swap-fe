@@ -8,12 +8,14 @@ import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
-import { renderWithLineBreaks } from '../../../utilities';
+import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
 
 function BookDetails({
     image,
     title,
     author,
+    isbn10,
+    isbn13,
     year,
     pageCount,
     genre,
@@ -23,6 +25,8 @@ function BookDetails({
     getBookData,
     refreshReviewsList,
 }) {
+    const [openBlurb, setOpenBlurb] = useState(false);
+
     const totalScore = reviews?.reduce((ratingSum, review) => ratingSum + review.rating, 0);
 
     const avgScore = totalScore ? totalScore / reviews?.length : 0;
@@ -40,10 +44,15 @@ function BookDetails({
         document.body.style.overflow = !openReturn ? 'hidden' : 'auto';
     }
 
+    function toggleBlurb() {
+        setOpenBlurb(!openBlurb);
+        openBlurb && scrollToTop();
+    }
+
     return (
         <>
             <ScrollToTop />
-            <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto bg-zinc-100'>
+            <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto'>
                 <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
                     <div className='w-[400px] flex justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
@@ -108,7 +117,7 @@ function BookDetails({
                             </div>
                         </div>
                     </div>
-                    <div className='flex flex-col w-full gap-2 lg:max-w-2xl'>
+                    <div className='flex flex-col w-full gap-2 lg:max-w-2xl transition'>
                         <h1 className='text-center lg:text-left p-0 sm:text-4xl text-[7vw] leading-tight'>
                             {title}
                         </h1>
@@ -120,12 +129,59 @@ function BookDetails({
                                 {reviews?.length} reviews
                             </a>
                         </div>
-                        <p>{renderWithLineBreaks(blurb)}</p>
+                        <div className={openBlurb || blurb.length < 600 ? null : 'fade max-h-60'}>
+                            <p>{renderWithLineBreaks(blurb)}</p>
+                        </div>
+
+                        {blurb.length > 600 && (
+                            <button
+                                className='font-bold flex flex-row self-center z-10'
+                                onClick={toggleBlurb}
+                            >
+                                {openBlurb ? 'Show less' : 'Show more '}
+                                <svg height='25' width='25' viewBox='0 0 24 24'>
+                                    <path
+                                        d='M8.70710678,9.27397892 C8.31658249,8.90867369 7.68341751,8.90867369 7.29289322,9.27397892 C6.90236893,9.63928415 6.90236893,10.2315609 7.29289322,10.5968662 L12,15 L16.7071068,10.5968662 C17.0976311,10.2315609 17.0976311,9.63928415 16.7071068,9.27397892 C16.3165825,8.90867369 15.6834175,8.90867369 15.2928932,9.27397892 L12,12.3542255 L8.70710678,9.27397892 Z'
+                                        transform={
+                                            openBlurb ? 'rotate(180 12 12)' : 'rotate(0 12 12)'
+                                        }
+                                    ></path>
+                                </svg>
+                            </button>
+                        )}
+
                         <br />
-                        <p>Genre: {genre.name}</p>
-                        <p>{year}</p>
-                        {pageCount && <p>{pageCount} pages</p>}
-                        <div className='mt-6 border-zinc-300'>
+                        <div>
+                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-3 text-sm'>
+                                {genre.name && (
+                                    <>
+                                        <p className='text-zinc-500 col-span-1'>Category</p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>{genre.name}</p>
+                                    </>
+                                )}
+                                {isbn13 && (
+                                    <>
+                                        <p className='text-zinc-500 col-span-1'>ISBN</p>
+                                        <p className='col-span-3 sm:col-span-5'>
+                                            {isbn13}
+                                            <span className='text-zinc-500'>{` (ISBN10: ${isbn10})`}</span>
+                                        </p>
+                                    </>
+                                )}
+                                {year && (
+                                    <>
+                                        <p className='text-zinc-500 col-span-1'>Year</p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>{year} </p>
+                                    </>
+                                )}
+                                {pageCount && (
+                                    <>
+                                        <p className='text-zinc-500 col-span-1'>Pages</p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>{pageCount} </p>
+                                    </>
+                                )}
+                                <div className='mt-6 border-zinc-300'></div>
+                            </div>
                             <h2
                                 className='border-t border-zinc-200 text-center lg:text-left'
                                 id='reviews'
