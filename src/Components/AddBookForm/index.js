@@ -160,7 +160,6 @@ function AddBookForm() {
 
     function changeISBN10(e) {
         setISBN10(e.target.value);
-
         setISBN10Error(false);
     }
 
@@ -576,7 +575,6 @@ function AddBookForm() {
         setTitleError(false);
         setAuthorError(false);
         setGenreError(false);
-        setIsbnError(false);
         setISBN10Error(false);
         setISBN13Error(false);
         setPageCountError(false);
