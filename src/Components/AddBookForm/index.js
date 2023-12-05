@@ -555,11 +555,10 @@ function AddBookForm() {
                 page_count: pageCount,
                 year,
                 blurb,
-                image:
-                    imageUrl ||
-                    'https://via.placeholder.com/600x840.png/efefef?text=Book+Cover+Coming+Soon',
+                image: imageUrl || 'https://vladistanchev.co.uk/images/cover-coming-soon.webp',
             };
 
+            console.log(requestBody.image);
             const res = await fetch(`${process.env.REACT_APP_API_URI}/books`, {
                 mode: 'cors',
                 method: 'POST',
