@@ -19,7 +19,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     }
 
     useEffect(() => {
-        // selectedGenreId === 0 && setSelectedGenreId("");
         fetch(
             `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`
         )
@@ -28,10 +27,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 setBookCollection(books.data);
             });
     }, [claimed, selectedGenreId, searchedString]);
-
-    const handleGenreChange = (genre) => {
-        setSelectedGenreId(genre);
-    };
 
     const handleSearchChange = (string) => {
         setSearchedString(string);
@@ -67,7 +62,12 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 id='filter'
             >
                 <div className='flex p-4 gap-3  justify-between items-center m-auto w-full max-w-7xl flex-col sm:flex-row '>
-                    <GenresSelector onGenreChangeID={handleGenreChange} label='Filter by genre ' />
+                    <GenresSelector
+                        label='Filter by genre'
+                        updateGenre={setSelectedGenreId}
+                        isControlled={false}
+                    />
+
                     <SearchCollection onSearchChange={handleSearchChange} />
                 </div>
             </div>

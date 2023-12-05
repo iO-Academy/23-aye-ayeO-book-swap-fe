@@ -7,6 +7,8 @@ function Bookpage() {
     const [image, setImage] = useState('');
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
+    const [isbn10, setIsbn10] = useState('');
+    const [isbn13, setIsbn13] = useState('');
     const [year, setYear] = useState('');
     const [pageCount, setPageCount] = useState('');
     const [genre, setGenre] = useState('');
@@ -25,6 +27,8 @@ function Bookpage() {
                 setImage(book.data.image);
                 setTitle(book.data.title);
                 setAuthor(book.data.author);
+                setIsbn10(book.data.isbn10);
+                setIsbn13(book.data.isbn13);
                 setYear(book.data.year);
                 setPageCount(book.data.page_count);
                 setGenre(book.data.genre);
@@ -59,6 +63,8 @@ function Bookpage() {
                     image={image}
                     title={title}
                     author={author}
+                    isbn10={isbn10}
+                    isbn13={isbn13}
                     year={year}
                     pageCount={pageCount}
                     genre={genre}

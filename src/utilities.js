@@ -1,4 +1,5 @@
 import React from 'react';
+import parse from 'html-react-parser';
 
 // Render error messages, prevent page jump
 
@@ -7,7 +8,7 @@ export function displayErrorMessage(error = ' ') {
         <div>
             <p className={error ? 'error' : 'hidden'}>
                 {/* <span class="material-symbols-outlined">warning</span> */}
-                {error}
+                {parse(error)}
             </p>
         </div>
     );
@@ -65,7 +66,7 @@ export function isValidISBN(isbn) {
 }
 
 export function removeQuotes(str) {
-    return str.replace(/^['"]|['"]$/g, '');
+    return str?.replace(/^['"]|['"]$/g, '') || '';
 }
 
 export function limitString(str, limiter) {
@@ -84,7 +85,7 @@ export function extractYear(dateString) {
     } else {
         // If it's in a format like 'Month day, year', extract the year from the last element
         const year = dateArray[dateArray.length - 1];
-        return year.replace(/[^0-9]/g, ''); // Extract only the digits (the year)
+        return year?.replace(/[^0-9]/g, '') || ''; // Extract only the digits (the year)
     }
 }
 
@@ -95,4 +96,36 @@ export function scrollToTop() {
 export function getYearFromDateString(dateString) {
     const date = new Date(dateString);
     return date.getFullYear();
+}
+
+export function playSound(sound) {
+    const successSound = new Audio(sound);
+    successSound.play();
+}
+
+export function renderWithLineBreaks(text) {
+    if (text) {
+        const lines = text.split('\n');
+
+        return lines.map((line, index) => (
+            <React.Fragment key={index}>
+                {line}
+                {/* Add <br> except for the last line */}
+                {index < lines.length - 1 && <br />}
+            </React.Fragment>
+        ));
+    }
+}
+
+export function removeHtmlTags(text) {
+    return text?.replace(/<\/?[^>]+(>|$)/g, '') || '';
+}
+
+// Removes a decoration from Google Books API covers
+export function removeEdgeCurl(url) {
+    if (url?.includes('&edge=curl')) {
+        return url.replace('&edge=curl', '');
+    } else {
+        return url;
+    }
 }
