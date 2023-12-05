@@ -63,6 +63,7 @@ function Review({ review }) {
                             ? 'break-words'
                             : 'fade max-h-36 break-words'
                     }
+                    onClick={!openReview || review.review.length < 300 ? toggleReview : null}
                 >
                     {review.review}
                 </p>
