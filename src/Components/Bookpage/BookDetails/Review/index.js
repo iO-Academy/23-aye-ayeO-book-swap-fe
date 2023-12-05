@@ -67,7 +67,10 @@ function Review({ review }) {
                     {review.review}
                 </p>
                 {review.review.length > 600 && (
-                    <button className='font-bold flex flex-row self-center' onClick={toggleReview}>
+                    <button
+                        className='font-bold flex flex-row self-center z-10 py-2'
+                        onClick={toggleReview}
+                    >
                         {openReview ? 'Show less' : 'Show more '}
                         <svg height='25' width='25' viewBox='0 0 24 24'>
                             <path
