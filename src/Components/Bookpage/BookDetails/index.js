@@ -152,31 +152,31 @@ function BookDetails({
 
                         <br />
                         <div>
-                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-3'>
+                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-3 text-sm'>
                                 {genre.name && (
                                     <>
-                                        <p className='text-zinc-600 col-span-1'>Category</p>{' '}
+                                        <p className='text-zinc-500 col-span-1'>Category</p>{' '}
                                         <p className='col-span-3 sm:col-span-5'>{genre.name}</p>
                                     </>
                                 )}
                                 {isbn13 && (
                                     <>
-                                        <p className='text-zinc-600 col-span-1'>ISBN</p>
-                                        <p className='text-sm col-span-3 sm:col-span-5'>
+                                        <p className='text-zinc-500 col-span-1'>ISBN</p>
+                                        <p className='col-span-3 sm:col-span-5'>
                                             {isbn13}
-                                            <span className='text-zinc-600'>{` (ISBN10: ${isbn10})`}</span>
+                                            <span className='text-zinc-500'>{` (ISBN10: ${isbn10})`}</span>
                                         </p>
                                     </>
                                 )}
                                 {year && (
                                     <>
-                                        <p className='text-zinc-600 col-span-1'>Year</p>{' '}
+                                        <p className='text-zinc-500 col-span-1'>Year</p>{' '}
                                         <p className='col-span-3 sm:col-span-5'>{year} </p>
                                     </>
                                 )}
                                 {pageCount && (
                                     <>
-                                        <p className='text-zinc-600 col-span-1'>Pages</p>{' '}
+                                        <p className='text-zinc-500 col-span-1'>Pages</p>{' '}
                                         <p className='col-span-3 sm:col-span-5'>{pageCount} </p>
                                     </>
                                 )}
