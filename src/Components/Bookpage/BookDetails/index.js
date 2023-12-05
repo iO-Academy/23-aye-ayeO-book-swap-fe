@@ -8,7 +8,7 @@ import StarRating from './StarRating';
 import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
-import { renderWithLineBreaks } from '../../../utilities';
+import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
 
 function BookDetails({
     image,
@@ -46,6 +46,7 @@ function BookDetails({
 
     function toggleBlurb() {
         setOpenBlurb(!openBlurb);
+        openBlurb && scrollToTop();
     }
 
     return (
@@ -134,7 +135,7 @@ function BookDetails({
 
                         {blurb.length > 600 && (
                             <button
-                                className='font-bold flex flex-row self-center'
+                                className='font-bold flex flex-row self-center z-10'
                                 onClick={toggleBlurb}
                             >
                                 {openBlurb ? 'Show less' : 'Show more '}
