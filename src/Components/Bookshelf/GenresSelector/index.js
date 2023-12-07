@@ -55,7 +55,7 @@ function GenresSelector({
   }, [selectedGenre, genres, updateGenre]);
 
   return (
-    <div className="flex flex-row items-center gap-3 text-slate-600 sm:pr-3">
+    <div className="mb-2 mt-1 flex flex-row items-center gap-3 text-lg text-slate-600 sm:pr-3">
       {label && (
         <label htmlFor="genreId" className="sr-only">
           {label}
@@ -63,7 +63,7 @@ function GenresSelector({
       )}
       <select
         id="genreId"
-        className={`text-md rounded-md bg-zinc-50 p-2 text-slate-600 ${className} ring-lime-500/30 focus:outline-none focus:ring-4`}
+        className={`rounded-md bg-zinc-50 p-2 text-lg text-slate-600 ${className} ring-lime-500/30 focus:outline-none focus:ring-4`}
         onChange={(e) => {
           updateGenre(e.target.value);
           isControlled && setGenreError(false);
