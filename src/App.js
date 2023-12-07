@@ -38,42 +38,44 @@ function App() {
     return (
         <div className='App montserrat'>
             <BrowserRouter>
-                {loading ? (
-                    <SplashScreen />
-                ) : (
-                    <>
-                        <Nav />
-                        <Context.Provider value={{ alert, setAlert }}>
-                            <Routes>
-                                <Route
-                                    path='/'
-                                    element={
-                                        <Bookshelf
-                                            claimed={0}
-                                            scrollPosition={scrollPositionAvailable}
-                                            setScrollPosition={setScrollPositionAvailable}
-                                        />
-                                    }
-                                />
-                                <Route
-                                    path='/claimed'
-                                    element={
-                                        <Bookshelf
-                                            claimed={1}
-                                            scrollPosition={scrollPositionClaimed}
-                                            setScrollPosition={setScrollPositionClaimed}
-                                        />
-                                    }
-                                />
-                                <Route path='/books/:id' element={<Bookpage />} />
-                                <Route path='*' element={<NotFound />} />
-                                <Route path='/books/add' element={<AddBookForm />} />
-                            </Routes>
-                            <AlertBubble message={alert} />
-                        </Context.Provider>
-                        <Footer />
-                    </>
-                )}
+                <div className='min-h-screen'>
+                    {loading ? (
+                        <SplashScreen />
+                    ) : (
+                        <>
+                            <Nav />
+                            <Context.Provider value={{ alert, setAlert }}>
+                                <Routes>
+                                    <Route
+                                        path='/'
+                                        element={
+                                            <Bookshelf
+                                                claimed={0}
+                                                scrollPosition={scrollPositionAvailable}
+                                                setScrollPosition={setScrollPositionAvailable}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path='/claimed'
+                                        element={
+                                            <Bookshelf
+                                                claimed={1}
+                                                scrollPosition={scrollPositionClaimed}
+                                                setScrollPosition={setScrollPositionClaimed}
+                                            />
+                                        }
+                                    />
+                                    <Route path='/books/:id' element={<Bookpage />} />
+                                    <Route path='*' element={<NotFound />} />
+                                    <Route path='/books/add' element={<AddBookForm />} />
+                                </Routes>
+                                <AlertBubble message={alert} />
+                            </Context.Provider>
+                        </>
+                    )}
+                </div>
+                <Footer />
             </BrowserRouter>
         </div>
     );
