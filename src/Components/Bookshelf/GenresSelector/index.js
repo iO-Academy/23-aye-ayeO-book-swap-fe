@@ -21,73 +21,72 @@
 
 // 4. If user makes a manual selection - selectedGenre is updated with the id. Any change of state here would trigger re-render
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 function GenresSelector({
-    className,
-    label = null,
-    defaultString = 'All',
-    isDisabled = false,
-    selectedGenre, // used when component is controlled
-    isControlled,
-    updateGenre,
-    setGenreError,
+  className,
+  label = null,
+  defaultString = "All",
+  isDisabled = false,
+  selectedGenre, // used when component is controlled
+  isControlled,
+  updateGenre,
+  setGenreError,
 }) {
-    const [genres, setGenres] = useState([]);
+  const [genres, setGenres] = useState([]);
 
-    // Get genres from DB
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URI}/genres`)
-            .then((res) => res.json())
-            .then((genres) => {
-                genres.data && setGenres(genres.data);
-            });
-    }, []);
+  // Get genres from DB
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URI}/genres`)
+      .then((res) => res.json())
+      .then((genres) => {
+        genres.data && setGenres(genres.data);
+      });
+  }, []);
 
-    // When state updated
-    useEffect(() => {
-        const selectedGenreId =
-            selectedGenre && genres.find((genre) => genre.name === selectedGenre)?.id;
+  // When state updated
+  useEffect(() => {
+    const selectedGenreId =
+      selectedGenre && genres.find((genre) => genre.name === selectedGenre)?.id;
 
-        if (selectedGenreId !== undefined) {
-            updateGenre(selectedGenreId);
+    if (selectedGenreId !== undefined) {
+      updateGenre(selectedGenreId);
+    }
+  }, [selectedGenre, genres, updateGenre]);
+
+  return (
+    <div className="flex flex-row items-center gap-3 text-slate-600 sm:pr-3">
+      {label && (
+        <label htmlFor="genreId" className="sr-only">
+          {label}
+        </label>
+      )}
+      <select
+        id="genreId"
+        className={`text-md rounded-md bg-zinc-50 p-2 text-slate-600 ${className} ring-lime-500/30 focus:outline-none focus:ring-4`}
+        onChange={(e) => {
+          updateGenre(e.target.value);
+          isControlled && setGenreError(false);
+        }}
+        value={
+          !isControlled
+            ? selectedGenre
+            : selectedGenre
+              ? genres.find((genre) => genre.name === selectedGenre)?.id
+              : "0"
         }
-    }, [selectedGenre, genres, updateGenre]);
-
-    return (
-        <div className='flex items-center gap-3 flex-row pr-3 text-slate-600'>
-            {label && (
-                <label htmlFor='genreId' className='sr-only'>
-                    {label}
-                </label>
-            )}
-            <select
-                id='genreId'
-                className={`rounded-md p-2 text-md bg-zinc-50 text-slate-600 ${className} focus:outline-none focus:ring-4 ring-lime-500/30`}
-                // className={`block pt-3.5 px-0 w-full text-lg text-zinc-800 bg-transparent border-0 border-b-2 border-zinc-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#343450] peer ${className} `}
-                onChange={(e) => {
-                    updateGenre(e.target.value);
-                    isControlled && setGenreError(false);
-                }}
-                value={
-                    !isControlled
-                        ? selectedGenre
-                        : selectedGenre
-                          ? genres.find((genre) => genre.name === selectedGenre)?.id
-                          : '0'
-                }
-            >
-                <option key='0' value='0' disabled={isDisabled}>
-                    {defaultString}
-                </option>
-                {genres.map((genre) => (
-                    <option key={genre.id} value={genre.id}>
-                        {genre.name}
-                    </option>
-                ))}
-            </select>
-        </div>
-    );
+      >
+        <option key="0" value="0" disabled={isDisabled}>
+          {defaultString}
+        </option>
+        {genres.map((genre) => (
+          <option key={genre.id} value={genre.id}>
+            {genre.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }
 
 export default GenresSelector;
