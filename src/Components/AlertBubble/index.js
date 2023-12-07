@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function AlertBubble({ message }) {
-    const [position, setPosition] = useState('translate-y-full -z-50');
+    const [position, setPosition] = useState('-translate-y-full -z-50');
 
     useEffect(() => {
         if (message) {
@@ -9,7 +9,7 @@ function AlertBubble({ message }) {
 
             const timer = setTimeout(() => {
                 setPosition('-translate-y-full -z-50');
-            }, 4000);
+            }, 5000);
 
             return () => {
                 clearTimeout(timer);
