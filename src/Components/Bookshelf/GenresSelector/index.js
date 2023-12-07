@@ -56,10 +56,15 @@ function GenresSelector({
 
     return (
         <div className='flex items-center gap-3 flex-row pr-3 text-slate-600'>
-            {label && <label htmlFor='genreId'>{label}</label>}
+            {label && (
+                <label htmlFor='genreId' className='sr-only'>
+                    {label}
+                </label>
+            )}
             <select
                 id='genreId'
-                className={`rounded-md p-2 text-md bg-zinc-50 text-slate-600 ${className} focus:outline-none`}
+                className={`rounded-md p-2 text-md bg-zinc-50 text-slate-600 ${className} focus:outline-none focus:ring-4 ring-lime-500/30`}
+                // className={`block pt-3.5 px-0 w-full text-lg text-zinc-800 bg-transparent border-0 border-b-2 border-zinc-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#343450] peer ${className} `}
                 onChange={(e) => {
                     updateGenre(e.target.value);
                     isControlled && setGenreError(false);
@@ -68,8 +73,8 @@ function GenresSelector({
                     !isControlled
                         ? selectedGenre
                         : selectedGenre
-                        ? genres.find((genre) => genre.name === selectedGenre)?.id
-                        : '0'
+                          ? genres.find((genre) => genre.name === selectedGenre)?.id
+                          : '0'
                 }
             >
                 <option key='0' value='0' disabled={isDisabled}>
