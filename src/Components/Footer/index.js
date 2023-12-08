@@ -3,47 +3,52 @@ import { Link } from 'react-router-dom';
 
 function Footer() {
     return (
-        <div className='w-full bg-rose-400 flex flex-row justify-center'>
-            <div className='flex justify-between text-slate-800 w-full max-w-7xl m-auto min-[500px]:flex-row flex-col px-4 sm:py-2 pb-2'>
-                <div className='w-full border-b-2 m-2'>
-                    <div className='block sm:hidde align-middle pt-2 px-4'>
-                        <span className='text-3xl font-semibold justify-center'>
-                            <Link to='/' className='flex flex-row gap-1 text-[#37424b]'>
-                                <svg
-                                    width='35'
-                                    zoomAndPan='magnify'
-                                    viewBox='0 0 144 143.999998'
-                                    height='35'
-                                    preserveAspectRatio='xMidYMid meet'
-                                    version='1.0'
-                                >
-                                    <path
-                                        fill='#37424b'
-                                        d='M 123.800781 24.941406 L 54.007812 24.941406 C 41.820312 24.117188 31.417969 33.914062 31.355469 45.8125 C 31.289062 57.800781 41.734375 67.742188 54.007812 66.917969 L 123.800781 66.917969 C 122.085938 64.757812 116.441406 57.109375 116.480469 45.8125 C 116.519531 34.660156 122.074219 27.113281 123.800781 24.941406 Z M 123.800781 24.941406 '
-                                        fillOpacity='1'
-                                        fillRule='nonzero'
-                                    />
-                                    <path
-                                        fill='#37424b'
-                                        d='M 27.609375 125.074219 L 97.402344 125.074219 C 109.589844 125.894531 119.996094 116.136719 120.054688 104.277344 C 120.121094 92.328125 109.675781 82.421875 97.402344 83.246094 L 27.609375 83.246094 C 29.324219 85.394531 34.972656 93.019531 34.933594 104.277344 C 34.894531 115.390625 29.335938 122.910156 27.609375 125.074219 Z M 27.609375 125.074219 '
-                                        fillOpacity='1'
-                                        fillRule='nonzero'
-                                    />
-                                </svg>
-                                swapp
-                            </Link>
-                        </span>
+        <div className='w-full bg-[#343450]'>
+            <div className='text-[#ededed] w-full max-w-7xl m-auto px-4 sm:py-2 pb-2'>
+                <div className='block pt-2 px-4'>
+                <span className="self-left text-3xl font-semibold">
+          <Link
+            to="/"
+            className="group flex translate-x-0 flex-row items-center justify-center text-[#ededed] sm:-translate-x-3"
+          >
+            <svg
+              width="60"
+              zoomAndPan="magnify"
+              viewBox="0 0 60 37.5"
+              height="60"
+              preserveAspectRatio="xMidYMid meet"
+              version="1.0"
+            >
+              <path
+                fill="#fff"
+                d="M 15.605469 20.003906 C 16.742188 21.4375 17.464844 23.527344 17.464844 25.867188 C 17.464844 28.199219 16.742188 30.289062 15.605469 31.726562 L 33.714844 31.726562 C 37.105469 31.695312 39.753906 30.078125 40.734375 27.8125 C 40.984375 27.21875 41.148438 26.53125 41.148438 25.859375 C 41.148438 25.183594 41.003906 24.539062 40.753906 23.953125 C 40.746094 23.941406 40.746094 23.921875 40.734375 23.914062 C 39.734375 21.679688 37.074219 20.03125 33.722656 20.003906 Z M 15.605469 20.003906 "
+                fillOpacity="1"
+                fillRule="nonzero"
+                className="translate-x-0 transition-all  ease-in-out group-hover:translate-x-1 group-hover:fill-[#ef9b9b]"
+              />
+
+              <path
+                fill="#fff"
+                d="M 44.394531 5.28125 C 43.257812 6.714844 42.535156 8.808594 42.535156 11.148438 C 42.535156 13.480469 43.257812 15.574219 44.394531 17.007812 L 26.277344 17.007812 C 22.886719 16.980469 20.234375 15.359375 19.253906 13.097656 C 19 12.5 18.839844 11.816406 18.839844 11.140625 C 18.839844 10.464844 18.984375 9.820312 19.234375 9.230469 C 19.242188 9.222656 19.242188 9.203125 19.253906 9.191406 C 20.253906 6.957031 22.914062 5.308594 26.269531 5.28125 Z M 44.394531 5.28125 "
+                fillOpacity="1"
+                fillRule="nonzero"
+                className="translate-x-0 transition-all ease-in-out group-hover:-translate-x-1 group-hover:fill-[#f87171]"
+              />
+            </svg>
+            <span className="-translate-x-2">swapp</span>
+          </Link>
+        </span>
                         <div>
-                            <Link to=''>Available</Link>
-                            <Link to=''>Claimed</Link>
-                            <Link to=''>Add book</Link>
+                            <Link to='/'>Available</Link>
+                            <Link to='/claimed'>Claimed</Link>
+                            <Link to='/books/add'>Add book</Link>
                         </div>
                     </div>
                     <hr className='my-4 border-[#37424b]' />
-                    <p className='text-[#37424b]'>©2023 Copyright: Aye-Aye-O's</p>
+                    <p className='text-[#ededed]'>©2023 Copyright: Aye-Aye-O's</p>
                 </div>
             </div>
-        </div>
+
     );
 }
 
