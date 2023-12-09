@@ -36,14 +36,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     }
 
     useEffect(() => {
-        // fetch(
-        //   `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}`,
-        // )
-        //   .then((res) => res.json())
-        //   .then((books) => {
-        //     setBookCollection(books.data?.data);
-        //   });
-
         getBookData(claimed, selectedGenreId, searchedString, page);
     }, [claimed, selectedGenreId, searchedString, currentPage, page]);
 
@@ -118,22 +110,8 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
             </div>
             {pageData && (
                 <div className='flex flex-row justify-center gap-4 my-10'>
-                    {/* <button onClick={() => setPage(pageData?.current_page - 1)}>
-            Previous
-          </button>
-          <p>Current page: {pageData?.current_page}</p>
-          <button onClick={() => setPage(pageData?.current_page + 1)}>
-            Next
-          </button> */}
                     {pageData?.links.map((link) => {
                         let page;
-                        // page =
-                        //     link.label === 'Next &raquo;'
-                        //         ? link.label + 1
-                        //         : link.label === '&laquo; Previous'
-                        //           ? link.label - 1
-                        //           : link.label;
-                        // console.log(page);
 
                         if (link.label === 'Next &raquo;') {
                             page = pageData.current_page + 1;
@@ -146,7 +124,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                         return (
                             <button
                                 className={`${
-                                    link.active ? 'active-pagge-button' : ''
+                                    link.active ? 'active-page-button' : ''
                                 }`}
                                 key={uuidv4()}
                                 onClick={() => setPage(page)}

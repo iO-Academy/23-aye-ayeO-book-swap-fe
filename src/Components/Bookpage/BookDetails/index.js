@@ -9,6 +9,7 @@ import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
 import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
+import { v4 as uuidv4 } from 'uuid';
 
 function BookDetails({
     image,
@@ -220,7 +221,7 @@ function BookDetails({
                                 Reviews
                             </h2>
                             {reviews?.map((review) => (
-                                <Review review={review} key={review.id} />
+                                <Review review={review} key={uuidv4()} />
                             ))}
                             <ReviewForm
                                 refreshReviewsList={refreshReviewsList}

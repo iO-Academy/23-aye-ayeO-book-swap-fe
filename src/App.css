@@ -43,7 +43,7 @@ h4 {
     @apply font-black;
 }
 
-.active-pagge-button {
+.active-page-button {
     @apply border-2 border-[#343450]  rounded-full w-[40px] h-[40px] text-[#f87171] font-black;
 }
 
