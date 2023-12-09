@@ -6,21 +6,6 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#343450" />
-    <script>
-        // A simplification of a scroll-based theme-color changer
-        window.addEventListener(
-            'scroll',
-            () => {
-                const metaTag = document.querySelector('meta[name="theme-color"]');
-                if (window.scrollY / window.innerHeight > 0.2 && window.innerWidth < 640) {
-                    metaTag.setAttribute('content', '#fffff');
-                } else {
-                    metaTag.setAttribute('content', '#343450');
-                }
-            },
-            false
-        );
-    </script>
     <meta name="description" content="Library management and book swap app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
