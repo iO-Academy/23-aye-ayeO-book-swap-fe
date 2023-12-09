@@ -5,7 +5,7 @@ function AlertBubble({ message }) {
 
     useEffect(() => {
         if (message) {
-            setPosition('translate-y-5');
+            setPosition('translate-y-2');
 
             const timer = setTimeout(() => {
                 setPosition('-translate-y-full -z-50');
@@ -20,7 +20,7 @@ function AlertBubble({ message }) {
     return (
         <div className='flex items-center justify-center'>
             <div
-                className={`rounded-[30px] backdrop-blur-sm bg-lime-600/100 transition-all ease-in-out duration-600 fixed top-0 z-50 sm:w-max w-[95vw] max-w-[800px] text-center text-zinc-100 text-xl px-10 p-4 ${position} flex flex-row items-center justify-center gap-2`}
+                className={`duration-600 fixed top-0 z-50 w-[95vw] max-w-[800px] rounded-[30px] bg-lime-600/100 p-4 px-10 text-center text-xl text-zinc-100 backdrop-blur-sm transition-all ease-in-out sm:w-max ${position} flex flex-row items-center justify-center gap-2`}
             >
                 <svg
                     xmlns='http://www.w3.org/2000/svg'
