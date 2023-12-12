@@ -17,6 +17,7 @@ import {
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
+import { Link } from 'react-router-dom';
 
 function AddBookForm() {
     const [isbn, setISBN] = useState('');
@@ -136,6 +137,7 @@ function AddBookForm() {
     const [blurbError, setBlurbError] = useState(false);
 
     const { setAlert } = useContext(Context);
+    const [existingBookId, setExistingBookId] = useState('');
 
     // State setters for form values + form reset
     function changeISBN(e) {
@@ -326,11 +328,15 @@ function AddBookForm() {
             );
             const isbnCheck = await swappRes.json();
 
-            isbnCheck.exists
-                ? setIsbnError(
-                      `<span><a href="/books/${isbnCheck.id}" className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</a> is already on Swapp</span>`,
-                  )
-                : getBookData(isbn);
+            if (isbnCheck.exists) {
+                setIsbnError(
+                    // `<span><a href="/books/${isbnCheck.id}" className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</a> is already on Swapp</span>`,
+                    `<span className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</span> is already on Swapp`,
+                );
+                setExistingBookId(isbnCheck.id);
+            } else {
+                getBookData(isbn);
+            }
         } catch (error) {
             //error
         }
@@ -770,8 +776,9 @@ function AddBookForm() {
 
                             {isbnError && !title && (
                                 <div className='px-4'>
-                                    {' '}
-                                    {displayErrorMessage(isbnError)}
+                                    <Link to={`/books/${existingBookId}`}>
+                                        {displayErrorMessage(isbnError)}
+                                    </Link>
                                 </div>
                             )}
 
