@@ -9,6 +9,7 @@ import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
 import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
+import { v4 as uuidv4 } from 'uuid';
 
 function BookDetails({
     image,
@@ -27,7 +28,10 @@ function BookDetails({
 }) {
     const [openBlurb, setOpenBlurb] = useState(false);
 
-    const totalScore = reviews?.reduce((ratingSum, review) => ratingSum + review.rating, 0);
+    const totalScore = reviews?.reduce(
+        (ratingSum, review) => ratingSum + review.rating,
+        0,
+    );
 
     const avgScore = totalScore ? totalScore / reviews?.length : 0;
 
@@ -52,9 +56,9 @@ function BookDetails({
     return (
         <>
             <ScrollToTop />
-            <div className='w-full min-h-screen overflow-hidden max-w-7xl m-auto'>
-                <div className='book-details w-full m-auto p-5 sm:p-20 pt-16 sm:pt-32 flex flex-col lg:flex-row justify-center lg:gap-24 gap-10'>
-                    <div className='w-[400px] flex justify-center max-lg:self-center'>
+            <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
+                <div className='book-details m-auto flex w-full flex-col justify-center gap-10 p-5 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
+                    <div className='flex w-[400px] justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
                             <LazyImgLoader
                                 src={image}
@@ -72,18 +76,21 @@ function BookDetails({
                             '
                                 rounded='rounded-md'
                             />
-                            <div className='w-full mx-auto mt-3 text-sm'>
+                            <div className='mx-auto mt-3 w-full text-sm'>
                                 {claimed === null ? (
                                     <Spinner />
                                 ) : claimed ? (
                                     <>
                                         <p className='text-xs text-zinc-600'>
-                                            Claimed by: <span className='italic'>{claimed}</span>
+                                            Claimed by:{' '}
+                                            <span className='italic'>
+                                                {claimed}
+                                            </span>
                                         </p>
                                         <button
                                             data-element='return'
                                             onClick={toggleReturn}
-                                            className='underline text-center text-md text-rose-400 font-bold'
+                                            className='text-md text-center font-bold text-rose-400 underline'
                                         >
                                             Return Book
                                         </button>
@@ -92,7 +99,7 @@ function BookDetails({
                                     <button
                                         data-element='claim'
                                         onClick={toggleClaim}
-                                        className='button py-2 w-full'
+                                        className='button w-full py-2'
                                     >
                                         Claim Book
                                     </button>
@@ -117,25 +124,34 @@ function BookDetails({
                             </div>
                         </div>
                     </div>
-                    <div className='flex flex-col w-full gap-2 lg:max-w-2xl transition'>
-                        <h1 className='text-center lg:text-left p-0 sm:text-4xl text-[7vw] leading-tight'>
+                    <div className='flex w-full flex-col gap-2 transition lg:max-w-2xl'>
+                        <h1 className='p-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'>
                             {title}
                         </h1>
                         <p className='text-center lg:text-left'>{author}</p>
-                        <div className='flex gap-2 items-baseline m-2 self-center lg:self-start pb-4 lg:pb-0'>
+                        <div className='m-2 flex items-baseline gap-2 self-center pb-4 lg:self-start lg:pb-0'>
                             <p className='text-2xl'>{avgScore.toFixed(1)}</p>
                             <StarRating rating={avgScore} />
-                            <a href='#reviews' className='underline text-zinc-600'>
+                            <a
+                                href='#reviews'
+                                className='text-zinc-600 underline'
+                            >
                                 {reviews?.length} reviews
                             </a>
                         </div>
-                        <div className={openBlurb || blurb.length < 600 ? null : 'fade max-h-60'}>
+                        <div
+                            className={
+                                openBlurb || blurb.length < 600
+                                    ? null
+                                    : 'fade max-h-60'
+                            }
+                        >
                             <p>{renderWithLineBreaks(blurb)}</p>
                         </div>
 
                         {blurb.length > 600 && (
                             <button
-                                className='font-bold flex flex-row self-center z-10'
+                                className='z-10 flex flex-row self-center font-bold'
                                 onClick={toggleBlurb}
                             >
                                 {openBlurb ? 'Show less' : 'Show more '}
@@ -143,7 +159,9 @@ function BookDetails({
                                     <path
                                         d='M8.70710678,9.27397892 C8.31658249,8.90867369 7.68341751,8.90867369 7.29289322,9.27397892 C6.90236893,9.63928415 6.90236893,10.2315609 7.29289322,10.5968662 L12,15 L16.7071068,10.5968662 C17.0976311,10.2315609 17.0976311,9.63928415 16.7071068,9.27397892 C16.3165825,8.90867369 15.6834175,8.90867369 15.2928932,9.27397892 L12,12.3542255 L8.70710678,9.27397892 Z'
                                         transform={
-                                            openBlurb ? 'rotate(180 12 12)' : 'rotate(0 12 12)'
+                                            openBlurb
+                                                ? 'rotate(180 12 12)'
+                                                : 'rotate(0 12 12)'
                                         }
                                     ></path>
                                 </svg>
@@ -152,16 +170,22 @@ function BookDetails({
 
                         <br />
                         <div>
-                            <div className='grid grid-cols-4 sm:grid-cols-6 gap-3 text-sm'>
+                            <div className='grid grid-cols-4 gap-3 text-sm sm:grid-cols-6'>
                                 {genre.name && (
                                     <>
-                                        <p className='text-zinc-500 col-span-1'>Category</p>{' '}
-                                        <p className='col-span-3 sm:col-span-5'>{genre.name}</p>
+                                        <p className='col-span-1 text-zinc-500'>
+                                            Category
+                                        </p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>
+                                            {genre.name}
+                                        </p>
                                     </>
                                 )}
                                 {isbn13 && (
                                     <>
-                                        <p className='text-zinc-500 col-span-1'>ISBN</p>
+                                        <p className='col-span-1 text-zinc-500'>
+                                            ISBN
+                                        </p>
                                         <p className='col-span-3 sm:col-span-5'>
                                             {isbn13}
                                             <span className='text-zinc-500'>{` (ISBN10: ${isbn10})`}</span>
@@ -170,14 +194,22 @@ function BookDetails({
                                 )}
                                 {year && (
                                     <>
-                                        <p className='text-zinc-500 col-span-1'>Year</p>{' '}
-                                        <p className='col-span-3 sm:col-span-5'>{year} </p>
+                                        <p className='col-span-1 text-zinc-500'>
+                                            Year
+                                        </p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>
+                                            {year}{' '}
+                                        </p>
                                     </>
                                 )}
                                 {pageCount && (
                                     <>
-                                        <p className='text-zinc-500 col-span-1'>Pages</p>{' '}
-                                        <p className='col-span-3 sm:col-span-5'>{pageCount} </p>
+                                        <p className='col-span-1 text-zinc-500'>
+                                            Pages
+                                        </p>{' '}
+                                        <p className='col-span-3 sm:col-span-5'>
+                                            {pageCount}{' '}
+                                        </p>
                                     </>
                                 )}
                                 <div className='mt-6 border-zinc-300'></div>
@@ -189,9 +221,11 @@ function BookDetails({
                                 Reviews
                             </h2>
                             {reviews?.map((review) => (
-                                <Review review={review} key={review.id} />
+                                <Review review={review} key={uuidv4()} />
                             ))}
-                            <ReviewForm refreshReviewsList={refreshReviewsList} />
+                            <ReviewForm
+                                refreshReviewsList={refreshReviewsList}
+                            />
                         </div>
                     </div>
                 </div>

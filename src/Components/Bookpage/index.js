@@ -20,7 +20,9 @@ function Bookpage() {
 
     async function getBookData() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URI}/books/${id}`);
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URI}/books/${id}`,
+            );
             const book = await response.json();
 
             if (book.message === 'Book successfully found') {

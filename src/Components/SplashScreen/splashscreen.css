@@ -1,0 +1,117 @@
+@keyframes enter-right {
+    0% {
+        transform: translateX(100px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes enter-left {
+    0% {
+        transform: translateX(-100px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes zoomInOut {
+    0%,
+    100% {
+        transform: scale(1);
+        transform-origin: center center;
+    }
+    50% {
+        transform: scale(1.5);
+        transform-origin: center center;
+    }
+}
+
+@keyframes traceStroke {
+    to {
+        stroke-dashoffset: 1;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        fill-opacity: 0.1;
+    }
+
+    30%,
+    100% {
+        fill-opacity: 1;
+    }
+}
+
+@keyframes exit-right {
+    0% {
+        transform: translateX(0);
+        fill-opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+}
+
+@keyframes exit-left {
+    0% {
+        transform: translateX(0);
+        fill-opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+}
+
+/* Splash fading out to page */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.book1,
+.book2 {
+    stroke-dasharray: 150;
+    stroke-dashoffset: 150;
+}
+.book1 {
+    animation:
+        enter-left 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        zoomInOut 0.3s ease-in-out,
+        traceStroke 1s ease-in,
+        fadeIn 1s ease-in,
+        exit-right 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation-delay: 0s, 0.7s, 0.9s, 1.6s, 2.6s;
+}
+
+.book2 {
+    animation:
+        enter-right 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        zoomInOut 0.3s ease-in-out,
+        traceStroke 1s ease-in,
+        fadeIn 1s ease-in,
+        exit-left 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation-delay: 0s, 0.7s, 0.9s, 1.6s, 2.6s;
+}
+
+/* Splash fading out to page */
+.fade-out {
+    animation: fadeOut 1.5s ease-out;
+    animation-delay: 3.2s;
+}
