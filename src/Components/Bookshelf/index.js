@@ -65,7 +65,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                     width='24'
                     fill='currentColor'
                 >
-                    <path d='M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z' />
+                    <path d='M440-120v-240h80v80h320v80H520v80h-80Zm-320-80v-80h240v80H120Zm160-160v-80H120v-80h160v-80h80v240h-80Zm160-80v-80h400v80H440Zm160-160v-240h80v80h160v80H680v80h-80Zm-480-80v-80h400v80H120Z' />
                 </svg>
                 {' Filter'}
             </div>
@@ -90,9 +90,9 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                     {pageData?.from} - {pageData?.to} of {pageData?.total} books
                 </p>
             )}
-
             <div className='bookshelf m-auto flex w-full max-w-7xl flex-row flex-wrap justify-center gap-2 p-1 sm:gap-4 sm:p-0'>
                 {bookCollection == null && <p>No Books Found</p>}
+
                 {bookCollection?.map((book) => {
                     return (
                         <BookCard
@@ -101,7 +101,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                             title={book.title}
                             author={book.author}
                             genre={book.genre.name}
-                            key={uuidv4()}
+                            key={book.id + book.title}
                             onClick={saveScroll}
                         />
                     );
