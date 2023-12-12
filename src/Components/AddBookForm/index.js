@@ -29,7 +29,9 @@ function AddBookForm() {
     const requestCameraPermission = async () => {
         try {
             // Request camera permission
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+            });
 
             // Permission granted
             // console.log('Camera permission granted');
@@ -93,7 +95,11 @@ function AddBookForm() {
             if (scanner && !isScannerOn) {
                 requestCameraPermission();
                 !cameraPermission && requestCameraPermission();
-                scanner.start({ facingMode: 'environment' }, config, qrCodeSuccessCallback);
+                scanner.start(
+                    { facingMode: 'environment' },
+                    config,
+                    qrCodeSuccessCallback,
+                );
                 setIsScannerOn(true);
             } else {
                 closeScanner();
@@ -316,13 +322,13 @@ function AddBookForm() {
 
         try {
             const swappRes = await fetch(
-                `${process.env.REACT_APP_API_URI}/books/check-isbn/${cleanIsbn}`
+                `${process.env.REACT_APP_API_URI}/books/check-isbn/${cleanIsbn}`,
             );
             const isbnCheck = await swappRes.json();
 
             isbnCheck.exists
                 ? setIsbnError(
-                      `<span><a href="/books/${isbnCheck.id}" className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</a> is already on Swapp.</span>`
+                      `<span><a href="/books/${isbnCheck.id}" className="font-black underline decoration-dotted decoration-red-500 decoration-[1px] underline-offset-2">${isbnCheck.title}</a> is already on Swapp</span>`,
                   )
                 : getBookData(isbn);
         } catch (error) {
@@ -346,13 +352,15 @@ function AddBookForm() {
             handleSuccess(google, openLibrary);
         } else {
             setIsbnError(
-                "Sorry, we couldn't find this book. Please fill in the form below manually."
+                "Sorry, we couldn't find this book. Please fill in the form below manually.",
             );
         }
     }
 
     async function fetchGoogleBookData(isbn) {
-        const google = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+        const google = await fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`,
+        );
         const googleRes = await google.json();
 
         // Secondary fetch for missing data in googleRes
@@ -363,13 +371,19 @@ function AddBookForm() {
     }
 
     async function fetchOpenLibraryBookData(isbn) {
-        const openLibraryRes = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+        const openLibraryRes = await fetch(
+            `https://openlibrary.org/isbn/${isbn}.json`,
+        );
         const book = await openLibraryRes.json();
 
-        const workRes = await fetch(`https://openlibrary.org${book.works[0].key}.json`);
+        const workRes = await fetch(
+            `https://openlibrary.org${book.works[0].key}.json`,
+        );
         const work = await workRes.json();
 
-        const authorRes = await fetch(`https://openlibrary.org${work.authors[0].author.key}.json`);
+        const authorRes = await fetch(
+            `https://openlibrary.org${work.authors[0].author.key}.json`,
+        );
         const author = await authorRes.json();
 
         return { book, work, author };
@@ -411,32 +425,37 @@ function AddBookForm() {
 
         ////////////////// OPEN LIBRARY //////////////////////
 
-        // 🟨 GOODREADS
-        if (bk.identifiers && bk.identifiers.goodreads && bk.identifiers.goodreads[0]) {
+        // GOODREADS
+        if (
+            bk.identifiers &&
+            bk.identifiers.goodreads &&
+            bk.identifiers.goodreads[0]
+        ) {
             goodreadsOL = bk.identifiers.goodreads[0];
         }
 
-        // 🟨 ISBN10
+        // ISBN10
         bk.isbn_10 && (isbn10OL = bk.isbn_10[0]);
 
-        // 🟨 ISBN13
+        // ISBN13
         bk.isbn_13 && (isbn13OL = bk.isbn_13[0]);
 
-        // 🟨 TITLE
+        // TITLE
         bk.title && (titleOL = bk.title);
 
-        // 🟨 AUTHOR
+        // AUTHOR
         au && au.name && (authorOL = au.name.trim());
 
-        // 🟨 PAGES
+        // PAGES
         bk.pagination && (pageCountOL = bk.pagination);
         bk.number_of_pages && (pageCountOL = bk.number_of_pages);
 
-        // 🟨 YEAR
-        wk.first_publish_date && (yearOL = getYearFromDateString(wk.first_publish_date));
+        // YEAR
+        wk.first_publish_date &&
+            (yearOL = getYearFromDateString(wk.first_publish_date));
         bk.publish_date && (yearOL = getYearFromDateString(bk.publish_date));
 
-        // 🟨 COVER
+        // COVER
         const bookCover = bk.covers && bk.covers[0];
         const workCover = wk.covers && wk.covers[0];
 
@@ -452,7 +471,7 @@ function AddBookForm() {
             coverOL = '';
         }
 
-        // 🟨 BLURB
+        // BLURB
         if (wk.description && wk.description.value) {
             blurbOL = limitString(removeQuotes(wk.description.value), 10000);
         } else if (wk.description) {
@@ -461,33 +480,39 @@ function AddBookForm() {
             blurbOL = limitString(removeQuotes(bk.description.value), 10000);
         }
 
-        // 🟨 LANGUAGE
+        // LANGUAGE
         setLanguage('es');
 
         ////////////////// GOOGLE //////////////////////
 
-        // 🟨 TITLE
+        // TITLE
         g1.items && (titleG = g1.items[0].volumeInfo?.title);
 
-        // 🟨 AUTHOR
+        // AUTHOR
         g1.items && (authorG = g1.items[0]?.volumeInfo?.authors?.[0]);
 
-        // 🟨 CATEGORY
+        // CATEGORY
         g1.items && (categoryG = g1.items[0]?.volumeInfo?.categories?.[0]);
 
-        // 🟨 PAGES
+        // PAGES
         g1.items && (pageCountG = g1.items[0]?.volumeInfo?.pageCount);
 
-        // 🟨 BLURB
+        // BLURB
         g2.volumeInfo && (blurbG = removeHtmlTags(g2.volumeInfo.description));
 
-        // 🟨 COVER
-        g1.items && (coverG = removeEdgeCurl(g1.items[0]?.volumeInfo?.imageLinks?.thumbnail));
+        // COVER
+        g1.items &&
+            (coverG = removeEdgeCurl(
+                g1.items[0]?.volumeInfo?.imageLinks?.thumbnail,
+            ));
 
-        // 🟨 YEAR
-        g1.items && (yearG = getYearFromDateString(g1.items[0].volumeInfo.publishedDate));
+        // YEAR
+        g1.items &&
+            (yearG = getYearFromDateString(
+                g1.items[0].volumeInfo.publishedDate,
+            ));
 
-        // 🟨 ISBN
+        // ISBN
         if (g2?.volumeInfo?.industryIdentifiers) {
             if (g2.volumeInfo.industryIdentifiers[0].type === 'ISBN_10') {
                 isbn10G = g2.volumeInfo?.industryIdentifiers[0]?.identifier;
@@ -498,42 +523,42 @@ function AddBookForm() {
             }
         }
 
-        // 🟨 LANGUAGE
+        // LANGUAGE
         g1.items && (languageG = g1.items[0]?.volumeInfo?.language);
 
         /////////////////  SETTING STATE  ///////////////////
 
-        // ✅ GOODREADS
+        // GOODREADS
         setGoodreadsLink(goodreadsOL);
 
-        // ✅ TITLE
+        // TITLE
         titleG ? setTitle(titleG) : setTitle(titleOL);
 
-        // ✅ AUTHOR
+        // AUTHOR
         authorG ? setAuthor(authorG) : setAuthor(authorOL);
 
-        // ✅ ISBN10
+        // ISBN10
         isbn10G ? setISBN10(isbn10G) : setISBN10(isbn10OL);
 
-        // ✅ ISBN13
+        // ISBN13
         isbn13G ? setISBN13(isbn13G) : setISBN13(isbn13OL);
 
-        // ✅ LANGUAGE
+        // LANGUAGE
         languageG && setLanguage(languageG);
 
-        // ✅ CATEGORY
+        // CATEGORY
         categoryG && setGenre(categoryG);
 
-        // ✅ PAGES
+        // PAGES
         pageCountG > 0 ? setPageCount(pageCountG) : setPageCount(pageCountOL);
 
-        // ✅ YEAR
+        // YEAR
         yearG > 0 ? setYear(yearG) : setYear(yearOL);
 
-        // ✅ COVER
+        // COVER
         coverOL ? setImageUrl(coverOL) : setImageUrl(coverG);
 
-        // ✅ BLURB
+        // BLURB
         blurbG && blurbG.length > 0 ? setBlurb(blurbG) : setBlurb(blurbOL);
     }
 
@@ -596,7 +621,9 @@ function AddBookForm() {
                 page_count: pageCount,
                 year,
                 blurb,
-                image: imageUrl || 'https://vladistanchev.co.uk/images/cover-coming-soon.webp',
+                image:
+                    imageUrl ||
+                    'https://vladistanchev.co.uk/images/cover-coming-soon.webp',
             };
 
             console.log(requestBody.image);
@@ -617,7 +644,8 @@ function AddBookForm() {
 
                 resetForm();
             } else {
-                const errorContainer = document.getElementById('error-container');
+                const errorContainer =
+                    document.getElementById('error-container');
                 errorContainer.innerHTML = Object.keys(data.errors)
                     .map((error) => {
                         const serverError = data.errors[error][0];
@@ -653,65 +681,66 @@ function AddBookForm() {
     return (
         <>
             <ScrollToTop />
-            <div className=' sm:pt-24'>
-                <div className='form-container md:max-w-[750px] !px-0 sm:!pt-5 !my-0 sm:!my-5 relative'>
-                    <form onSubmit={validateForm} className='flex  flex-col gap-4 w-3/4 '>
-                        <h1>Add New Book</h1>
-
-                        <div id='scanner'></div>
-                        {/* <span className='button' onClick={handleStartScanner}>
-                            Start scanner
-                        </span> */}
-                        <label htmlFor='isbn' className='sr-only'>
-                            Search by ISBN
-                        </label>
-                        <div
-                            className={`pb-2 rounded-md bg-slate-300 overflow-hidden
+            <div className='sm:pt-24'>
+                <h1 className='py-8 sm:py-12'>Add new book</h1>
+                <div className='m-auto mb-5 max-w-[750px] bg-[#34345020] px-6 pb-8 pt-2 text-slate-600 ring-inset ring-orange-100 transition sm:rounded-lg  sm:p-16 sm:ring-8'>
+                    <div
+                        id='scanner'
+                        className='overflow-hidden rounded-xl'
+                    ></div>
+                    <br />
+                    <label htmlFor='isbn' className='sr-only'>
+                        Search by ISBN
+                    </label>
+                    <div
+                        className={`overflow-hidden rounded-md bg-slate-300 pb-2
                         ${
                             isValidISBN(isbn) &&
                             !remoteSuccess &&
                             !isbnError &&
-                            'bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 background-animate border-none rounded-t'
+                            'background-animate rounded-t border-none bg-gradient-to-r from-amber-200 via-[#ef9b9b90] to-amber-200'
                         }
                         ${remoteSuccess && 'success-isbn border-none'}
                         ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
 
                         `}
-                        >
-                            <div className='flex items-center  flex-row bg-zinc-100 rounded-t-md text-zinc-600 border-slate-300'>
-                                <input
-                                    type='text'
-                                    id='isbn'
-                                    className='w-full p-5 text-xl focus:outline-none h-full align-middle'
-                                    value={isbn}
-                                    onInput={changeISBN}
-                                    placeholder='Search by ISBN'
-                                    aria-placeholder='Search by ISBN'
-                                ></input>
-                                <div
-                                    role='button'
-                                    tabIndex={0}
-                                    className='cursor-pointer h-[65px] transition-colors p-3 pt-5 text-zinc-400 hover:text-zinc-500 flex items-center justify-center text-center'
-                                    onClick={handleStartScanner}
-                                    title='Start ISBN barcode scanner'
-                                    aria-label='Start ISBN barcode scanner'
+                    >
+                        <div className='flex flex-row items-center rounded-t-md border-slate-300 bg-zinc-100 text-zinc-600'>
+                            <input
+                                type='text'
+                                id='isbn'
+                                className='h-full w-full p-5 align-middle text-xl focus:outline-none'
+                                value={isbn}
+                                onInput={changeISBN}
+                                placeholder='Search by ISBN'
+                                aria-placeholder='Search by ISBN'
+                            ></input>
+                            <div
+                                role='button'
+                                tabIndex={0}
+                                className='flex h-[65px] cursor-pointer items-center justify-center p-3 pt-5 text-center text-zinc-400 transition-colors hover:text-zinc-500'
+                                onClick={handleStartScanner}
+                                title='Start ISBN barcode scanner'
+                                aria-label='Start ISBN barcode scanner'
+                            >
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    height='35'
+                                    viewBox='0 -960 960 960'
+                                    width='35'
+                                    fill='currentColor'
+                                    className='align-middle'
                                 >
-                                    <svg
-                                        xmlns='http://www.w3.org/2000/svg'
-                                        height='35'
-                                        viewBox='0 -960 960 960'
-                                        width='35'
-                                        fill='currentColor'
-                                        className='align-middle'
-                                    >
-                                        <path d='M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z' />
-                                    </svg>
-                                </div>
+                                    <path d='M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z' />
+                                </svg>
                             </div>
-                            <div className='pb-0 py-2 flex flex-row  text-slate-600 gap-3 items-center justify-center'>
-                                {!isValidISBN(isbn) && !remoteSuccess && !isbnError && (
+                        </div>
+                        <div className='flex flex-row items-center gap-3 py-2 pb-0 text-slate-600'>
+                            {!isValidISBN(isbn) &&
+                                !remoteSuccess &&
+                                !isbnError && (
                                     <>
-                                        <div className='w-8 sm:w-0 px-3'>
+                                        <div className='w-8 px-3 sm:w-0'>
                                             <svg
                                                 xmlns='http://www.w3.org/2000/svg'
                                                 height='18'
@@ -723,37 +752,59 @@ function AddBookForm() {
                                                 <path d='M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z' />
                                             </svg>
                                         </div>
-                                        <p className='text-xs align-middle'>
+                                        <p className='align-middle text-xs'>
                                             <a
                                                 href='https://en.wikipedia.org/wiki/ISBN'
                                                 target='_blank'
                                                 rel='noreferrer'
-                                                className='font-bold underline decoration-dotted decoration-slate-400 decoration-[1px] underline-offset-2'
+                                                className='font-bold underline decoration-slate-400 decoration-dotted decoration-[1px] underline-offset-2'
                                             >
                                                 ISBN
                                             </a>{' '}
-                                            is either 10 or 13 digits, usually printed alongside a
-                                            barcode on the back of books
+                                            is either 10 or 13 digits, usually
+                                            printed alongside a barcode on the
+                                            back of books
                                         </p>
                                     </>
                                 )}
-                                {isbnError && !title && displayErrorMessage(isbnError)}
-                            </div>
-                            {goodreadsLink && (
-                                <a
-                                    href={`https://goodreads.com/book/show/${goodreadsLink}`}
-                                    target='_blank'
-                                    rel='noreferrer'
-                                    className='mx-2 text-xs text-green-800'
-                                >
-                                    Check "{title}" on <span className='font-bold'>Goodreads</span>
-                                </a>
+
+                            {isbnError && !title && (
+                                <div className='px-4'>
+                                    {' '}
+                                    {displayErrorMessage(isbnError)}
+                                </div>
                             )}
+
+                            <div className='px-2 text-xs text-green-800'>
+                                {' '}
+                                {goodreadsLink && (
+                                    <a
+                                        href={`https://goodreads.com/book/show/${goodreadsLink}`}
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >
+                                        Check "{title}" on{' '}
+                                        <span className='font-bold'>
+                                            Goodreads
+                                        </span>
+                                    </a>
+                                )}
+                            </div>
                         </div>
-                        <hr className='border-zinc-300 my-4' />
+                    </div>
+                </div>
+
+                <div className='form-container relative !my-0 !px-6 sm:my-5 sm:px-0 sm:pt-5 md:max-w-[750px]'>
+                    <form
+                        onSubmit={validateForm}
+                        className='flex  w-full flex-col gap-4 sm:w-3/4'
+                    >
                         <div>
                             <label htmlFor='title'>
-                                Title <span className='text-rose-600'>*</span>
+                                Title{' '}
+                                <span className='text-rose-400 drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
                             <br />
                             <input
@@ -763,14 +814,22 @@ function AddBookForm() {
                                 aria-required='true'
                                 value={title}
                                 onChange={changeTitle}
-                                className={titleError ? 'input-error form-text' : 'form-text'}
+                                className={
+                                    titleError
+                                        ? 'input-error form-text'
+                                        : 'form-text'
+                                }
                             />
-                            {titleError && displayErrorMessage('Title is required')}
+                            {titleError &&
+                                displayErrorMessage('Title is required')}
                         </div>
 
                         <div>
                             <label htmlFor='author'>
-                                Author <span className='text-rose-600'>*</span>
+                                Author{' '}
+                                <span className='text-rose-400 drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
                             <br />
 
@@ -781,20 +840,30 @@ function AddBookForm() {
                                 aria-required='true'
                                 value={author}
                                 onChange={changeAuthor}
-                                className={authorError ? 'input-error form-text' : ' form-text'}
+                                className={
+                                    authorError
+                                        ? 'input-error form-text'
+                                        : ' form-text'
+                                }
                             />
-                            {authorError && displayErrorMessage('Author is required')}
+                            {authorError &&
+                                displayErrorMessage('Author is required')}
                         </div>
 
                         <div>
                             <label htmlFor='genreId'>
-                                Category <span className='text-rose-600'>*</span>
+                                Category{' '}
+                                <span className='text-rose-400 drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
-                            <div className='flex items-start sm:items-center flex-col-reverse sm:flex-row gap-1'>
+                            <div className='flex flex-col-reverse items-start gap-1 sm:flex-row sm:items-center'>
                                 {}
                                 <GenresSelector
                                     updateGenre={updateGenre}
-                                    className={genreError ? 'select-error' : null}
+                                    className={
+                                        genreError ? 'select-error' : null
+                                    }
                                     defaultString='Select'
                                     isDisabled={true}
                                     selectedGenre={genre}
@@ -802,28 +871,37 @@ function AddBookForm() {
                                     aria-required='true'
                                     setGenreError={setGenreError}
                                 />
-                                <div className='tooltip w-8 sm:w-0 px-0 text-slate-500'>
+                                <div className='tooltip w-8 px-0 text-slate-500 sm:w-0'>
                                     <svg
                                         xmlns='http://www.w3.org/2000/svg'
-                                        height='30'
+                                        height='20'
                                         viewBox='0 -960 960 960'
-                                        width='30'
+                                        width='20'
                                         fill='currentColor'
                                         className='align-middle'
                                     >
                                         <path d='M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z' />
                                     </svg>
-                                    <span className='tooltiptext'>BISAC Subject Headings</span>
+                                    <span className='tooltiptext'>
+                                        BISAC Subject Headings
+                                    </span>
                                 </div>
                             </div>
-                            {genreError && displayErrorMessage('Category selection is required')}
+
+                            {genreError &&
+                                displayErrorMessage(
+                                    'Category selection is required',
+                                )}
                         </div>
-                        <div className='flex sm:flex-row flex-col justify-between gap-3'>
+                        <div className='flex flex-col justify-between gap-3 sm:flex-row'>
                             {' '}
                             {/* ISBN-13 */}
                             <div className='sm:w-1/2'>
                                 <label htmlFor='isbn13'>
-                                    ISBN13 <span className='text-rose-600'>*</span>
+                                    ISBN-13{' '}
+                                    <span className='text-rose-400 drop-shadow-xl'>
+                                        *
+                                    </span>
                                 </label>
 
                                 <br />
@@ -834,14 +912,21 @@ function AddBookForm() {
                                     aria-required='true'
                                     value={isbn13}
                                     onChange={changeISBN13}
-                                    className={isbn13Error ? 'input-error form-text' : 'form-text'}
+                                    className={
+                                        isbn13Error
+                                            ? 'input-error form-text'
+                                            : 'form-text'
+                                    }
                                 />
-                                {isbn13Error && displayErrorMessage('ISBN13 is required')}
+                                {isbn13Error &&
+                                    displayErrorMessage('ISBN-13 is required')}
                             </div>
-                            {/* ISBN-10 */}
                             <div className='sm:w-1/2'>
                                 <label htmlFor='isbn10'>
-                                    ISBN10 <span className='text-rose-600'>*</span>
+                                    ISBN-10{' '}
+                                    <span className='text-rose-400 drop-shadow-xl'>
+                                        *
+                                    </span>
                                 </label>
 
                                 <br />
@@ -852,15 +937,23 @@ function AddBookForm() {
                                     aria-required='true'
                                     value={isbn10}
                                     onChange={changeISBN10}
-                                    className={isbn10Error ? 'input-error form-text' : 'form-text'}
+                                    className={
+                                        isbn10Error
+                                            ? 'input-error form-text'
+                                            : 'form-text'
+                                    }
                                 />
-                                {isbn10Error && displayErrorMessage('ISBN10 is required')}
+                                {isbn10Error &&
+                                    displayErrorMessage('ISBN-10 is required')}
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor='pageCount'>
-                                Pages <span className='text-rose-600'>*</span>
+                                Pages{' '}
+                                <span className='text-rose-400 drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
                             <br />
                             <input
@@ -870,14 +963,22 @@ function AddBookForm() {
                                 aria-required='true'
                                 value={pageCount}
                                 onChange={changePageCount}
-                                className={pageCountError ? 'input-error form-text' : 'form-text'}
+                                className={
+                                    pageCountError
+                                        ? 'input-error form-text'
+                                        : 'form-text'
+                                }
                             />
-                            {pageCountError && displayErrorMessage('Page count is required')}
+                            {pageCountError &&
+                                displayErrorMessage('Page count is required')}
                         </div>
 
                         <div>
                             <label htmlFor='year'>
-                                Year <span className='text-rose-600'>*</span>
+                                Year{' '}
+                                <span className='text-rose-400 drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
                             <br />
                             <input
@@ -887,10 +988,18 @@ function AddBookForm() {
                                 aria-required='true'
                                 value={year}
                                 onChange={changeYear}
-                                className={yearError ? 'input-error form-text' : ' form-text'}
+                                className={
+                                    yearError
+                                        ? 'input-error form-text'
+                                        : ' form-text'
+                                }
                             />
-                            {yearError && displayErrorMessage('Year is required (e.g. 1997)')}
+                            {yearError &&
+                                displayErrorMessage(
+                                    'Year is required (e.g. 1997)',
+                                )}
                         </div>
+
                         {isValidUrl(imageUrl) && (
                             <div>
                                 <img
@@ -911,32 +1020,49 @@ function AddBookForm() {
                                 aria-required='true'
                                 value={imageUrl}
                                 onChange={changeImageUrl}
-                                className={imageUrlError ? 'input-error form-text' : 'form-text'}
+                                className={
+                                    imageUrlError
+                                        ? 'input-error form-text'
+                                        : 'form-text'
+                                }
                             />
-                            {imageUrlError && displayErrorMessage('Valid cover URL is required')}
+                            {imageUrlError &&
+                                displayErrorMessage(
+                                    'Valid cover URL is required',
+                                )}
                         </div>
 
                         <div>
                             <label htmlFor='blurb'>
-                                Blurb <span className='text-rose-600'>*</span>
+                                Blurb{' '}
+                                <span className='text-[#f87171] drop-shadow-xl'>
+                                    *
+                                </span>
                             </label>
                             <br />
                             <textarea
                                 id='blurb'
                                 aria-required='true'
-                                rows='5'
+                                rows='8'
                                 maxLength='10000'
                                 value={blurb}
                                 onChange={changeBlurb}
-                                className={blurbError ? 'input-error form-text' : 'form-text'}
+                                className={`form-text h-max  w-full !p-3 !text-sm ${
+                                    blurbError && 'input-error'
+                                }`}
                             ></textarea>
+
                             {blurbError &&
                                 displayErrorMessage(
-                                    'The blurb must be between 10 and 10,000 characters'
+                                    'The blurb must be between 10 and 10,000 characters',
                                 )}
                         </div>
                         <div id='error-container' className='error'></div>
-                        <input type='submit' value='Add Book' className='button py-3' />
+                        <input
+                            type='submit'
+                            value='Add book'
+                            className='button py-3'
+                        />
                     </form>
                 </div>
             </div>

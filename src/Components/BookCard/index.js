@@ -1,24 +1,25 @@
 import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
+import { truncateWithEllipsis } from '../../utilities.js';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
     return (
         <Link
             to={'/books/' + id}
-            className='sm:w-72 sm:h-auto sm:p-0 bg-zinc-100 sm:rounded-t-xl rounded-b-md rounded-lg text-slate-800 w-full mx-2 sm:h-min-96'
+            className='sm:h-min-96 mx-2 w-full rounded-lg rounded-b-md bg-zinc-100 text-slate-800 sm:h-auto sm:w-72 sm:rounded-t-xl sm:p-0'
             onClick={onClick}
         >
             <div className='flex sm:flex-col'>
                 <div
                     className='
+                w-24
+                overflow-hidden
+                rounded-l-lg
                 sm:h-[450px]
                 sm:w-auto
-                w-24
-                rounded-l-lg
-                sm:rounded-t-xl
                 sm:rounded-b-none
-                overflow-hidden
+                sm:rounded-t-xl
                 '
                 >
                     <LazyImgLoader
@@ -27,10 +28,17 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                         dimensions='w-full h-full'
                     />
                 </div>
-                <div className='flex flex-col justify-center sm:flex-none sm:p-5 p-5 w-2/3 sm:w-full'>
-                    <h2 className='text-lg pb-3 pt-0 '>{title}</h2>
-                    <p className='text-slate-600 text-sm'>by {author}</p>
-                    <p className='text-slate-600 text-xs font-light'>{genre}</p>
+                <div className='flex w-2/3 flex-col justify-center p-5 sm:w-full sm:flex-none sm:p-5'>
+                    <div className='h-14'>
+                        <h2
+                            className='pb-3 pt-0 text-base font-black text-slate-600'
+                            title={title.length > 55 ? title : ''}
+                        >
+                            {truncateWithEllipsis(title, 55)}
+                        </h2>
+                    </div>
+                    <p className='text-sm text-zinc-600'>by {author}</p>
+                    <p className='text-xs font-light text-zinc-800'>{genre}</p>
                 </div>
             </div>
         </Link>

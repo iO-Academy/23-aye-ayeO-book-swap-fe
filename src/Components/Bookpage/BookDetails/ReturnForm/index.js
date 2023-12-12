@@ -100,6 +100,7 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
                         viewBox='0 -960 960 960'
                         width='30'
                         fill='currentColor'
+                        className='hover:rotate-180 transition'
                     >
                         <path d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z' />
                     </svg>
@@ -115,7 +116,6 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
                         <label htmlFor='email'>
                             {claimed}'s Email <span className='text-rose-600'>*</span>
                         </label>
-
                         <input
                             autoFocus
                             autoComplete='email'

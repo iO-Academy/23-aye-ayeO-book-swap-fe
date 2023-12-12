@@ -4,47 +4,67 @@ import './nav.css';
 
 function Nav() {
     return (
-        <div className='w-full bg-rose-400 sm:fixed relative z-40 nav'>
-            <nav className='px-4 sm:py-2 pb-2 flex justify-between text-slate-800 w-full max-w-7xl m-auto min-[500px]:flex-row flex-col gap-3'>
-                <span className='text-3xl font-semibold py-2 justify-center'>
-                    <Link to='/' className='flex flex-row gap-1 justify-center  text-[#37424b]'>
+        <div className='nav relative z-40 w-full bg-[#343450] sm:fixed'>
+            <nav className='m-auto flex w-full max-w-7xl flex-col justify-between gap-3 px-4 pb-2 text-slate-800 min-[500px]:flex-row sm:py-2'>
+                <span className='justify-center text-3xl font-semibold'>
+                    <Link
+                        to='/'
+                        className='group flex translate-x-0 flex-row items-center justify-center text-[#ededed] sm:-translate-x-3'
+                    >
                         <svg
-                            width='35'
+                            width='60'
                             zoomAndPan='magnify'
-                            viewBox='0 0 144 143.999998'
-                            height='35'
+                            viewBox='0 0 60 37.5'
+                            height='60'
                             preserveAspectRatio='xMidYMid meet'
                             version='1.0'
                         >
                             <path
-                                fill='#37424b'
-                                d='M 123.800781 24.941406 L 54.007812 24.941406 C 41.820312 24.117188 31.417969 33.914062 31.355469 45.8125 C 31.289062 57.800781 41.734375 67.742188 54.007812 66.917969 L 123.800781 66.917969 C 122.085938 64.757812 116.441406 57.109375 116.480469 45.8125 C 116.519531 34.660156 122.074219 27.113281 123.800781 24.941406 Z M 123.800781 24.941406 '
+                                fill='#fff'
+                                d='M 15.605469 20.003906 C 16.742188 21.4375 17.464844 23.527344 17.464844 25.867188 C 17.464844 28.199219 16.742188 30.289062 15.605469 31.726562 L 33.714844 31.726562 C 37.105469 31.695312 39.753906 30.078125 40.734375 27.8125 C 40.984375 27.21875 41.148438 26.53125 41.148438 25.859375 C 41.148438 25.183594 41.003906 24.539062 40.753906 23.953125 C 40.746094 23.941406 40.746094 23.921875 40.734375 23.914062 C 39.734375 21.679688 37.074219 20.03125 33.722656 20.003906 Z M 15.605469 20.003906 '
                                 fillOpacity='1'
                                 fillRule='nonzero'
+                                className='translate-x-0 transition-all  ease-in-out group-hover:translate-x-1 group-hover:fill-[#ef9b9b]'
                             />
+
                             <path
-                                fill='#37424b'
-                                d='M 27.609375 125.074219 L 97.402344 125.074219 C 109.589844 125.894531 119.996094 116.136719 120.054688 104.277344 C 120.121094 92.328125 109.675781 82.421875 97.402344 83.246094 L 27.609375 83.246094 C 29.324219 85.394531 34.972656 93.019531 34.933594 104.277344 C 34.894531 115.390625 29.335938 122.910156 27.609375 125.074219 Z M 27.609375 125.074219 '
+                                fill='#fff'
+                                d='M 44.394531 5.28125 C 43.257812 6.714844 42.535156 8.808594 42.535156 11.148438 C 42.535156 13.480469 43.257812 15.574219 44.394531 17.007812 L 26.277344 17.007812 C 22.886719 16.980469 20.234375 15.359375 19.253906 13.097656 C 19 12.5 18.839844 11.816406 18.839844 11.140625 C 18.839844 10.464844 18.984375 9.820312 19.234375 9.230469 C 19.242188 9.222656 19.242188 9.203125 19.253906 9.191406 C 20.253906 6.957031 22.914062 5.308594 26.269531 5.28125 Z M 44.394531 5.28125 '
                                 fillOpacity='1'
                                 fillRule='nonzero'
+                                className='translate-x-0 transition-all ease-in-out group-hover:-translate-x-1 group-hover:fill-[#f87171]'
                             />
                         </svg>
-                        swapp
+                        <span className='-translate-x-2'>swapp</span>
                     </Link>
                 </span>
-                <div className='flex gap-6 sm:justified-end justify-center transition items-center text-md'>
-                    <NavLink to='/' className='transition-font duration-2000'>
+                <div className='sm:justified-end text-md flex items-center justify-center gap-6 text-white transition'>
+                    <NavLink
+                        to='/'
+                        className='duration-2000 transition-all hover:text-[#ef9b9b]'
+                    >
                         Available
                     </NavLink>
-
-                    <NavLink to='/claimed'>Claimed</NavLink>
                     <NavLink
-                        to='/books/add'
-                        className={
-                            'py-2 px-4 rounded-md text-base bg-zinc-100 bg-opacity-40 border-slate-700 hover:text-zinc-100 hover:bg-slate-700 text-slate-800 transition'
-                        }
+                        to='/claimed'
+                        className='duration-2000 transition-all hover:text-[#ef9b9b]'
                     >
-                        Add&nbsp;Book
+                        Claimed
+                    </NavLink>
+                    <NavLink to='/books/add'>
+                        <button className='background-animate-slow group group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-amber-300 to-[#ef9b9b] p-0.5 text-sm font-semibold text-white hover:text-[#343450]'>
+                            <span className='relative flex flex-row items-center gap-1 rounded-md  bg-[#343450] px-4 py-2 transition-all duration-100 ease-in group-hover:bg-opacity-0'>
+                                <svg
+                                    height='20'
+                                    viewBox='0 -960 960 960'
+                                    width='20'
+                                    fill='currentColor'
+                                >
+                                    <path d='M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z' />
+                                </svg>
+                                Add book
+                            </span>
+                        </button>
                     </NavLink>
                 </div>
             </nav>

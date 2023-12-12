@@ -21,7 +21,7 @@ export function isValidEmail(email) {
 }
 
 export function isValidUrl(url) {
-    const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/;
+    const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-.,+/?%&=]*)?$/;
     return urlPattern.test(url);
 }
 
@@ -128,4 +128,13 @@ export function removeEdgeCurl(url) {
     } else {
         return url;
     }
+}
+
+export function truncateWithEllipsis(inputString, maxLength = 50) {
+    if (inputString.length <= maxLength) {
+        return inputString;
+    }
+
+    const truncatedString = inputString.substring(0, maxLength - 3) + '...';
+    return truncatedString;
 }

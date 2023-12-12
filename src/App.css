@@ -1,5 +1,5 @@
 * {
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     overscroll-behavior-y: none;
 }
 
@@ -16,6 +16,10 @@ select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+.disabled {
+    pointer-events: none;
+}
+
 h1,
 h2,
 h3,
@@ -24,7 +28,7 @@ h4 {
 }
 
 h1 {
-    @apply text-3xl py-12 text-center;
+    @apply py-12 text-center text-3xl;
 }
 
 h2 {
@@ -40,29 +44,40 @@ h4 {
 }
 
 .active {
-    font-weight: bold;
-    pointer-events: none;
+    @apply font-black;
+}
+
+.active-page-button {
+    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black;
 }
 
 .button {
-    @apply rounded-md px-4 py-3 bg-slate-600 border hover:bg-transparent border-slate-600 hover:text-slate-600 text-zinc-50 text-base transition cursor-pointer;
+    @apply cursor-pointer rounded-md border border-slate-600 bg-slate-600 px-4 py-3 text-base text-zinc-50 outline-none ring-lime-500/30 transition hover:bg-transparent hover:text-slate-600 focus:ring-4;
 }
 
 .form-container {
-    @apply bg-zinc-200 flex justify-center p-10 my-5 m-auto rounded-lg transition;
+    @apply m-auto my-5 flex justify-center rounded-lg bg-zinc-200 p-10 transition;
 }
 
 .form-text {
-    @apply p-2 text-lg bg-zinc-50 focus:outline-none rounded w-full;
+    @apply mb-2 mt-1 w-full rounded bg-zinc-50 p-2 text-base text-slate-600  ring-lime-500/30 focus:bg-white focus:outline-none focus:ring-4;
+}
+
+.form-input {
+    @apply block w-full appearance-none border-0 border-b border-slate-300 bg-transparent !px-0 !pb-0 !pt-3.5 text-lg text-gray-900 transition focus:border-slate-500 focus:outline-0 focus:ring-0;
+}
+
+label {
+    @apply text-base font-semibold text-[#343450df];
 }
 
 .error {
-    @apply text-red-700 relative text-xs mt-1;
+    @apply relative text-xs text-rose-600 drop-shadow-2xl;
 }
 
 .input-error,
 .select-error {
-    @apply border-2 border-rose-300;
+    @apply ring-4 ring-rose-200/60;
 }
 
 .montserrat {
@@ -75,10 +90,16 @@ h4 {
 
 .background-animate {
     background-size: 400%;
-
     -webkit-animation: animateBackground 0.6s ease infinite;
     -moz-animation: animateBackground 0.6s ease infinite;
     animation: animateBackground 0.6s ease infinite;
+}
+
+.background-animate-slow {
+    background-size: 400%;
+    -webkit-animation: animateBackground 3s ease infinite;
+    -moz-animation: animateBackground 3s ease infinite;
+    animation: animateBackground 3s ease infinite;
 }
 
 @keyframes animateBackground {
@@ -99,9 +120,15 @@ h4 {
 }
 
 /* Star rating */
+
+.ratingStar {
+    @apply leading-8;
+}
+
 .rate {
     float: right;
     height: 46px;
+    line-height: 2rem;
 }
 .rate:not(:checked) > input {
     position: absolute;
@@ -113,7 +140,7 @@ h4 {
     overflow: hidden;
     white-space: nowrap;
     cursor: pointer;
-    font-size: 40px;
+    font-size: 35px;
     /* color: #ccc; */
     color: #52525240;
 }

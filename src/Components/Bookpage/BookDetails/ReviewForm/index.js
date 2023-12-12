@@ -73,20 +73,23 @@ function ReviewForm({ refreshReviewsList }) {
     // SUBMIT form / FETCH
     async function handleSubmit() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URI}/reviews`, {
-                mode: 'cors',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URI}/reviews`,
+                {
+                    mode: 'cors',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        rating: rating,
+                        review: review,
+                        book_id: id,
+                    }),
                 },
-                body: JSON.stringify({
-                    name: name,
-                    rating: rating,
-                    review: review,
-                    book_id: id,
-                }),
-            });
+            );
 
             const data = await response.json();
 
@@ -122,7 +125,11 @@ function ReviewForm({ refreshReviewsList }) {
                             name='name'
                             value={name}
                             onChange={changeName}
-                            className={nameError ? 'input-error form-text' : 'form-text'}
+                            className={
+                                nameError
+                                    ? 'input-error form-text'
+                                    : 'form-text'
+                            }
                         />
                         {nameError && displayErrorMessage('Name is required')}
                     </div>
@@ -134,30 +141,75 @@ function ReviewForm({ refreshReviewsList }) {
                             role='radiogroup'
                             id='rate'
                             onChange={changeRating}
-                            className={
+                            className={`${
                                 ratingError
-                                    ? 'rate flex flex-row-reverse justify-end items-center'
-                                    : 'rate flex flex-row-reverse justify-end items-center'
-                            }
+                                    ? 'rate flex flex-row-reverse items-center justify-end'
+                                    : 'rate flex flex-row-reverse items-center justify-end'
+                            }`}
                         >
-                            <input type='radio' id='star5' name='rate' value='5' />
-                            <label htmlFor='star5' title='Excellent'>
+                            <input
+                                type='radio'
+                                id='star5'
+                                name='rate'
+                                value='5'
+                            />
+                            <label
+                                className='ratingStar'
+                                htmlFor='star5'
+                                title='Excellent'
+                            >
                                 5 stars
                             </label>
-                            <input type='radio' id='star4' name='rate' value='4' />
-                            <label htmlFor='star4' title='Great'>
+                            <input
+                                type='radio'
+                                id='star4'
+                                name='rate'
+                                value='4'
+                            />
+                            <label
+                                className='ratingStar'
+                                htmlFor='star4'
+                                title='Great'
+                            >
                                 4 stars
                             </label>
-                            <input type='radio' id='star3' name='rate' value='3' />
-                            <label htmlFor='star3' title='Good'>
+                            <input
+                                type='radio'
+                                id='star3'
+                                name='rate'
+                                value='3'
+                            />
+                            <label
+                                className='ratingStar'
+                                htmlFor='star3'
+                                title='Good'
+                            >
                                 3 stars
                             </label>
-                            <input type='radio' id='star2' name='rate' value='2' />
-                            <label htmlFor='star2' title='Fair'>
+                            <input
+                                type='radio'
+                                id='star2'
+                                name='rate'
+                                value='2'
+                            />
+                            <label
+                                className='ratingStar'
+                                htmlFor='star2'
+                                title='Fair'
+                            >
                                 2 stars
                             </label>
-                            <input type='radio' id='star1' name='rate' value='1' />
-                            <label htmlFor='star1' title='Poor'>
+                            <input
+                                type='radio'
+                                id='star1'
+                                name='rate'
+                                value='1'
+                            />
+                            <label
+                                className='ratingStar'
+                                htmlFor='star1'
+                                title='Poor'
+                            >
                                 1 star
                             </label>
                         </div>
@@ -174,14 +226,24 @@ function ReviewForm({ refreshReviewsList }) {
                             maxLength='10000'
                             cols='50'
                             onChange={changeReview}
-                            className={reviewError ? 'input-error form-text' : 'form-text'}
+                            className={
+                                reviewError
+                                    ? 'input-error form-text'
+                                    : 'form-text'
+                            }
                         ></textarea>
                         {reviewError &&
-                            displayErrorMessage('Review is required (Min. 10 characters)')}
+                            displayErrorMessage(
+                                'Review is required (Min. 10 characters)',
+                            )}
                         <div>{review.length} / 10000</div>
                     </div>
                     <span className='error'>{serverError}</span>
-                    <input type='submit' value='Post Review' className='button py-2' />
+                    <input
+                        type='submit'
+                        value='Post Review'
+                        className='button py-2'
+                    />
                 </form>
             </div>
         )
