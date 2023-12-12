@@ -1,6 +1,7 @@
 import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
+import { truncateWithEllipsis } from '../../utilities.js';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
     return (
@@ -29,8 +30,11 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                 </div>
                 <div className='flex w-2/3 flex-col justify-center p-5 sm:w-full sm:flex-none sm:p-5'>
                     <div className='h-14'>
-                        <h2 className='pb-3 pt-0 text-base font-black text-slate-600'>
-                            {title}
+                        <h2
+                            className='pb-3 pt-0 text-base font-black text-slate-600'
+                            title={title.length > 55 && title}
+                        >
+                            {truncateWithEllipsis(title, 55)}
                         </h2>
                     </div>
                     <p className='text-sm text-zinc-600'>by {author}</p>
