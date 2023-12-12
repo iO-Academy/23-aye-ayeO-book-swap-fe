@@ -84,11 +84,10 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                     <SearchCollection onSearchChange={handleSearchChange} />
                 </div>
             </div>
-            <h1>{claimed ? 'Claimed Books' : 'Available Books'}</h1>
+            <h1 className='pb-3'>{claimed ? 'Claimed' : 'Available'}</h1>
             {pageData && (
-                <p className='text-center mb-6'>
-                    Showing {pageData?.from} - {pageData?.to} out of{' '}
-                    {pageData?.total}
+                <p className='text-center mb-12 text-sm'>
+                    {pageData?.from} - {pageData?.to} of {pageData?.total} books
                 </p>
             )}
 
@@ -110,31 +109,48 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
             </div>
             {pageData && (
                 <div className='flex flex-row justify-center gap-4 my-10'>
-                    {pageData?.links.map((link) => {
-                        let page;
+                    {pageData.total / pageData.per_page > 1 &&
+                        pageData?.links.map((link) => {
+                            let page;
 
-                        if (link.label === 'Next &raquo;') {
-                            page = pageData.current_page + 1;
-                        } else if (link.label === '&laquo; Previous') {
-                            page = pageData.current_page - 1;
-                        } else {
-                            page = link.label;
-                        }
+                            if (
+                                link.label === 'Next &raquo;' &&
+                                link.url !== null
+                            ) {
+                                page = pageData.current_page + 1;
+                            } else if (
+                                link.label === '&laquo; Previous' &&
+                                link.url !== null
+                            ) {
+                                if (pageData.current_page - 1 > 0) {
+                                    page = pageData.current_page - 1;
+                                }
+                            } else {
+                                page = link.label;
+                            }
 
-                        return (
-                            <button
-                                className={`${
-                                    link.active ? 'active-page-button' : ''
-                                }`}
-                                key={uuidv4()}
-                                onClick={() => setPage(page)}
-                            >
-                                {link.label
-                                    .replace(/&raquo;/g, '\u00BB')
-                                    .replace(/&laquo;/g, '\u00AB')}
-                            </button>
-                        );
-                    })}
+                            return (
+                                <button
+                                    className={`text-[#343450] ${
+                                        link.active ? 'active-page-button' : ''
+                                    }
+                                    
+                                    ${
+                                        !link.url &&
+                                        'disabled !text-zinc-400 drop-shadow-xl'
+                                    }
+                                    
+                                    
+                                    `}
+                                    key={uuidv4()}
+                                    onClick={() => setPage(page)}
+                                >
+                                    {link.label
+                                        .replace(/&raquo;/g, '\u00BB')
+                                        .replace(/&laquo;/g, '\u00AB')}
+                                </button>
+                            );
+                        })}
                 </div>
             )}
         </>

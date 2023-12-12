@@ -1,5 +1,5 @@
 * {
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     overscroll-behavior-y: none;
 }
 
@@ -14,6 +14,10 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
+}
+
+.disabled {
+    pointer-events: none;
 }
 
 h1,
@@ -44,7 +48,7 @@ h4 {
 }
 
 .active-page-button {
-    @apply border-2 border-[#343450]  rounded-full w-[40px] h-[40px] text-[#f87171] font-black;
+    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black;
 }
 
 .button {
