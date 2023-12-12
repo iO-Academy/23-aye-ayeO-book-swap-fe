@@ -120,9 +120,15 @@ label {
 }
 
 /* Star rating */
+
+.ratingStar {
+    @apply leading-8;
+}
+
 .rate {
     float: right;
     height: 46px;
+    line-height: 2rem;
 }
 .rate:not(:checked) > input {
     position: absolute;

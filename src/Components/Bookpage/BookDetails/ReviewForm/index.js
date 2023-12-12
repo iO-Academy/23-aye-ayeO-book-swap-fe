@@ -153,7 +153,11 @@ function ReviewForm({ refreshReviewsList }) {
                                 name='rate'
                                 value='5'
                             />
-                            <label htmlFor='star5' title='Excellent'>
+                            <label
+                                className='ratingStar'
+                                htmlFor='star5'
+                                title='Excellent'
+                            >
                                 5 stars
                             </label>
                             <input
@@ -162,7 +166,11 @@ function ReviewForm({ refreshReviewsList }) {
                                 name='rate'
                                 value='4'
                             />
-                            <label htmlFor='star4' title='Great'>
+                            <label
+                                className='ratingStar'
+                                htmlFor='star4'
+                                title='Great'
+                            >
                                 4 stars
                             </label>
                             <input
@@ -171,7 +179,11 @@ function ReviewForm({ refreshReviewsList }) {
                                 name='rate'
                                 value='3'
                             />
-                            <label htmlFor='star3' title='Good'>
+                            <label
+                                className='ratingStar'
+                                htmlFor='star3'
+                                title='Good'
+                            >
                                 3 stars
                             </label>
                             <input
@@ -180,7 +192,11 @@ function ReviewForm({ refreshReviewsList }) {
                                 name='rate'
                                 value='2'
                             />
-                            <label htmlFor='star2' title='Fair'>
+                            <label
+                                className='ratingStar'
+                                htmlFor='star2'
+                                title='Fair'
+                            >
                                 2 stars
                             </label>
                             <input
@@ -189,7 +205,11 @@ function ReviewForm({ refreshReviewsList }) {
                                 name='rate'
                                 value='1'
                             />
-                            <label htmlFor='star1' title='Poor'>
+                            <label
+                                className='ratingStar'
+                                htmlFor='star1'
+                                title='Poor'
+                            >
                                 1 star
                             </label>
                         </div>
