@@ -6,10 +6,7 @@ import parse from 'html-react-parser';
 export function displayErrorMessage(error = ' ') {
     return (
         <div>
-            <p className={error ? 'error' : 'hidden'}>
-                {/* <span class="material-symbols-outlined">warning</span> */}
-                {parse(error)}
-            </p>
+            <p className={error ? 'error' : 'hidden'}>{parse(error)}</p>
         </div>
     );
 }

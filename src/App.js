@@ -10,6 +10,7 @@ import AlertBubble from './Components/AlertBubble';
 import { Context } from './Context';
 import { useState } from 'react';
 import SplashScreen from './Components/SplashScreen';
+import Footer from './Components/Footer';
 
 function App() {
     const [alert, setAlert] = useState();
@@ -49,6 +50,7 @@ function App() {
                         <Route path='*' element={<NotFound />} />
                         <Route path='/books/add' element={<AddBookForm />} />
                     </Routes>
+                    <Footer />
                     <AlertBubble message={alert} />
                 </Context.Provider>
             </BrowserRouter>

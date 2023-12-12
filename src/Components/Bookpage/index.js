@@ -57,7 +57,7 @@ function Bookpage() {
     }
 
     return (
-        <div>
+        <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
             {error ? (
                 <p>{error}</p>
             ) : (
