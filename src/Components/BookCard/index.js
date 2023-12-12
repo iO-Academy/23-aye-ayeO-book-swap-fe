@@ -32,7 +32,7 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                     <div className='h-14'>
                         <h2
                             className='pb-3 pt-0 text-base font-black text-slate-600'
-                            title={title.length > 55 && title}
+                            title={title.length > 55 ? title : ''}
                         >
                             {truncateWithEllipsis(title, 55)}
                         </h2>
