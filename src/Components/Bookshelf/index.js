@@ -92,7 +92,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
             )}
             <div className='bookshelf m-auto flex w-full max-w-7xl flex-row flex-wrap justify-center gap-2 p-1 sm:gap-4 sm:p-0'>
                 {bookCollection == null && <p>No Books Found</p>}
-
                 {bookCollection?.map((book) => {
                     return (
                         <BookCard

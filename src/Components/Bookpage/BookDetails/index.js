@@ -57,7 +57,7 @@ function BookDetails({
         <>
             <ScrollToTop />
             <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
-                <div className='book-details m-auto flex w-full flex-col justify-center gap-10 p-5 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
+                <div className='book-details m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
                     <div className='flex w-[400px] justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
                             <LazyImgLoader
@@ -125,11 +125,13 @@ function BookDetails({
                         </div>
                     </div>
                     <div className='flex w-full flex-col gap-2 transition lg:max-w-2xl'>
-                        <h1 className='p-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'>
+                        <h1 className='px-5 sm:p-0 py-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'>
                             {title}
                         </h1>
-                        <p className='text-center lg:text-left'>{author}</p>
-                        <div className='m-2 flex items-baseline gap-2 self-center pb-4 lg:self-start lg:pb-0'>
+                        <p className='px-5 sm:px-0 text-center lg:text-left'>
+                            {author}
+                        </p>
+                        <div className='m-2 flex items-baseline gap-2 self-center pb-4 px-5 sm:px-0 lg:self-start lg:pb-0'>
                             <p className='text-2xl'>{avgScore.toFixed(1)}</p>
                             <StarRating rating={avgScore} />
                             <a
@@ -140,11 +142,11 @@ function BookDetails({
                             </a>
                         </div>
                         <div
-                            className={
+                            className={`px-5 sm:px-0 ${
                                 openBlurb || blurb.length < 600
                                     ? null
                                     : 'fade max-h-60'
-                            }
+                            }`}
                         >
                             <p>{renderWithLineBreaks(blurb)}</p>
                         </div>
@@ -170,7 +172,7 @@ function BookDetails({
 
                         <br />
                         <div>
-                            <div className='grid grid-cols-4 gap-3 text-sm sm:grid-cols-6'>
+                            <div className='px-5 sm:px-0 grid grid-cols-4 gap-3 text-sm sm:grid-cols-6'>
                                 {genre.name && (
                                     <>
                                         <p className='col-span-1 text-zinc-500'>
