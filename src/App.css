@@ -16,6 +16,16 @@ select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+/* body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+    background-color: white;
+    z-index: 1;
+    box-sizing: border-box;
+} */
+
 .disabled {
     pointer-events: none;
 }

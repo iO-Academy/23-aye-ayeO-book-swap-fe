@@ -52,7 +52,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     }
 
     return (
-        <>
+        <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
             <div
                 onClick={showFilter}
                 className='relative z-20 flex cursor-pointer items-center justify-center gap-1 bg-[#545470] py-4 text-center text-sm font-semibold text-white sm:hidden sm:text-zinc-600'
@@ -153,7 +153,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                         })}
                 </div>
             )}
-        </>
+        </div>
     );
 }
 

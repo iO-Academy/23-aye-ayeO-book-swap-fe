@@ -679,7 +679,7 @@ function AddBookForm() {
     }
 
     return (
-        <>
+        <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
             <ScrollToTop />
             <div className='sm:pt-24'>
                 <h1 className='py-8 sm:py-12'>Add new book</h1>
@@ -1066,7 +1066,7 @@ function AddBookForm() {
                     </form>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
