@@ -5,28 +5,38 @@ import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
 import NotFound from '../NotFound';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
+function Bookshelf({ claimed, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [page, setPage] = useState(1);
     const [pageData, setPageData] = useState('');
 
-    // Restore scroll position from state in App.js
-    window.scrollTo(0, scrollPosition);
+    const navigate = useNavigate();
 
-    // Preserve scroll position when bookcard is clicked
-    function saveScroll() {
-        setScrollPosition(window.scrollY);
-    }
+    const updatePageQueryParam = (newPageValue) => {
+        const currentPage = window.location.search;
+        const paramsPage = new URLSearchParams(currentPage);
+        // Update or set the value of the "page" parameter
+        paramsPage.set('page', newPageValue);
+
+        // Replace the current URL with the updated query parameters
+        navigate({
+            pathname: window.location.pathname,
+            search: `?${paramsPage.toString()}`,
+        });
+    };
+    // Use URL query params to fetch page
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    let pageNumber = params.get('page');
 
     async function getBookData(claimed, selectedGenreId, searchedString, page) {
         try {
             const bookData = await fetch(
-                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${page}`,
+                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${pageNumber}`,
             );
             const books = await bookData.json();
             setBookCollection(books.data?.data);
@@ -37,12 +47,19 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     }
 
     useEffect(() => {
-        getBookData(claimed, selectedGenreId, searchedString, page);
-    }, [claimed, selectedGenreId, searchedString, currentPage, page]);
+        getBookData(claimed, selectedGenreId, searchedString, pageNumber);
+    }, [claimed, selectedGenreId, searchedString, pageNumber]);
+
+    useEffect(() => {
+        // Reset page to start results from page 1 instead
+        if (params.get('page') > 1) {
+            updatePageQueryParam('');
+        }
+    }, [selectedGenreId]);
 
     const handleSearchChange = (string) => {
         setSearchedString(string);
-        setCurrentPage(1);
+        string.length > 2 && pageNumber > 1 && updatePageQueryParam('');
     };
 
     function showFilter() {
@@ -50,6 +67,11 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
         isFilterVisible === '-translate-y-full'
             ? setIsFilterVisible('translate-y-0')
             : setIsFilterVisible('-translate-y-full');
+    }
+
+    function getPageFromURL(url) {
+        const pageLink = new URLSearchParams(new URL(url).search);
+        return pageLink.get('page');
     }
 
     return (
@@ -102,53 +124,32 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                             author={book.author}
                             genre={book.genre.name}
                             key={book.id + book.title}
-                            onClick={saveScroll}
                         />
                     );
                 })}
             </div>
             {pageData && (
-                <div className='flex flex-row justify-center gap-4 my-10'>
+                <div className='flex flex-row justify-center gap-4 my-10 items-center'>
                     {pageData.total / pageData.per_page > 1 &&
                         pageData?.links.map((link) => {
-                            let page;
-
-                            if (
-                                link.label === 'Next &raquo;' &&
-                                link.url !== null
-                            ) {
-                                page = pageData.current_page + 1;
-                            } else if (
-                                link.label === '&laquo; Previous' &&
-                                link.url !== null
-                            ) {
-                                if (pageData.current_page - 1 > 0) {
-                                    page = pageData.current_page - 1;
-                                }
-                            } else {
-                                page = link.label;
-                            }
-
                             return (
-                                <button
-                                    className={`text-[#343450] ${
-                                        link.active ? 'active-page-button' : ''
+                                <Link
+                                    to={
+                                        link.url &&
+                                        `?page=${getPageFromURL(link.url)}`
                                     }
-                                    
-                                    ${
+                                    className={`justify-center items-center flex p-1 text-[#343450] ${
+                                        link.active ? 'active-page-button' : ''
+                                    } ${
                                         !link.url &&
                                         'disabled !text-zinc-400 drop-shadow-xl'
-                                    }
-                                    
-                                    
-                                    `}
+                                    }`}
                                     key={uuidv4()}
-                                    onClick={() => setPage(page)}
                                 >
                                     {link.label
                                         .replace(/&raquo;/g, '\u00BB')
                                         .replace(/&laquo;/g, '\u00AB')}
-                                </button>
+                                </Link>
                             );
                         })}
                 </div>
