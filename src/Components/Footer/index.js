@@ -6,7 +6,7 @@ function Footer() {
     return (
         <>
             <div className='w-full bg-zinc-700 sticky bottom-0'>
-                <div className='w-full flex justify-cente bg-zinc-600 hover:bg-zinc-500 hover:font-black'>
+                <div className='w-full flex justify-cente bg-zinc-600 hover:bg-zinc-500/50'>
                     <button
                         className='text-zinc-200 p-4 w-full '
                         onClick={scrollToTop}
