@@ -4,6 +4,7 @@ import BookCard from '../BookCard';
 import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
+import { Link, useLocation } from 'react-router-dom';
 
 function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
@@ -11,8 +12,13 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
     const [currentPage, setCurrentPage] = useState(1);
-    const [page, setPage] = useState(1);
+    // const [page, setPage] = useState(1);
     const [pageData, setPageData] = useState('');
+
+    // Use URL query params to fetch page
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const pageNumber = params.get('page');
 
     // Restore scroll position from state in App.js
     window.scrollTo(0, scrollPosition);
@@ -25,7 +31,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     async function getBookData(claimed, selectedGenreId, searchedString, page) {
         try {
             const bookData = await fetch(
-                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${page}`,
+                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${pageNumber}`,
             );
             const books = await bookData.json();
             setBookCollection(books.data?.data);
@@ -36,8 +42,8 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     }
 
     useEffect(() => {
-        getBookData(claimed, selectedGenreId, searchedString, page);
-    }, [claimed, selectedGenreId, searchedString, currentPage, page]);
+        getBookData(claimed, selectedGenreId, searchedString, pageNumber);
+    }, [claimed, selectedGenreId, searchedString, currentPage, pageNumber]);
 
     const handleSearchChange = (string) => {
         setSearchedString(string);
@@ -49,6 +55,11 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
         isFilterVisible === '-translate-y-full'
             ? setIsFilterVisible('translate-y-0')
             : setIsFilterVisible('-translate-y-full');
+    }
+
+    function getPageFromURL(url) {
+        const pageLink = new URLSearchParams(new URL(url).search);
+        return pageLink.get('page');
     }
 
     return (
@@ -107,47 +118,27 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 })}
             </div>
             {pageData && (
-                <div className='flex flex-row justify-center gap-4 my-10'>
+                <div className='flex flex-row justify-center gap-4 my-10 items-center'>
                     {pageData.total / pageData.per_page > 1 &&
                         pageData?.links.map((link) => {
-                            let page;
-
-                            if (
-                                link.label === 'Next &raquo;' &&
-                                link.url !== null
-                            ) {
-                                page = pageData.current_page + 1;
-                            } else if (
-                                link.label === '&laquo; Previous' &&
-                                link.url !== null
-                            ) {
-                                if (pageData.current_page - 1 > 0) {
-                                    page = pageData.current_page - 1;
-                                }
-                            } else {
-                                page = link.label;
-                            }
-
                             return (
-                                <button
-                                    className={`text-[#343450] ${
-                                        link.active ? 'active-page-button' : ''
+                                <Link
+                                    to={
+                                        link.url &&
+                                        `?page=${getPageFromURL(link.url)}`
                                     }
-                                    
-                                    ${
+                                    className={`justify-center items-center flex p-1 text-[#343450] ${
+                                        link.active ? 'active-page-button' : ''
+                                    } ${
                                         !link.url &&
                                         'disabled !text-zinc-400 drop-shadow-xl'
-                                    }
-                                    
-                                    
-                                    `}
+                                    }`}
                                     key={uuidv4()}
-                                    onClick={() => setPage(page)}
                                 >
                                     {link.label
                                         .replace(/&raquo;/g, '\u00BB')
                                         .replace(/&laquo;/g, '\u00AB')}
-                                </button>
+                                </Link>
                             );
                         })}
                 </div>
