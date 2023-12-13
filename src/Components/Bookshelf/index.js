@@ -4,6 +4,7 @@ import BookCard from '../BookCard';
 import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
+import NotFound from '../NotFound';
 
 function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
@@ -91,7 +92,7 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                 </p>
             )}
             <div className='bookshelf m-auto flex w-full max-w-7xl flex-row flex-wrap justify-center gap-2 p-1 sm:gap-4 sm:p-0'>
-                {bookCollection == null && <p>No Books Found</p>}
+                {bookCollection == null && <NotFound />}
                 {bookCollection?.map((book) => {
                     return (
                         <BookCard

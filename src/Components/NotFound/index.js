@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 function NotFound() {
     return (
-        <div className='h-screen flex items-center sm:justify-center flex-col sm:p-8 pt-20'>
+        <div className='h-[100vh] flex items-center sm:justify-center flex-col sm:p-8 pt-20 bg-white sticky z-10'>
             <img src={logo} alt='Swapp logo' width='100px' />
             <h1>
                 404
