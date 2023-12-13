@@ -4,21 +4,33 @@ import BookCard from '../BookCard';
 import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
-    const [currentPage, setCurrentPage] = useState(1);
-    // const [page, setPage] = useState(1);
     const [pageData, setPageData] = useState('');
 
+    const navigate = useNavigate();
+
+    const updatePageQueryParam = (newPageValue) => {
+        const currentPage = window.location.search;
+        const paramsPage = new URLSearchParams(currentPage);
+        // Update or set the value of the "page" parameter
+        paramsPage.set('page', newPageValue);
+
+        // Replace the current URL with the updated query parameters
+        navigate({
+            pathname: window.location.pathname,
+            search: `?${paramsPage.toString()}`,
+        });
+    };
     // Use URL query params to fetch page
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const pageNumber = params.get('page');
+    let pageNumber = params.get('page');
 
     // Restore scroll position from state in App.js
     window.scrollTo(0, scrollPosition);
@@ -43,11 +55,18 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
 
     useEffect(() => {
         getBookData(claimed, selectedGenreId, searchedString, pageNumber);
-    }, [claimed, selectedGenreId, searchedString, currentPage, pageNumber]);
+    }, [claimed, selectedGenreId, searchedString, pageNumber]);
+
+    useEffect(() => {
+        // Reset page to start results from page 1 instead
+        if (params.get('page') > 1) {
+            updatePageQueryParam('');
+        }
+    }, [selectedGenreId]);
 
     const handleSearchChange = (string) => {
         setSearchedString(string);
-        setCurrentPage(1);
+        string.length > 2 && pageNumber > 1 && updatePageQueryParam('');
     };
 
     function showFilter() {
