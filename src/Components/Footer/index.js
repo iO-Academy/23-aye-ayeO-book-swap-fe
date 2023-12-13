@@ -55,7 +55,7 @@ function Footer() {
                     </div> */}
                     </div>
                     <hr className='my-4 border-[#37424b]' />
-                    <p className='text-[#ededed] text-center'>
+                    <p className='text-zinc-400 text-center'>
                         © 2023 Aye-Aye-O. All rights reserved.
                     </p>
                 </div>
