@@ -6,9 +6,9 @@ function Footer() {
     return (
         <>
             <div className='w-full bg-zinc-700 sticky bottom-0'>
-                <div className='w-full flex justify-cente bg-zinc-600'>
+                <div className='w-full flex justify-cente bg-zinc-600 hover:bg-zinc-500/50'>
                     <button
-                        className='text-zinc-200 p-4 w-full'
+                        className='text-zinc-200 p-4 w-full '
                         onClick={scrollToTop}
                     >
                         Back to top
@@ -55,8 +55,8 @@ function Footer() {
                     </div> */}
                     </div>
                     <hr className='my-4 border-[#37424b]' />
-                    <p className='text-[#ededed] text-center'>
-                        © 2023 Aye-Aye-O
+                    <p className='text-zinc-400 text-center'>
+                        © 2023 Aye-Aye-O. All rights reserved.
                     </p>
                 </div>
             </div>

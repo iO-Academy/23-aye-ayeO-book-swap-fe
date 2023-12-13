@@ -2,8 +2,22 @@ import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
 import { truncateWithEllipsis } from '../../utilities.js';
+import { useEffect, useState } from 'react';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
+    const [maxTitleLength, setMaxTitleLength] = useState(55);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setMaxTitleLength(window.innerWidth <= 768 ? 53 : 55);
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <Link
             to={'/books/' + id}
@@ -25,7 +39,13 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                     <LazyImgLoader
                         src={bookCover}
                         alt={title + ' cover'}
-                        dimensions='w-full h-full'
+                        dimensions='
+                        w-[96px]
+                        h-[150px]
+
+                        sm:w-full
+                        sm:h-full
+                        '
                     />
                 </div>
                 <div className='flex w-2/3 flex-col justify-center p-5 sm:w-full sm:flex-none sm:p-5'>
@@ -34,7 +54,7 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                             className='pb-3 pt-0 text-base font-black text-slate-600'
                             title={title.length > 55 ? title : ''}
                         >
-                            {truncateWithEllipsis(title, 55)}
+                            {truncateWithEllipsis(title, maxTitleLength)}
                         </h2>
                     </div>
                     <p className='text-sm text-zinc-600'>by {author}</p>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BookDetails from './BookDetails';
+import NotFound from '../NotFound';
 
 function Bookpage() {
     const { id } = useParams();
@@ -59,7 +60,7 @@ function Bookpage() {
     return (
         <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
             {error ? (
-                <p>{error}</p>
+                <NotFound />
             ) : (
                 <BookDetails
                     image={image}
