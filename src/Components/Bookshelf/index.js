@@ -6,7 +6,7 @@ import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
+function Bookshelf({ claimed, setScrollPosition }) {
     const [bookCollection, setBookCollection] = useState([]);
     const [selectedGenreId, setSelectedGenreId] = useState('');
     const [searchedString, setSearchedString] = useState('');
@@ -31,14 +31,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     let pageNumber = params.get('page');
-
-    // Restore scroll position from state in App.js
-    window.scrollTo(0, scrollPosition);
-
-    // Preserve scroll position when bookcard is clicked
-    function saveScroll() {
-        setScrollPosition(window.scrollY);
-    }
 
     async function getBookData(claimed, selectedGenreId, searchedString, page) {
         try {
@@ -131,7 +123,6 @@ function Bookshelf({ claimed, scrollPosition, setScrollPosition }) {
                             author={book.author}
                             genre={book.genre.name}
                             key={book.id + book.title}
-                            onClick={saveScroll}
                         />
                     );
                 })}

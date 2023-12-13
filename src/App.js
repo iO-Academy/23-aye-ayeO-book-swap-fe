@@ -14,8 +14,6 @@ import Footer from './Components/Footer';
 
 function App() {
     const [alert, setAlert] = useState();
-    const [scrollPositionAvailable, setScrollPositionAvailable] = useState(0);
-    const [scrollPositionClaimed, setScrollPositionClaimed] = useState(0);
 
     return (
         <div className='App montserrat'>
@@ -24,27 +22,10 @@ function App() {
                 <Nav />
                 <Context.Provider value={{ alert, setAlert }}>
                     <Routes>
-                        <Route
-                            path='/'
-                            element={
-                                <Bookshelf
-                                    claimed={0}
-                                    scrollPosition={scrollPositionAvailable}
-                                    setScrollPosition={
-                                        setScrollPositionAvailable
-                                    }
-                                />
-                            }
-                        />
+                        <Route path='/' element={<Bookshelf claimed={0} />} />
                         <Route
                             path='/claimed'
-                            element={
-                                <Bookshelf
-                                    claimed={1}
-                                    scrollPosition={scrollPositionClaimed}
-                                    setScrollPosition={setScrollPositionClaimed}
-                                />
-                            }
+                            element={<Bookshelf claimed={1} />}
                         />
                         <Route path='/books/:id' element={<Bookpage />} />
                         <Route path='*' element={<NotFound />} />
