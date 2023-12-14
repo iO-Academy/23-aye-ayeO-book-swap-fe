@@ -2,13 +2,13 @@ import Review from './Review';
 import ClaimForm from './ClaimForm';
 import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
-import './bookdetails.css';
 import { useState } from 'react';
 import StarRating from './StarRating';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
 import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 
 function BookDetails({
     image,
@@ -56,8 +56,8 @@ function BookDetails({
 
     return (
         <>
-            <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
-                <div className='book-details m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
+            <div className='m-auto min-h-screen w-full max-w-7xl'>
+                <div className='m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
                     <div className='flex w-[400px] justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
                             <LazyImgLoader
@@ -134,12 +134,20 @@ function BookDetails({
                         <div className='m-2 flex items-baseline gap-2 self-center pb-4 px-5 sm:px-0 lg:self-start lg:pb-0'>
                             <p className='text-2xl'>{avgScore.toFixed(1)}</p>
                             <StarRating rating={avgScore} />
-                            <a
-                                href='#reviews'
+                            <Link
+                                to='#reviews'
                                 className='text-zinc-600 underline'
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    document
+                                        .getElementById('reviews')
+                                        .scrollIntoView({
+                                            behavior: 'smooth',
+                                        });
+                                }}
                             >
                                 {reviews?.length} reviews
-                            </a>
+                            </Link>
                         </div>
                         <div
                             className={`px-5 sm:px-0 ${
