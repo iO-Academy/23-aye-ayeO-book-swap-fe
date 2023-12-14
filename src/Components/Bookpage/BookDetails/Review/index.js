@@ -18,7 +18,8 @@ function Review({ review }) {
         my-4
         md:flex
         lg:flex-col
-        xl:flex-row'
+        xl:flex-row
+        overflow-hidden'
         >
             <div
                 className='
