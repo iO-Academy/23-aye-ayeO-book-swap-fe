@@ -5,7 +5,6 @@ import ReviewForm from './ReviewForm';
 import './bookdetails.css';
 import { useState } from 'react';
 import StarRating from './StarRating';
-import ScrollToTop from '../../ScrollToTop';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
 import { renderWithLineBreaks, scrollToTop } from '../../../utilities';
@@ -27,6 +26,8 @@ function BookDetails({
     refreshReviewsList,
 }) {
     const [openBlurb, setOpenBlurb] = useState(false);
+
+    scrollToTop();
 
     const totalScore = reviews?.reduce(
         (ratingSum, review) => ratingSum + review.rating,
@@ -55,7 +56,6 @@ function BookDetails({
 
     return (
         <>
-            <ScrollToTop />
             <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
                 <div className='book-details m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
                     <div className='flex w-[400px] justify-center max-lg:self-center'>
