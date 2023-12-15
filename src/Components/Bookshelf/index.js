@@ -126,7 +126,11 @@ function Bookshelf({ claimed }) {
                 </p>
             )}
             <div className='bookshelf m-auto flex w-full max-w-7xl flex-row flex-wrap justify-center gap-2 p-1 sm:gap-4 sm:p-0'>
-                {bookCollection == null && <NotFound />}
+                {bookCollection == null && (
+                    <p className='text-center text-xl text-zinc-700'>
+                        No books found
+                    </p>
+                )}
                 {bookCollection?.map((book) => {
                     return (
                         <BookCard
