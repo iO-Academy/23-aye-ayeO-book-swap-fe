@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../../Context';
 
 function Logo() {
+    const { resetFilter } = useContext(Context);
     return (
         <Link
             to='/'
             className='group flex flex-row items-center text-[#ededed] text-3xl font-semibold justify-center mx-auto'
+            onClick={resetFilter}
         >
             <svg
                 width='60'
