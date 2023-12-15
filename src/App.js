@@ -40,8 +40,8 @@ function App() {
         navigate(`/`);
 
         // 3. Reset GUI elements
-        genreId.current.value = '0';
-        searchInput.current.value = '';
+        genreId.current && (genreId.current.value = '0');
+        searchInput.current && (searchInput.current.value = '');
 
         // 4. Clear URL
         params.delete('page');
