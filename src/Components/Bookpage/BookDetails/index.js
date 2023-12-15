@@ -58,7 +58,7 @@ function BookDetails({
         <>
             <div className='m-auto min-h-screen w-full max-w-7xl'>
                 <div className='m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
-                    <div className='flex w-[400px] justify-center max-lg:self-center'>
+                    <div className='flex sm:w-[400px]  justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
                             <LazyImgLoader
                                 src={image}
@@ -66,7 +66,6 @@ function BookDetails({
                                 dimensions='
                             h-[96vw]
                             w-[60vw]
-         
 
                             sm:h-[70vw]
                             sm:w-[44vw]
@@ -156,7 +155,9 @@ function BookDetails({
                                     : 'fade max-h-60'
                             }`}
                         >
-                            <p>{renderWithLineBreaks(blurb)}</p>
+                            <p className='break-words'>
+                                {renderWithLineBreaks(blurb)}
+                            </p>
                         </div>
 
                         {blurb.length > 600 && (

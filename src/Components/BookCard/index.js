@@ -1,7 +1,7 @@
 import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
-import { truncateWithEllipsis } from '../../utilities.js';
+import { isMobile, truncateWithEllipsis } from '../../utilities.js';
 import { useEffect, useState } from 'react';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
@@ -9,7 +9,7 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
 
     useEffect(() => {
         const handleResize = () => {
-            setMaxTitleLength(window.innerWidth <= 768 ? 53 : 55);
+            setMaxTitleLength(isMobile() ? 40 : 55);
         };
 
         window.addEventListener('resize', handleResize);

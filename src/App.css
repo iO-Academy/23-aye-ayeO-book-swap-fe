@@ -1,6 +1,6 @@
 * {
     /* scroll-behavior: smooth; */
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
 }
 
 /* Change Autocomplete styles in Chrome*/
@@ -60,7 +60,7 @@ h4 {
 }
 
 .form-container {
-    @apply m-auto my-5 flex justify-center rounded-lg bg-zinc-200 p-10 transition;
+    @apply m-auto my-5 flex justify-center sm:rounded-lg bg-zinc-200 p-10 transition;
 }
 
 .form-text {
