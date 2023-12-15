@@ -21,18 +21,22 @@
 
 // 4. If user makes a manual selection - selectedGenre is updated with the id. Any change of state here would trigger re-render
 
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 
-function GenresSelector({
-    className,
-    label = null,
-    defaultString = 'All',
-    isDisabled = false,
-    selectedGenre, // used when component is controlled
-    isControlled,
-    updateGenre,
-    setGenreError,
-}) {
+function GenresSelector(
+    {
+        className,
+        label = null,
+        defaultString = 'All',
+        isDisabled = false,
+        selectedGenre, // used when component is controlled
+        isControlled,
+        updateGenre,
+        setGenreError,
+        catSelection,
+    },
+    genreId,
+) {
     const [genres, setGenres] = useState([]);
 
     // Get genres from DB
@@ -64,6 +68,7 @@ function GenresSelector({
             )}
             <select
                 id='genreId'
+                ref={genreId}
                 className={`rounded-md bg-zinc-50 p-2 text-lg text-slate-600 ${className} ring-lime-500/30 focus:outline-none focus:ring-4`}
                 onChange={(e) => {
                     updateGenre(e.target.value);
@@ -71,7 +76,7 @@ function GenresSelector({
                 }}
                 value={
                     !isControlled
-                        ? selectedGenre
+                        ? catSelection
                         : selectedGenre
                           ? genres.find((genre) => genre.name === selectedGenre)
                                 ?.id
@@ -91,4 +96,4 @@ function GenresSelector({
     );
 }
 
-export default GenresSelector;
+export default forwardRef(GenresSelector);
