@@ -58,7 +58,7 @@ function Bookpage() {
     }
 
     return (
-        <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
+        <div className='bg-white min-h-[100vh] pb-10 relative'>
             {error ? (
                 <NotFound />
             ) : (

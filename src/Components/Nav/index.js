@@ -5,7 +5,7 @@ import Logo from '../Logo';
 
 function Nav() {
     return (
-        <div className='nav relative z-40 w-full bg-[#343450] sm:fixed'>
+        <div className='relative z-40 w-full bg-[#343450] sm:fixed'>
             <nav className='m-auto flex w-full max-w-7xl flex-col justify-between gap-3 px-4 pb-2 text-slate-800 min-[500px]:flex-row sm:py-2'>
                 <span className='justify-center text-3xl font-semibold'>
                     <Logo />
