@@ -102,7 +102,7 @@ function ReturnForm({
             className='dialog w-full fixed inset-0 flex items-center justify-center h-full'
             onClick={backdropClick}
         >
-            <div className='form-container w-[500px] relative'>
+            <div className='form-container !rounded-lg w-[500px] relative'>
                 <button
                     onClick={backdropClick}
                     className='absolute top-0 right-0 text-3xl text-zinc-600 p-4'
