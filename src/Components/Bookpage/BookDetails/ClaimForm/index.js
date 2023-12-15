@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../../../../Context';
-import { displayErrorMessage } from '../../../../utilities';
+import { displayErrorMessage, isMobile } from '../../../../utilities';
 
 function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
     const { id } = useParams();
@@ -130,7 +130,7 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                         </label>
 
                         <input
-                            autoFocus
+                            autoFocus={!isMobile()}
                             autoComplete='name'
                             type='text'
                             id='name'

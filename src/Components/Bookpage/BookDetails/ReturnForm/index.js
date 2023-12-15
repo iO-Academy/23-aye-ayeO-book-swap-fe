@@ -1,9 +1,19 @@
 import React, { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../../../../Context';
-import { displayErrorMessage, isValidEmail } from '../../../../utilities';
+import {
+    displayErrorMessage,
+    isValidEmail,
+    isMobile,
+} from '../../../../utilities';
 
-function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle }) {
+function ReturnForm({
+    claimed,
+    getBookData,
+    open,
+    visibilityToggle,
+    bookTitle,
+}) {
     const { id } = useParams();
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
@@ -36,17 +46,20 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
 
     async function handleSubmit() {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URI}/books/return/${id}`, {
-                mode: 'cors',
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
+            const res = await fetch(
+                `${process.env.REACT_APP_API_URI}/books/return/${id}`,
+                {
+                    mode: 'cors',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                    }),
                 },
-                body: JSON.stringify({
-                    email: email,
-                }),
-            });
+            );
 
             const data = await res.json();
 
@@ -59,10 +72,11 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
             }
         } catch (error) {
             if (
-                error.message === `Book ${id} was not returned. ${email} did not claim this book.`
+                error.message ===
+                `Book ${id} was not returned. ${email} did not claim this book.`
             ) {
                 setServerError(
-                    `<span className='font-semibold'>${email}</span> has not claimed this book`
+                    `<span className='font-semibold'>${email}</span> has not claimed this book`,
                 );
             } else {
                 setServerError(error.message);
@@ -109,29 +123,41 @@ function ReturnForm({ claimed, getBookData, open, visibilityToggle, bookTitle })
                     <h3 className='text-base text-center text-zinc-500'>
                         You are returning:
                         <br />
-                        <span className='text-lg text-zinc-600'>{bookTitle}</span>
+                        <span className='text-lg text-zinc-600'>
+                            {bookTitle}
+                        </span>
                     </h3>
                     <br />
                     <div>
                         <label htmlFor='email'>
-                            {claimed}'s Email <span className='text-rose-600'>*</span>
+                            {claimed}'s Email{' '}
+                            <span className='text-rose-600'>*</span>
                         </label>
                         <input
-                            autoFocus
+                            autoFocus={!isMobile()}
                             autoComplete='email'
                             type='email'
                             id='email'
                             name='email'
                             value={email}
                             onChange={changeEmail}
-                            className={emailError ? 'form-text input-error' : 'form-text'}
+                            className={
+                                emailError
+                                    ? 'form-text input-error'
+                                    : 'form-text'
+                            }
                         />
-                        {emailError && displayErrorMessage('Valid email is required')}
+                        {emailError &&
+                            displayErrorMessage('Valid email is required')}
                         {serverError && displayErrorMessage(serverError)}
                     </div>
 
                     <br />
-                    <input type='submit' value='Return Book' className='button py-3' />
+                    <input
+                        type='submit'
+                        value='Return Book'
+                        className='button py-3'
+                    />
                 </form>
             </div>
         </dialog>

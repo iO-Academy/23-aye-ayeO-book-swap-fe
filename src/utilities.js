@@ -135,3 +135,7 @@ export function truncateWithEllipsis(inputString, maxLength = 50) {
     const truncatedString = inputString.substring(0, maxLength - 3) + '...';
     return truncatedString;
 }
+
+export function isMobile() {
+    return window.innerWidth <= 768;
+}
