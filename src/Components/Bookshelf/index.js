@@ -154,7 +154,7 @@ function Bookshelf({ claimed }) {
                                         link.active ? 'active-page-button' : ''
                                     } ${
                                         !link.url &&
-                                        'disabled !text-zinc-400 drop-shadow-xl'
+                                        'disabled !text-zinc-500 drop-shadow-xl'
                                     }`}
                                     key={uuidv4()}
                                     onClick={() => {
