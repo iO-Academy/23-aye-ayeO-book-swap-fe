@@ -2,7 +2,7 @@ import Review from './Review';
 import ClaimForm from './ClaimForm';
 import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StarRating from './StarRating';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
@@ -26,8 +26,17 @@ function BookDetails({
     refreshReviewsList,
 }) {
     const [openBlurb, setOpenBlurb] = useState(false);
+    const h1Ref = useRef(null);
 
-    scrollToTop();
+    const scrollToElement = () => {
+        if (h1Ref.current) {
+            h1Ref.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
 
     const totalScore = reviews?.reduce(
         (ratingSum, review) => ratingSum + review.rating,
@@ -51,7 +60,7 @@ function BookDetails({
 
     function toggleBlurb() {
         setOpenBlurb(!openBlurb);
-        openBlurb && scrollToTop();
+        openBlurb && scrollToElement();
     }
 
     return (
@@ -124,7 +133,10 @@ function BookDetails({
                         </div>
                     </div>
                     <div className='flex w-full flex-col gap-2 transition lg:max-w-2xl'>
-                        <h1 className='px-5 sm:p-0 py-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'>
+                        <h1
+                            className='px-5 sm:p-0 py-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'
+                            ref={h1Ref}
+                        >
                             {title}
                         </h1>
                         <p className='px-5 sm:px-0 text-center lg:text-left'>
@@ -159,7 +171,6 @@ function BookDetails({
                                 {renderWithLineBreaks(blurb)}
                             </p>
                         </div>
-
                         {blurb.length > 600 && (
                             <button
                                 className='z-10 flex flex-row self-center font-bold'
@@ -178,7 +189,6 @@ function BookDetails({
                                 </svg>
                             </button>
                         )}
-
                         <br />
                         <div>
                             <div className='px-5 sm:px-0 grid grid-cols-4 gap-3 text-sm sm:grid-cols-6'>
