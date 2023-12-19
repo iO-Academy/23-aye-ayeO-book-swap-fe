@@ -1,9 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import React from 'react';
+import React, { useContext } from 'react';
 import './nav.css';
 import Logo from '../Logo';
+import { Context } from '../../Context';
 
 function Nav() {
+    const { resetFilter } = useContext(Context);
+
     return (
         <div className='relative z-40 w-full bg-[#343450] sm:fixed'>
             <nav className='m-auto flex w-full max-w-7xl flex-col justify-between gap-3 px-4 pb-2 text-slate-800 min-[500px]:flex-row sm:py-2'>
@@ -14,12 +17,14 @@ function Nav() {
                     <NavLink
                         to='/'
                         className='duration-2000 transition-all hover:text-[#ef9b9b]'
+                        onClick={resetFilter}
                     >
                         Available
                     </NavLink>
                     <NavLink
                         to='/claimed'
                         className='duration-2000 transition-all hover:text-[#ef9b9b]'
+                        onClick={resetFilter}
                     >
                         Claimed
                     </NavLink>
