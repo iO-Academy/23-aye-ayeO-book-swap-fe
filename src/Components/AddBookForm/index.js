@@ -712,7 +712,7 @@ function AddBookForm() {
             <ScrollToTop />
             <div className='sm:pt-24'>
                 <h1 className='py-8 sm:py-12'>Add new book</h1>
-                <div className='m-auto mb-5 max-w-[750px] bg-[#34345020] px-6 pb-8 pt-2 text-slate-600 ring-inset ring-orange-100 transition sm:rounded-lg  sm:p-16 sm:ring-8'>
+                <div className='m-auto mb-5 max-w-[750px] bg-[#34345020] px-6 pb-8 pt-2 text-slate-600 ring-inset ring-zinc-300 transition sm:rounded-lg  sm:p-16'>
                     <div
                         id='scanner'
                         className='overflow-hidden rounded-xl'
@@ -722,12 +722,12 @@ function AddBookForm() {
                         Search by ISBN
                     </label>
                     <div
-                        className={`overflow-hidden rounded-md bg-slate-300 pb-2
+                        className={`transition ease-out overflow-hidden rounded-md bg-slate-300 pb-2
                         ${
                             isValidISBN(isbn) &&
                             !remoteSuccess &&
                             !isbnError &&
-                            'background-animate rounded-t border-none bg-gradient-to-r from-amber-200 via-[#ef9b9b90] to-amber-200'
+                            'background-animate rounded-t border-none bg-gradient-to-r from-orange-100 via-lime-50 to-orange-100'
                         }
                         ${remoteSuccess && 'success-isbn border-none'}
                         ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
