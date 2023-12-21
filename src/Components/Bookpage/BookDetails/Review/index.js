@@ -60,14 +60,14 @@ function Review({ review }) {
             >
                 <p
                     className={
-                        openReview || review.review.length < 300
+                        openReview || review.review.length < 320
                             ? 'break-words'
                             : 'fade max-h-36 break-words'
                     }
                 >
                     {review.review}
                 </p>
-                {review.review.length > 600 && (
+                {review.review.length >= 320 && (
                     <button
                         className='font-bold flex flex-row self-center z-10 py-2'
                         onClick={toggleReview}
