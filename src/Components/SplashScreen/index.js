@@ -9,7 +9,7 @@ function SplashScreen() {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 3600);
+        }, 2100);
 
         return () => clearTimeout(timeout);
     }, []);

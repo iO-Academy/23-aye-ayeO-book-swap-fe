@@ -25,7 +25,7 @@
         transform-origin: center center;
     }
     50% {
-        transform: scale(1.5);
+        transform: scale(1.4);
         transform-origin: center center;
     }
 }
@@ -92,26 +92,26 @@
 }
 .book1 {
     animation:
-        enter-left 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        enter-left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        traceStroke 0.7s ease-in,
+        fadeIn 0.5s ease-in,
         zoomInOut 0.3s ease-in-out,
-        traceStroke 1s ease-in,
-        fadeIn 1s ease-in,
-        exit-right 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    animation-delay: 0s, 0.7s, 0.9s, 1.6s, 2.6s;
+        exit-right 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation-delay: 0s, 0.5s, 1s, 1s, 1.4s;
 }
 
 .book2 {
     animation:
-        enter-right 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        enter-right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        traceStroke 0.7s ease-in,
+        fadeIn 0.5s ease-in,
         zoomInOut 0.3s ease-in-out,
-        traceStroke 1s ease-in,
-        fadeIn 1s ease-in,
-        exit-left 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    animation-delay: 0s, 0.7s, 0.9s, 1.6s, 2.6s;
+        exit-left 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation-delay: 0s, 0.5s, 1s, 1s, 1.4s;
 }
 
 /* Splash fading out to page */
 .fade-out {
-    animation: fadeOut 1.5s ease-out;
-    animation-delay: 3.2s;
+    animation: fadeOut 0.4s ease-out;
+    animation-delay: 1.9s;
 }

@@ -1,7 +1,7 @@
 import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
-import { truncateWithEllipsis } from '../../utilities.js';
+import { isMobile, truncateWithEllipsis } from '../../utilities.js';
 import { useEffect, useState } from 'react';
 
 function BookCard({ id, bookCover, title, author, genre, onClick }) {
@@ -9,7 +9,7 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
 
     useEffect(() => {
         const handleResize = () => {
-            setMaxTitleLength(window.innerWidth <= 768 ? 53 : 55);
+            setMaxTitleLength(isMobile() ? 40 : 55);
         };
 
         window.addEventListener('resize', handleResize);
@@ -46,6 +46,8 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                         sm:w-full
                         sm:h-full
                         '
+                        srcsetSizes='(max-width: 639px) 5vw,
+                       320px'
                     />
                 </div>
                 <div className='flex w-2/3 flex-col justify-center p-5 sm:w-full sm:flex-none sm:p-5'>

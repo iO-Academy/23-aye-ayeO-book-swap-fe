@@ -112,7 +112,7 @@ function ReviewForm({ refreshReviewsList }) {
 
     return (
         !reviewSubmitted && (
-            <div className='form-container'>
+            <div className='form-container !pb-16'>
                 <form onSubmit={validateForm} className='flex flex-col gap-4'>
                     <h3 className='text-center'>What do you think?</h3>
                     <div>

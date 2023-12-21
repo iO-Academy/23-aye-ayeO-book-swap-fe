@@ -2,7 +2,7 @@ import Review from './Review';
 import ClaimForm from './ClaimForm';
 import ReturnForm from './ReturnForm';
 import ReviewForm from './ReviewForm';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StarRating from './StarRating';
 import LazyImgLoader from '../../LazyImgLoader';
 import Spinner from '../../Spinner';
@@ -26,8 +26,17 @@ function BookDetails({
     refreshReviewsList,
 }) {
     const [openBlurb, setOpenBlurb] = useState(false);
+    const h1Ref = useRef(null);
 
-    scrollToTop();
+    const scrollToElement = () => {
+        if (h1Ref.current) {
+            h1Ref.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, []);
 
     const totalScore = reviews?.reduce(
         (ratingSum, review) => ratingSum + review.rating,
@@ -51,14 +60,14 @@ function BookDetails({
 
     function toggleBlurb() {
         setOpenBlurb(!openBlurb);
-        openBlurb && scrollToTop();
+        openBlurb && scrollToElement();
     }
 
     return (
         <>
             <div className='m-auto min-h-screen w-full max-w-7xl'>
                 <div className='m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
-                    <div className='flex w-[400px] justify-center max-lg:self-center'>
+                    <div className='flex sm:w-[400px]  justify-center max-lg:self-center'>
                         <div className='lg:fixed lg:z-40'>
                             <LazyImgLoader
                                 src={image}
@@ -66,7 +75,6 @@ function BookDetails({
                                 dimensions='
                             h-[96vw]
                             w-[60vw]
-         
 
                             sm:h-[70vw]
                             sm:w-[44vw]
@@ -74,6 +82,12 @@ function BookDetails({
                             lg:h-[500px]
                             lg:w-[312.5px]
                             '
+                                srcsetSizes='
+                                    (max-width: 399px) 55vw,
+                                    (max-width: 640px) 50vw,
+                                    (max-width: 1084px) 33vw,
+                                    (max-width: 1280px) 20vw,
+                                    360px'
                                 rounded='rounded-md'
                             />
                             <div className='mx-auto mt-3 w-full text-sm'>
@@ -125,7 +139,10 @@ function BookDetails({
                         </div>
                     </div>
                     <div className='flex w-full flex-col gap-2 transition lg:max-w-2xl'>
-                        <h1 className='px-5 sm:p-0 py-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'>
+                        <h1
+                            className='px-5 sm:p-0 py-0 text-center text-[7vw] leading-tight sm:text-4xl lg:text-left'
+                            ref={h1Ref}
+                        >
                             {title}
                         </h1>
                         <p className='px-5 sm:px-0 text-center lg:text-left'>
@@ -156,9 +173,10 @@ function BookDetails({
                                     : 'fade max-h-60'
                             }`}
                         >
-                            <p>{renderWithLineBreaks(blurb)}</p>
+                            <p className='break-words'>
+                                {renderWithLineBreaks(blurb)}
+                            </p>
                         </div>
-
                         {blurb.length > 600 && (
                             <button
                                 className='z-10 flex flex-row self-center font-bold'
@@ -177,7 +195,6 @@ function BookDetails({
                                 </svg>
                             </button>
                         )}
-
                         <br />
                         <div>
                             <div className='px-5 sm:px-0 grid grid-cols-4 gap-3 text-sm sm:grid-cols-6'>

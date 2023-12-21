@@ -1,77 +1,83 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './bookshelf.css';
 import BookCard from '../BookCard';
-import GenresSelector from './GenresSelector';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
 import NotFound from '../NotFound';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { scrollToTop } from '../../utilities.js';
+import GenresSelector from './GenresSelector/index.js';
+import { Context } from '../../Context.js';
 
-function Bookshelf({ claimed, setScrollPosition }) {
+function Bookshelf({ claimed }) {
     const [bookCollection, setBookCollection] = useState([]);
-    const [selectedGenreId, setSelectedGenreId] = useState('');
-    const [searchedString, setSearchedString] = useState('');
     const [isFilterVisible, setIsFilterVisible] = useState('-translate-y-full');
     const [pageData, setPageData] = useState('');
 
-    const navigate = useNavigate();
+    const {
+        params,
+        navigate,
+        setPaginationState,
+        paginationState,
+        genreId,
+        searchInput,
+    } = useContext(Context);
 
-    const updatePageQueryParam = (newPageValue) => {
-        const currentPage = window.location.search;
-        const paramsPage = new URLSearchParams(currentPage);
-        // Update or set the value of the "page" parameter
-        paramsPage.set('page', newPageValue);
+    const searchString = paginationState.search;
+    const catSelection = paginationState.category;
 
-        // Replace the current URL with the updated query parameters
-        navigate({
-            pathname: window.location.pathname,
-            search: `?${paramsPage.toString()}`,
-        });
-    };
-    // Use URL query params to fetch page
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    let pageNumber = params.get('page');
+    useEffect(() => {
+        // Update the URL query parameters
+        paginationState.page > 1
+            ? params.set('page', paginationState.page)
+            : params.delete('page');
+        paginationState.search
+            ? params.set('search', paginationState.search)
+            : params.delete('search');
+        paginationState.category > 0
+            ? params.set('category', paginationState.category)
+            : params.delete('category');
 
-    async function getBookData(claimed, selectedGenreId, searchedString, page) {
+        navigate(`?${params.toString()}`);
+        getBookData(claimed, paginationState.category, paginationState.search);
+    }, [paginationState, claimed]);
+
+    async function getBookData(claimed, selectedGenreId, searchedString) {
         try {
             const bookData = await fetch(
-                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${pageNumber}`,
+                `${process.env.REACT_APP_API_URI}/books?claimed=${claimed}&genre=${selectedGenreId}&search=${searchedString}&page=${paginationState.page}`,
             );
             const books = await bookData.json();
             setBookCollection(books.data?.data);
             setPageData(books.data);
-            if (books.message === 'Books successfully retrieved') {
-            }
+            scrollToTop();
         } catch (error) {}
     }
 
-    useEffect(() => {
-        getBookData(claimed, selectedGenreId, searchedString, pageNumber);
-    }, [claimed, selectedGenreId, searchedString, pageNumber]);
-
-    useEffect(() => {
-        // Reset page to start results from page 1 instead
-        if (params.get('page') > 1) {
-            updatePageQueryParam('');
-        }
-    }, [selectedGenreId]);
-
-    const handleSearchChange = (string) => {
-        setSearchedString(string);
-        string.length > 2 && pageNumber > 1 && updatePageQueryParam('');
+    const handleCategoryChange = (newCategory) => {
+        setPaginationState({
+            ...paginationState,
+            page: 1,
+            category: newCategory,
+        });
     };
 
-    function showFilter() {
-        setScrollPosition(0);
-        isFilterVisible === '-translate-y-full'
-            ? setIsFilterVisible('translate-y-0')
-            : setIsFilterVisible('-translate-y-full');
-    }
+    const handleSearchChange = (string) => {
+        setPaginationState({
+            ...paginationState,
+            page: 1,
+            search: string,
+        });
+    };
 
     function getPageFromURL(url) {
         const pageLink = new URLSearchParams(new URL(url).search);
         return pageLink.get('page');
+    }
+
+    function showFilter() {
+        isFilterVisible === '-translate-y-full'
+            ? setIsFilterVisible('translate-y-0')
+            : setIsFilterVisible('-translate-y-full');
     }
 
     return (
@@ -99,12 +105,18 @@ function Bookshelf({ claimed, setScrollPosition }) {
                 <div className='m-auto flex w-full max-w-7xl flex-col items-center  justify-between gap-3 p-4 sm:flex-row'>
                     <GenresSelector
                         label='Filter by genre'
-                        updateGenre={setSelectedGenreId}
+                        updateGenre={handleCategoryChange}
                         isControlled={false}
                         defaultString='Show all categories'
+                        ref={genreId}
+                        catSelection={catSelection}
                     />
 
-                    <SearchCollection onSearchChange={handleSearchChange} />
+                    <SearchCollection
+                        onSearchChange={handleSearchChange}
+                        ref={searchInput}
+                        searchString={searchString}
+                    />
                 </div>
             </div>
             <h1 className='pb-3'>{claimed ? 'Claimed' : 'Available'}</h1>
@@ -114,7 +126,11 @@ function Bookshelf({ claimed, setScrollPosition }) {
                 </p>
             )}
             <div className='bookshelf m-auto flex w-full max-w-7xl flex-row flex-wrap justify-center gap-2 p-1 sm:gap-4 sm:p-0'>
-                {bookCollection == null && <NotFound />}
+                {bookCollection == null && (
+                    <p className='text-center text-xl text-zinc-700'>
+                        No books found
+                    </p>
+                )}
                 {bookCollection?.map((book) => {
                     return (
                         <BookCard
@@ -133,23 +149,28 @@ function Bookshelf({ claimed, setScrollPosition }) {
                     {pageData.total / pageData.per_page > 1 &&
                         pageData?.links.map((link) => {
                             return (
-                                <Link
-                                    to={
-                                        link.url &&
-                                        `?page=${getPageFromURL(link.url)}`
-                                    }
-                                    className={`justify-center items-center flex p-1 text-[#343450] ${
+                                <div
+                                    className={`justify-center items-center flex p-1 text-[#343450] cursor-pointer ${
                                         link.active ? 'active-page-button' : ''
                                     } ${
                                         !link.url &&
-                                        'disabled !text-zinc-400 drop-shadow-xl'
+                                        'disabled !text-zinc-500 drop-shadow-xl'
                                     }`}
                                     key={uuidv4()}
+                                    onClick={() => {
+                                        setPaginationState({
+                                            ...paginationState,
+                                            page: getPageFromURL(link.url),
+                                        });
+                                        navigate(
+                                            `?page=${getPageFromURL(link.url)}`,
+                                        );
+                                    }}
                                 >
                                     {link.label
                                         .replace(/&raquo;/g, '\u00BB')
                                         .replace(/&laquo;/g, '\u00AB')}
-                                </Link>
+                                </div>
                             );
                         })}
                 </div>

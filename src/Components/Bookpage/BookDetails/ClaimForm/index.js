@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../../../../Context';
-import { displayErrorMessage } from '../../../../utilities';
+import { displayErrorMessage, isMobile } from '../../../../utilities';
 
 function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
     const { id } = useParams();
@@ -51,18 +51,21 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
 
     async function handleSubmit() {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URI}/books/claim/${id}`, {
-                mode: 'cors',
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
+            const res = await fetch(
+                `${process.env.REACT_APP_API_URI}/books/claim/${id}`,
+                {
+                    mode: 'cors',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                    }),
                 },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                }),
-            });
+            );
             const data = await res.json();
 
             if (res.ok) {
@@ -95,9 +98,10 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
             className='dialog w-full fixed inset-0 flex items-center justify-center h-full'
             onClick={backdropClick}
         >
-            <div className='form-container w-[500px] relative '>
+            <div className='form-container !rounded-lg w-[500px] relative '>
                 <button
                     onClick={backdropClick}
+                    aria-label='Close'
                     className='absolute top-0 right-0 text-3xl text-zinc-600 p-4'
                 >
                     <svg
@@ -116,7 +120,9 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                     <h3 className='text-base text-center text-zinc-500'>
                         You are claiming:
                         <br />
-                        <span className='text-lg text-zinc-600'>{bookTitle}</span>
+                        <span className='text-lg text-zinc-600'>
+                            {bookTitle}
+                        </span>
                     </h3>
                     <br />
                     <div>
@@ -125,14 +131,18 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                         </label>
 
                         <input
-                            autoFocus
+                            autoFocus={!isMobile()}
                             autoComplete='name'
                             type='text'
                             id='name'
                             name='name'
                             value={name}
                             onChange={changeName}
-                            className={nameError ? 'form-text input-error' : 'form-text'}
+                            className={
+                                nameError
+                                    ? 'form-text input-error'
+                                    : 'form-text'
+                            }
                         />
                         {nameError && displayErrorMessage('Name is required')}
                     </div>
@@ -149,12 +159,21 @@ function ClaimForm({ getBookData, open, visibilityToggle, bookTitle }) {
                             name='email'
                             value={email}
                             onChange={changeEmail}
-                            className={emailError ? 'form-text input-error' : 'form-text'}
+                            className={
+                                emailError
+                                    ? 'form-text input-error'
+                                    : 'form-text'
+                            }
                         />
-                        {emailError && displayErrorMessage('Valid email is required')}
+                        {emailError &&
+                            displayErrorMessage('Valid email is required')}
                     </div>
                     <br />
-                    <input type='submit' value='Claim Book' className='button py-3 ' />
+                    <input
+                        type='submit'
+                        value='Claim Book'
+                        className='button py-3 '
+                    />
                 </form>
             </div>
         </dialog>

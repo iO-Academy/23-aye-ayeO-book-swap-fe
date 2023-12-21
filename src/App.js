@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import './App.css';
 import Nav from './Components/Nav';
@@ -8,33 +8,79 @@ import Bookpage from './Components/Bookpage';
 import AddBookForm from './Components/AddBookForm';
 import AlertBubble from './Components/AlertBubble';
 import { Context } from './Context';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SplashScreen from './Components/SplashScreen';
 import Footer from './Components/Footer';
 
 function App() {
     const [alert, setAlert] = useState();
 
+    const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+
+    const [paginationState, setPaginationState] = useState({
+        page: parseInt(params.get('page')) || '',
+        category: '',
+        search: '',
+    });
+
+    const genreId = useRef(null);
+    const searchInput = useRef(null);
+
+    function resetFilter() {
+        // 1. Clear State
+        setPaginationState({
+            page: '',
+            category: '',
+            search: '',
+        });
+
+        // 2. Navigate to Available
+        navigate(`/`);
+
+        // 3. Reset GUI elements
+        genreId.current && (genreId.current.value = '0');
+        searchInput.current && (searchInput.current.value = '');
+
+        // 4. Clear URL
+        params.delete('page');
+        params.delete('search');
+        params.delete('category');
+    }
+
     return (
         <div className='App montserrat'>
             <SplashScreen />
-            <BrowserRouter>
+
+            <Context.Provider
+                value={{
+                    alert,
+                    setAlert,
+                    params,
+                    navigate,
+                    location,
+                    resetFilter,
+                    setPaginationState,
+                    paginationState,
+                    genreId,
+                    searchInput,
+                }}
+            >
                 <Nav />
-                <Context.Provider value={{ alert, setAlert }}>
-                    <Routes>
-                        <Route path='/' element={<Bookshelf claimed={0} />} />
-                        <Route
-                            path='/claimed'
-                            element={<Bookshelf claimed={1} />}
-                        />
-                        <Route path='/books/:id' element={<Bookpage />} />
-                        <Route path='*' element={<NotFound />} />
-                        <Route path='/books/add' element={<AddBookForm />} />
-                    </Routes>
-                    <Footer />
-                    <AlertBubble message={alert} />
-                </Context.Provider>
-            </BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<Bookshelf claimed={0} />} />
+                    <Route
+                        path='/claimed'
+                        element={<Bookshelf claimed={1} />}
+                    />
+                    <Route path='/books/:id' element={<Bookpage />} />
+                    <Route path='*' element={<NotFound />} />
+                    <Route path='/books/add' element={<AddBookForm />} />
+                </Routes>
+                <Footer />
+                <AlertBubble message={alert} />
+            </Context.Provider>
         </div>
     );
 }
