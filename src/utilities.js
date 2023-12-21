@@ -139,3 +139,24 @@ export function truncateWithEllipsis(inputString, maxLength = 50) {
 export function isMobile() {
     return window.innerWidth <= 768;
 }
+
+export function convertToIsbn10(isbn) {
+    const cleanedIsbn = isbn.replace(/-/g, '');
+
+    if (cleanedIsbn.length === 13) {
+        // Convert to ISBN-10
+        const isbn10 = cleanedIsbn.substring(3, 12);
+
+        // Calculate the ISBN-10 checksum
+        let checksum = 0;
+        for (let i = 0; i < 9; i++) {
+            checksum += parseInt(isbn10[i]) * (i + 1);
+        }
+        checksum = checksum % 11;
+        checksum = checksum === 10 ? 'X' : checksum.toString();
+
+        return isbn10 + checksum;
+    }
+
+    return cleanedIsbn;
+}

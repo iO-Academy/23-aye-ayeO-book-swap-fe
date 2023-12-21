@@ -14,6 +14,7 @@ import {
     playSound,
     removeHtmlTags,
     removeEdgeCurl,
+    convertToIsbn10,
 } from '../../utilities';
 
 import scanSound from '../../sounds/click.mp3';
@@ -345,6 +346,7 @@ function AddBookForm() {
     async function getBookData(isbn) {
         let google;
         let openLibrary;
+        let amazon;
 
         try {
             google = await fetchGoogleBookData(isbn);
@@ -354,8 +356,12 @@ function AddBookForm() {
             openLibrary = await fetchOpenLibraryBookData(isbn);
         } catch (openLibraryError) {}
 
+        try {
+            amazon = await fetchAmazonBookData(isbn);
+        } catch (error) {}
+
         if (google || openLibrary) {
-            handleSuccess(google, openLibrary);
+            handleSuccess(google, openLibrary, amazon);
         } else {
             setIsbnError(
                 "Sorry, we couldn't find this book. Please fill in the form below manually.",
@@ -395,7 +401,17 @@ function AddBookForm() {
         return { book, work, author };
     }
 
-    function handleSuccess(g, ol) {
+    async function fetchAmazonBookData(isbn) {
+        const amazon = await fetch(
+            `https://m.media-amazon.com/images/P/${convertToIsbn10(isbn)}.jpg`,
+        );
+
+        console.log(amazon.headers.get('Content-Length'));
+
+        return amazon;
+    }
+
+    function handleSuccess(g, ol, a) {
         setRemoteSuccess(true);
 
         // Open Library API
@@ -544,7 +560,8 @@ function AddBookForm() {
         authorG ? setAuthor(authorG) : setAuthor(authorOL);
 
         // ISBN10
-        isbn10G ? setISBN10(isbn10G) : setISBN10(isbn10OL);
+        const isbn10 = isbn10G ? isbn10G : isbn10OL;
+        setISBN10(isbn10);
 
         // ISBN13
         isbn13G ? setISBN13(isbn13G) : setISBN13(isbn13OL);
@@ -562,7 +579,13 @@ function AddBookForm() {
         yearG > 0 ? setYear(yearG) : setYear(yearOL);
 
         // COVER
-        coverOL ? setImageUrl(coverOL) : setImageUrl(coverG);
+
+        // Amazon responds with 200 status if book not found and returns a pixel with length 43
+        a.headers.get('Content-Length') > 50
+            ? setImageUrl(`https://m.media-amazon.com/images/P/${isbn10}.jpg`)
+            : coverOL
+              ? setImageUrl(coverOL)
+              : setImageUrl(coverG);
 
         // BLURB
         blurbG && blurbG.length > 0 ? setBlurb(blurbG) : setBlurb(blurbOL);
