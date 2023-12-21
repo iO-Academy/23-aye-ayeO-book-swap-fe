@@ -1,17 +1,42 @@
 import React, { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-const LazyImgLoader = ({ src, alt, dimensions, rounded }) => {
+const LazyImgLoader = ({ src, alt, dimensions, srcsetSizes, rounded }) => {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [ref, inView] = useInView({
         triggerOnce: true,
         // rootMargin pushes the bottom margin to 400px below the viewport
         rootMargin: '0px 0px 400px 0px',
     });
+    let srcset = '';
 
     const handleImageLoad = () => {
         setIsImageLoaded(true);
     };
+
+    function isAmazonImage(url) {
+        return url.includes('https://m.media-amazon.com/');
+    }
+
+    function getAmazonLink(url, width) {
+        return url.slice(0, -4) + '._FMwebp_SX' + width + '.jpg';
+    }
+
+    if (isAmazonImage(src)) {
+        srcset = `
+        ${getAmazonLink(src, '120')} 120w,
+        ${getAmazonLink(src, '220')} 220w,
+        ${getAmazonLink(src, '320')} 320w,
+        ${getAmazonLink(src, '480')} 480w,
+        ${getAmazonLink(src, '640')} 640w,
+        ${getAmazonLink(src, '800')} 800w,
+        ${getAmazonLink(src, '960')} 960w,
+        ${getAmazonLink(src, '1120')} 1120w,
+        ${getAmazonLink(src, '1280')} 1280w,
+        ${getAmazonLink(src, '1440')} 1440w,
+        ${getAmazonLink(src, '1600')} 1600w,
+        ${getAmazonLink(src, '2000')} 2000w`;
+    }
 
     return (
         <div className={`relative ${dimensions} ${rounded}`}>
@@ -38,6 +63,8 @@ const LazyImgLoader = ({ src, alt, dimensions, rounded }) => {
             <img
                 ref={ref}
                 src={inView ? src : ''}
+                srcSet={inView ? srcset : ''}
+                sizes={srcsetSizes}
                 alt={alt}
                 onLoad={handleImageLoad}
                 className={`object-cover object-top ${dimensions} ${rounded}`}

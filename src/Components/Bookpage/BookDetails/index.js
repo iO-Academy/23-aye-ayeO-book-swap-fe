@@ -82,6 +82,12 @@ function BookDetails({
                             lg:h-[500px]
                             lg:w-[312.5px]
                             '
+                                srcsetSizes='
+                                    (max-width: 399px) 55vw,
+                                    (max-width: 640px) 50vw,
+                                    (max-width: 1084px) 33vw,
+                                    (max-width: 1280px) 20vw,
+                                    360px'
                                 rounded='rounded-md'
                             />
                             <div className='mx-auto mt-3 w-full text-sm'>

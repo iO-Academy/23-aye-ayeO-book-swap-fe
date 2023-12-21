@@ -46,6 +46,8 @@ function BookCard({ id, bookCover, title, author, genre, onClick }) {
                         sm:w-full
                         sm:h-full
                         '
+                        srcsetSizes='(max-width: 639px) 5vw,
+                       320px'
                     />
                 </div>
                 <div className='flex w-2/3 flex-col justify-center p-5 sm:w-full sm:flex-none sm:p-5'>
