@@ -3,6 +3,14 @@
     overscroll-behavior: none;
 }
 
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    @apply ring-lime-500/30 focus:outline-none focus:ring-4 focus:rounded-lg;
+}
+
 /* Change Autocomplete styles in Chrome*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

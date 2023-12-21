@@ -734,11 +734,11 @@ function AddBookForm() {
 
                         `}
                     >
-                        <div className='flex flex-row items-center rounded-t-md border-slate-300 bg-zinc-100 text-zinc-600'>
+                        <div className='flex flex-row items-center !rounded-t-md border-slate-300 bg-zinc-100 text-zinc-600'>
                             <input
                                 type='text'
                                 id='isbn'
-                                className='h-full w-full p-5 align-middle text-xl focus:outline-none'
+                                className='h-full w-full p-5 align-middle text-xl ring-inset focus:outline-none'
                                 value={isbn}
                                 onInput={changeISBN}
                                 placeholder='Search by ISBN'
@@ -747,8 +747,13 @@ function AddBookForm() {
                             <div
                                 role='button'
                                 tabIndex={0}
-                                className='flex h-[65px] cursor-pointer items-center justify-center p-3 pt-5 text-center text-zinc-400 transition-colors hover:text-zinc-500'
+                                className='flex h-[65px] cursor-pointer items-center ring-inset justify-center p-3 pt-5 text-center text-zinc-400 transition-colors hover:text-zinc-500'
                                 onClick={handleStartScanner}
+                                onKeyDown={(event) => {
+                                    (event.key === 'Enter' ||
+                                        event.key === ' ') &&
+                                        handleStartScanner();
+                                }}
                                 title='Start ISBN barcode scanner'
                                 aria-label='Start ISBN barcode scanner'
                             >

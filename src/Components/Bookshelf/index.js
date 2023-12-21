@@ -3,7 +3,6 @@ import './bookshelf.css';
 import BookCard from '../BookCard';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
-import NotFound from '../NotFound';
 import { scrollToTop } from '../../utilities.js';
 import GenresSelector from './GenresSelector/index.js';
 import { Context } from '../../Context.js';
@@ -150,6 +149,7 @@ function Bookshelf({ claimed }) {
                         pageData?.links.map((link) => {
                             return (
                                 <div
+                                    tabIndex={link.url && 0}
                                     className={`justify-center items-center flex p-1 text-[#343450] cursor-pointer ${
                                         link.active ? 'active-page-button' : ''
                                     } ${
