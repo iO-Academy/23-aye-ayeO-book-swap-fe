@@ -35,7 +35,7 @@ function Logo() {
                     className='translate-x-0 transition-all ease-in-out group-hover:-translate-x-1 group-hover:fill-[#f87171]'
                 />
             </svg>
-            <span className='-translate-x-2'>swapp</span>
+            <span className='-translate-x-2'>swapee</span>
         </Link>
     );
 }
