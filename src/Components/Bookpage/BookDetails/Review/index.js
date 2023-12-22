@@ -11,6 +11,8 @@ function Review({ review }) {
     return (
         <div
             className='
+            border
+            border-zinc-100
         bg-white
         border-slate-200
         rounded-lg
