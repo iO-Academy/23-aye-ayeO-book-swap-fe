@@ -105,7 +105,7 @@ function BookDetails({
         <>
             <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
                 <div
-                    className='book-details flex w-full flex-col justify-between pt-16 gap-8 lg:gap-10 sm:pt-32 lg:flex-row xl:pl-0 px-5'
+                    className='book-details flex w-full flex-col justify-between pt-16 gap-8 lg:gap-10 sm:pt-32 lg:flex-row xl:pl-0 sm:px-5'
                     id='book-details'
                 >
                     <div
