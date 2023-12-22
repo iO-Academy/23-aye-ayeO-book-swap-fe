@@ -109,7 +109,7 @@ function BookDetails({
                     id='book-details'
                 >
                     <div
-                        className='flex sm:w-[600px] md:w[] lg:min-w-[406px] xl:w-[500px] justify-center max-lg:self-center mx-auto '
+                        className='flex sm:w-[600px] lg:w-[368px] lg:min-w-[368px] xl:w-[450px] justify-center max-lg:self-center mx-auto'
                         id='cover-channel'
                     >
                         <div
@@ -126,11 +126,11 @@ function BookDetails({
                             sm:h-[70vw]
                             sm:w-[44vw]
 
-                            lg:h-[650px]
-                            lg:w-[406px]
-
-                            xl:h-[770px]
-                            xl:w-[500px]
+                            lg:h-[550px]
+                            lg:w-[368px]
+                            
+                            xl:h-[720px]
+                            xl:w-[450px]
                             '
                                 srcsetSizes='
                                     (max-width: 399px) 55vw,
