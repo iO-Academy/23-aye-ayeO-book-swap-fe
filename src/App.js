@@ -11,6 +11,7 @@ import { Context } from './Context';
 import { useRef, useState } from 'react';
 import SplashScreen from './Components/SplashScreen';
 import Footer from './Components/Footer';
+import FirstTabbableElement from './Components/FirstTabbableElement/index';
 
 function App() {
     const [alert, setAlert] = useState();
@@ -52,7 +53,7 @@ function App() {
     return (
         <div className='App montserrat'>
             <SplashScreen />
-
+            <FirstTabbableElement />
             <Context.Provider
                 value={{
                     alert,

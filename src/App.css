@@ -1,5 +1,4 @@
 * {
-    /* scroll-behavior: smooth; */
     overscroll-behavior: none;
 }
 
@@ -8,7 +7,11 @@
 }
 
 *:focus-visible {
-    @apply ring-lime-500/30 focus:outline-none focus:ring-4 focus:rounded-lg;
+    @apply ring-lime-500/30 focus:outline-none focus:ring-4;
+}
+
+*::selection {
+    @apply bg-lime-200 text-zinc-800;
 }
 
 /* Change Autocomplete styles in Chrome*/
@@ -55,12 +58,8 @@ h4 {
     @apply py-5 text-lg font-semibold;
 }
 
-.active {
-    @apply font-black;
-}
-
 .active-page-button {
-    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black;
+    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black pointer-events-none;
 }
 
 .button {
@@ -68,7 +67,7 @@ h4 {
 }
 
 .form-container {
-    @apply m-auto my-5 flex justify-center sm:rounded-lg bg-zinc-200 p-10 transition;
+    @apply m-auto flex justify-center sm:rounded-lg bg-zinc-200 p-10 transition;
 }
 
 .form-text {
@@ -84,12 +83,12 @@ label {
 }
 
 .error {
-    @apply relative text-xs text-rose-600 drop-shadow-2xl;
+    @apply relative text-xs text-rose-500 drop-shadow-2xl;
 }
 
 .input-error,
 .select-error {
-    @apply ring-4 ring-rose-200/60;
+    @apply bg-[#fff6f6ee];
 }
 
 .montserrat {
@@ -109,9 +108,9 @@ label {
 
 .background-animate-slow {
     background-size: 400%;
-    -webkit-animation: animateBackground 3s ease infinite;
-    -moz-animation: animateBackground 3s ease infinite;
-    animation: animateBackground 3s ease infinite;
+    -webkit-animation: animateBackground 15s ease infinite;
+    -moz-animation: animateBackground 15s ease infinite;
+    animation: animateBackground 15s ease infinite;
 }
 
 @keyframes animateBackground {
