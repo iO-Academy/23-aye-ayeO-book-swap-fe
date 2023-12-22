@@ -63,12 +63,59 @@ function BookDetails({
         openBlurb && scrollToElement();
     }
 
+    function controlCoverPosition() {
+        document.addEventListener('scroll', function () {
+            let element = document.getElementById('book-details');
+            let coverContainer = document.getElementById('cover-container');
+            let coverChannel = document.getElementById('cover-channel');
+
+            if (
+                element &&
+                element.offsetHeight !== undefined &&
+                coverContainer &&
+                coverContainer.offsetHeight !== undefined
+            ) {
+                let threshold = element.offsetHeight;
+                let heightCoverContainerPlusPadding =
+                    coverContainer.offsetHeight + 128;
+
+                if (
+                    window.scrollY >
+                    threshold - heightCoverContainerPlusPadding
+                ) {
+                    coverContainer.classList.remove('lg:fixed');
+                    coverContainer.classList.add('lg:relative');
+                    coverContainer.classList.remove('lg:z-40');
+                    coverChannel.classList.add('lg:flex-col');
+                    coverChannel.classList.add('lg:justify-end');
+                } else {
+                    coverContainer.classList.add('lg:fixed');
+                    coverContainer.classList.remove('lg:relative');
+                    coverContainer.classList.add('lg:z-40');
+                    coverChannel.classList.remove('lg:flex-col');
+                    coverChannel.classList.remove('lg:justify-end');
+                }
+            }
+        });
+    }
+
+    controlCoverPosition();
+
     return (
         <>
-            <div className='m-auto min-h-screen w-full max-w-7xl'>
-                <div className='m-auto flex w-full flex-col justify-center gap-10 pt-16 sm:p-20 sm:pt-32 lg:flex-row lg:gap-24'>
-                    <div className='flex sm:w-[400px]  justify-center max-lg:self-center'>
-                        <div className='lg:fixed lg:z-40'>
+            <div className='m-auto min-h-screen w-full max-w-7xl overflow-hidden'>
+                <div
+                    className='book-details flex w-full flex-col justify-between pt-16 gap-8 lg:gap-10 sm:pt-32 lg:flex-row xl:pl-0 px-5'
+                    id='book-details'
+                >
+                    <div
+                        className='flex sm:w-[600px] md:w[] lg:min-w-[406px] xl:w-[500px] justify-center max-lg:self-center mx-auto '
+                        id='cover-channel'
+                    >
+                        <div
+                            className='lg:fixed lg:z-40 h-max'
+                            id='cover-container'
+                        >
                             <LazyImgLoader
                                 src={image}
                                 alt={'Cover of ' + title}
@@ -79,8 +126,11 @@ function BookDetails({
                             sm:h-[70vw]
                             sm:w-[44vw]
 
-                            lg:h-[500px]
-                            lg:w-[312.5px]
+                            lg:h-[650px]
+                            lg:w-[406px]
+
+                            xl:h-[770px]
+                            xl:w-[500px]
                             '
                                 srcsetSizes='
                                     (max-width: 399px) 55vw,
