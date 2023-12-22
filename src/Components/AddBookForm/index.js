@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
@@ -27,6 +27,16 @@ function AddBookForm() {
     const [cameraPermission, setCameraPermission] = useState(null);
     const [scanner, setScanner] = useState('');
     const [isScannerOn, setIsScannerOn] = useState(false);
+
+    const titleRef = useRef(null);
+    const authorRef = useRef(null);
+    const categoryRef = useRef(null);
+    const isbn10Ref = useRef(null);
+    const isbn13Ref = useRef(null);
+    const pagesRef = useRef(null);
+    const yearRef = useRef(null);
+    const imageUrlRef = useRef(null);
+    const blurbRef = useRef(null);
 
     const requestCameraPermission = async () => {
         try {
@@ -285,21 +295,6 @@ function AddBookForm() {
             blurbError = false;
         }
 
-        function scrollToFirstError() {
-            const firstErrorElement = document.querySelector('.input-error');
-
-            // Offset sticky nav
-            if (firstErrorElement) {
-                const navHeight = document.querySelector('.nav').offsetHeight;
-                const scrollPosition = firstErrorElement.offsetTop - navHeight;
-
-                window.scrollTo({
-                    top: scrollPosition,
-                    behavior: 'smooth',
-                });
-            }
-        }
-
         // If no errors...
         if (
             !titleError &&
@@ -314,7 +309,26 @@ function AddBookForm() {
         ) {
             handleSubmit(e);
         } else {
-            scrollToFirstError();
+            // Focus on first invalid element
+            if (titleError) {
+                titleRef.current.focus();
+            } else if (authorError) {
+                authorRef.current.focus();
+            } else if (genreError) {
+                categoryRef.current.focus();
+            } else if (isbn13Error) {
+                isbn13Ref.current.focus();
+            } else if (isbn10Error) {
+                isbn10.current.focus();
+            } else if (pageCountError) {
+                pagesRef.current.focus();
+            } else if (yearError) {
+                yearRef.current.focus();
+            } else if (imageUrlError) {
+                imageUrlRef.current.focus();
+            } else if (blurbError) {
+                blurbRef.current.focus();
+            }
         }
     }
 
@@ -854,6 +868,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={titleRef}
                             />
                             {titleError &&
                                 displayErrorMessage('Title is required')}
@@ -880,6 +895,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : ' form-text'
                                 }
+                                ref={authorRef}
                             />
                             {authorError &&
                                 displayErrorMessage('Author is required')}
@@ -905,6 +921,7 @@ function AddBookForm() {
                                     isControlled={true}
                                     aria-required='true'
                                     setGenreError={setGenreError}
+                                    ref={categoryRef}
                                 />
                                 <div className='tooltip w-8 px-0 text-slate-500 sm:w-0'>
                                     <svg
@@ -952,6 +969,7 @@ function AddBookForm() {
                                             ? 'input-error form-text'
                                             : 'form-text'
                                     }
+                                    ref={isbn13Ref}
                                 />
                                 {isbn13Error &&
                                     displayErrorMessage('ISBN-13 is required')}
@@ -977,6 +995,7 @@ function AddBookForm() {
                                             ? 'input-error form-text'
                                             : 'form-text'
                                     }
+                                    ref={isbn10Ref}
                                 />
                                 {isbn10Error &&
                                     displayErrorMessage('ISBN-10 is required')}
@@ -1003,6 +1022,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={pagesRef}
                             />
                             {pageCountError &&
                                 displayErrorMessage('Page count is required')}
@@ -1028,6 +1048,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : ' form-text'
                                 }
+                                ref={yearRef}
                             />
                             {yearError &&
                                 displayErrorMessage(
@@ -1060,6 +1081,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={imageUrlRef}
                             />
                             {imageUrlError &&
                                 displayErrorMessage(
@@ -1085,11 +1107,12 @@ function AddBookForm() {
                                 className={`form-text h-max  w-full !p-3 !text-sm ${
                                     blurbError && 'input-error'
                                 }`}
+                                ref={blurbRef}
                             ></textarea>
 
                             {blurbError &&
                                 displayErrorMessage(
-                                    'The blurb must be between 10 and 10,000 characters',
+                                    'Blurb must be between 10 and 10,000 characters',
                                 )}
                         </div>
                         <div id='error-container' className='error'></div>
