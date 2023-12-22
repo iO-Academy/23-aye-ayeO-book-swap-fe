@@ -7,7 +7,7 @@ function Logo() {
     return (
         <Link
             to='/'
-            className='group flex flex-row items-center text-[#ededed] text-3xl font-semibold justify-center mx-auto'
+            className='group flex flex-row items-center text-[#ededed] text-3xl font-semibold justify-center mx-auto rounded-lg'
             onClick={resetFilter}
         >
             <svg
