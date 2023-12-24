@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../../../../Context';
 import {
@@ -96,11 +96,48 @@ function ReturnForm({
         }
     });
 
+    // Trap tab focus within the dialog
+    const dialogRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Tab') {
+                const focusableElements = dialogRef.current.querySelectorAll(
+                    'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                );
+
+                const firstElement = focusableElements[0];
+                const lastElement =
+                    focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    // Tab + Shift + focus on the FIRST element -> move focus to the last element
+                    e.preventDefault();
+                    lastElement.focus();
+                } else if (
+                    !e.shiftKey &&
+                    document.activeElement === lastElement
+                ) {
+                    // Tab + focus on the LAST element -> move focus to the first element
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     return (
         <dialog
             open={open}
             className='dialog w-full fixed inset-0 flex items-center justify-center h-full'
             onClick={backdropClick}
+            ref={dialogRef}
         >
             <div className='form-container !rounded-lg w-[500px] relative'>
                 <button
