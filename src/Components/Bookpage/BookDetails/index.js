@@ -109,7 +109,7 @@ function BookDetails({
                     id='book-details'
                 >
                     <div
-                        className='flex sm:w-[600px] lg:w-[368px] lg:min-w-[368px] xl:w-[450px] justify-center max-lg:self-center mx-auto'
+                        className='flex sm:w-[600px] lg:w-[343px] lg:min-w-[343px] justify-center max-lg:self-center mx-auto'
                         id='cover-channel'
                     >
                         <div
@@ -127,10 +127,7 @@ function BookDetails({
                             sm:w-[44vw]
 
                             lg:h-[550px]
-                            lg:w-[368px]
-                            
-                            xl:h-[720px]
-                            xl:w-[450px]
+                            lg:w-[343px]
                             '
                                 srcsetSizes='
                                     (max-width: 399px) 55vw,
