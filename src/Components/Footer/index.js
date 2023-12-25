@@ -1,5 +1,4 @@
 import React from 'react';
-import { scrollToTop } from '../../utilities';
 import Logo from '../Logo';
 
 function Footer() {
@@ -9,7 +8,14 @@ function Footer() {
                 <div className='w-full justify-center bg-zinc-600/50 hover:bg-zinc-600/90 transition'>
                     <button
                         className='text-zinc-200 p-4 w-full'
-                        onClick={scrollToTop}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document
+                                .getElementById('first-tabbable-element')
+                                .scrollIntoView({
+                                    behavior: 'smooth',
+                                });
+                        }}
                     >
                         Back to top
                     </button>
@@ -17,7 +23,7 @@ function Footer() {
                 <div className='max-w-7xl mx-auto py-4 w-max'>
                     <Logo />
                     <p className='text-zinc-300 text-center text-xs p-2'>
-                        © 2023 Swapp. All rights reserved.
+                        © 2023 Swapee. All rights reserved.
                     </p>
                 </div>
             </div>

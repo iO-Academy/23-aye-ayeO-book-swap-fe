@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import './bookshelf.css';
 import BookCard from '../BookCard';
 import SearchCollection from './SearchCollection';
 import { v4 as uuidv4 } from 'uuid';
-import NotFound from '../NotFound';
-import { scrollToTop } from '../../utilities.js';
+import { scrollToTop, resetTab } from '../../utilities.js';
 import GenresSelector from './GenresSelector/index.js';
 import { Context } from '../../Context.js';
 
@@ -81,7 +79,7 @@ function Bookshelf({ claimed }) {
     }
 
     return (
-        <div className='bg-white min-h-[100vh] pb-10 relative z-10'>
+        <div className='bg-white min-h-[100vh] relative z-10'>
             <div
                 onClick={showFilter}
                 className='relative z-20 flex cursor-pointer items-center justify-center gap-1 bg-[#545470] py-4 text-center text-sm font-semibold text-white sm:hidden sm:text-zinc-600'
@@ -102,7 +100,7 @@ function Bookshelf({ claimed }) {
                 className={`absolute w-full transform bg-zinc-200 transition sm:relative sm:flex sm:pt-[76px] ${isFilterVisible} sm:translate-y-0`}
                 id='filter'
             >
-                <div className='m-auto flex w-full max-w-7xl flex-col items-center  justify-between gap-3 p-4 sm:flex-row'>
+                <div className='m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 p-4 sm:flex-row'>
                     <GenresSelector
                         label='Filter by genre'
                         updateGenre={handleCategoryChange}
@@ -145,12 +143,13 @@ function Bookshelf({ claimed }) {
                 })}
             </div>
             {pageData && (
-                <div className='flex flex-row justify-center gap-4 my-10 items-center'>
+                <div className='flex flex-row justify-center gap-4 py-10 items-center'>
                     {pageData.total / pageData.per_page > 1 &&
                         pageData?.links.map((link) => {
                             return (
-                                <div
-                                    className={`justify-center items-center flex p-1 text-[#343450] cursor-pointer ${
+                                <button
+                                    tabIndex={link.url ? 0 : -1}
+                                    className={`justify-center items-center flex p-1 text-[#343450] cursor-pointer rounded-full ${
                                         link.active ? 'active-page-button' : ''
                                     } ${
                                         !link.url &&
@@ -165,12 +164,14 @@ function Bookshelf({ claimed }) {
                                         navigate(
                                             `?page=${getPageFromURL(link.url)}`,
                                         );
+                                        resetTab();
                                     }}
+                                    disabled={link.active}
                                 >
                                     {link.label
                                         .replace(/&raquo;/g, '\u00BB')
                                         .replace(/&laquo;/g, '\u00AB')}
-                                </div>
+                                </button>
                             );
                         })}
                 </div>

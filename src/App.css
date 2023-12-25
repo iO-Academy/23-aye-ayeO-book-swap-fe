@@ -1,6 +1,17 @@
 * {
-    /* scroll-behavior: smooth; */
     overscroll-behavior: none;
+}
+
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    @apply ring-lime-500/30 focus:outline-none focus:ring-4;
+}
+
+*::selection {
+    @apply bg-lime-200 text-zinc-800;
 }
 
 /* Change Autocomplete styles in Chrome*/
@@ -47,20 +58,16 @@ h4 {
     @apply py-5 text-lg font-semibold;
 }
 
-.active {
-    @apply font-black;
-}
-
 .active-page-button {
-    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black;
+    @apply bg-[#343450dd]  rounded-full w-[40px] h-[40px] text-zinc-50 font-black pointer-events-none;
 }
 
 .button {
-    @apply cursor-pointer rounded-md border border-slate-600 bg-slate-600 px-4 py-3 text-base text-zinc-50 outline-none ring-lime-500/30 transition hover:bg-transparent hover:text-slate-600 focus:ring-4;
+    @apply cursor-pointer rounded-md border border-[#444460] bg-[#444460] px-4 py-3 text-base text-zinc-50 outline-none ring-lime-500/30 transition hover:bg-transparent hover:text-[#444460] focus:ring-4;
 }
 
 .form-container {
-    @apply m-auto my-5 flex justify-center sm:rounded-lg bg-zinc-200 p-10 transition;
+    @apply m-auto flex justify-center sm:rounded-lg bg-zinc-200 p-10 transition;
 }
 
 .form-text {
@@ -76,12 +83,12 @@ label {
 }
 
 .error {
-    @apply relative text-xs text-rose-600 drop-shadow-2xl;
+    @apply relative text-xs text-rose-500 drop-shadow-2xl;
 }
 
 .input-error,
 .select-error {
-    @apply ring-4 ring-rose-200/60;
+    @apply bg-[#fff6f6ee];
 }
 
 .montserrat {
@@ -94,16 +101,16 @@ label {
 
 .background-animate {
     background-size: 400%;
-    -webkit-animation: animateBackground 0.6s ease infinite;
-    -moz-animation: animateBackground 0.6s ease infinite;
-    animation: animateBackground 0.6s ease infinite;
+    -webkit-animation: animateBackground 0.7s ease infinite;
+    -moz-animation: animateBackground 0.7s ease infinite;
+    animation: animateBackground 0.7s ease infinite;
 }
 
 .background-animate-slow {
     background-size: 400%;
-    -webkit-animation: animateBackground 3s ease infinite;
-    -moz-animation: animateBackground 3s ease infinite;
-    animation: animateBackground 3s ease infinite;
+    -webkit-animation: animateBackground 15s ease infinite;
+    -moz-animation: animateBackground 15s ease infinite;
+    animation: animateBackground 15s ease infinite;
 }
 
 @keyframes animateBackground {

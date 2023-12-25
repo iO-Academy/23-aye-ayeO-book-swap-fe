@@ -1,4 +1,3 @@
-import './bookcard.css';
 import { Link } from 'react-router-dom';
 import LazyImgLoader from '../LazyImgLoader';
 import { isMobile, truncateWithEllipsis } from '../../utilities.js';

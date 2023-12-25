@@ -23,8 +23,13 @@ export function isValidUrl(url) {
 }
 
 export function isValidYear(year) {
-    const yearPattern = /^(?!0{1,2})\d{3,4}$/;
-    return yearPattern.test(year);
+    const currentYear = new Date().getFullYear();
+    const yearPattern = /^(?!0{1,2})\d{1,4}$/;
+    return (
+        yearPattern.test(year) &&
+        parseInt(year, 10) >= 100 &&
+        parseInt(year, 10) <= currentYear + 1
+    );
 }
 
 export function isValidISBN(isbn) {
@@ -159,4 +164,10 @@ export function convertToIsbn10(isbn) {
     }
 
     return cleanedIsbn;
+}
+
+// Resets tabbing order to a hidden element above the fold
+// Used in pagination to shift focus quietly from the page numbers
+export function resetTab() {
+    document.getElementById('first-tabbable-element').focus();
 }

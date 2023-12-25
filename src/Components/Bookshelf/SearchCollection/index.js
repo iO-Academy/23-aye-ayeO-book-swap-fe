@@ -33,7 +33,7 @@ function SearchCollection({ onSearchChange, searchString }, searchInput) {
                 id='search-bar'
                 type='text'
                 value={searchString}
-                className='text-md bg-zinc-50  p-2 pl-0 outline-none'
+                className='text-md bg-zinc-50 p-2 pl-0 !ring-0 outline-none'
                 placeholder='Search books'
             ></input>
         </div>

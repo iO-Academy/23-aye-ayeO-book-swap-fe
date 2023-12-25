@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import GenresSelector from '../Bookshelf/GenresSelector/';
 import ScrollToTop from '../ScrollToTop';
 import { Context } from '../../Context';
@@ -27,6 +27,16 @@ function AddBookForm() {
     const [cameraPermission, setCameraPermission] = useState(null);
     const [scanner, setScanner] = useState('');
     const [isScannerOn, setIsScannerOn] = useState(false);
+
+    const titleRef = useRef(null);
+    const authorRef = useRef(null);
+    const categoryRef = useRef(null);
+    const isbn10Ref = useRef(null);
+    const isbn13Ref = useRef(null);
+    const pagesRef = useRef(null);
+    const yearRef = useRef(null);
+    const imageUrlRef = useRef(null);
+    const blurbRef = useRef(null);
 
     const requestCameraPermission = async () => {
         try {
@@ -285,21 +295,6 @@ function AddBookForm() {
             blurbError = false;
         }
 
-        function scrollToFirstError() {
-            const firstErrorElement = document.querySelector('.input-error');
-
-            // Offset sticky nav
-            if (firstErrorElement) {
-                const navHeight = document.querySelector('.nav').offsetHeight;
-                const scrollPosition = firstErrorElement.offsetTop - navHeight;
-
-                window.scrollTo({
-                    top: scrollPosition,
-                    behavior: 'smooth',
-                });
-            }
-        }
-
         // If no errors...
         if (
             !titleError &&
@@ -314,7 +309,26 @@ function AddBookForm() {
         ) {
             handleSubmit(e);
         } else {
-            scrollToFirstError();
+            // Focus on first invalid element
+            if (titleError) {
+                titleRef.current.focus();
+            } else if (authorError) {
+                authorRef.current.focus();
+            } else if (genreError) {
+                categoryRef.current.focus();
+            } else if (isbn13Error) {
+                isbn13Ref.current.focus();
+            } else if (isbn10Error) {
+                isbn10.current.focus();
+            } else if (pageCountError) {
+                pagesRef.current.focus();
+            } else if (yearError) {
+                yearRef.current.focus();
+            } else if (imageUrlError) {
+                imageUrlRef.current.focus();
+            } else if (blurbError) {
+                blurbRef.current.focus();
+            }
         }
     }
 
@@ -712,7 +726,7 @@ function AddBookForm() {
             <ScrollToTop />
             <div className='sm:pt-24'>
                 <h1 className='py-8 sm:py-12'>Add new book</h1>
-                <div className='m-auto mb-5 max-w-[750px] bg-[#34345020] px-6 pb-8 pt-2 text-slate-600 ring-inset ring-orange-100 transition sm:rounded-lg  sm:p-16 sm:ring-8'>
+                <div className='m-auto mb-5 max-w-[750px] bg-[#34345020] px-6 pb-8 pt-2 text-slate-600 ring-inset ring-zinc-300 transition sm:rounded-lg  sm:p-16'>
                     <div
                         id='scanner'
                         className='overflow-hidden rounded-xl'
@@ -722,23 +736,23 @@ function AddBookForm() {
                         Search by ISBN
                     </label>
                     <div
-                        className={`overflow-hidden rounded-md bg-slate-300 pb-2
+                        className={`transition ease-out overflow-hidden rounded-md bg-slate-300 pb-2
                         ${
                             isValidISBN(isbn) &&
                             !remoteSuccess &&
                             !isbnError &&
-                            'background-animate rounded-t border-none bg-gradient-to-r from-amber-200 via-[#ef9b9b90] to-amber-200'
+                            'background-animate rounded-t border-none bg-gradient-to-r from-orange-100 via-lime-50 to-orange-100'
                         }
                         ${remoteSuccess && 'success-isbn border-none'}
                         ${isbnError ? '!bg-rose-200' : 'border-zinc-300'}
 
                         `}
                     >
-                        <div className='flex flex-row items-center rounded-t-md border-slate-300 bg-zinc-100 text-zinc-600'>
+                        <div className='flex flex-row items-center !rounded-t-md border-slate-300 bg-zinc-100 text-zinc-600'>
                             <input
                                 type='text'
                                 id='isbn'
-                                className='h-full w-full p-5 align-middle text-xl focus:outline-none'
+                                className='h-full w-full p-5 align-middle text-xl ring-inset focus:outline-none'
                                 value={isbn}
                                 onInput={changeISBN}
                                 placeholder='Search by ISBN'
@@ -747,8 +761,13 @@ function AddBookForm() {
                             <div
                                 role='button'
                                 tabIndex={0}
-                                className='flex h-[65px] cursor-pointer items-center justify-center p-3 pt-5 text-center text-zinc-400 transition-colors hover:text-zinc-500'
+                                className='flex h-[65px] cursor-pointer items-center ring-inset justify-center p-3 pt-5 text-center text-zinc-400 transition-colors hover:text-zinc-500'
                                 onClick={handleStartScanner}
+                                onKeyDown={(event) => {
+                                    (event.key === 'Enter' ||
+                                        event.key === ' ') &&
+                                        handleStartScanner();
+                                }}
                                 title='Start ISBN barcode scanner'
                                 aria-label='Start ISBN barcode scanner'
                             >
@@ -849,6 +868,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={titleRef}
                             />
                             {titleError &&
                                 displayErrorMessage('Title is required')}
@@ -875,6 +895,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : ' form-text'
                                 }
+                                ref={authorRef}
                             />
                             {authorError &&
                                 displayErrorMessage('Author is required')}
@@ -900,6 +921,7 @@ function AddBookForm() {
                                     isControlled={true}
                                     aria-required='true'
                                     setGenreError={setGenreError}
+                                    ref={categoryRef}
                                 />
                                 <div className='tooltip w-8 px-0 text-slate-500 sm:w-0'>
                                     <svg
@@ -947,6 +969,7 @@ function AddBookForm() {
                                             ? 'input-error form-text'
                                             : 'form-text'
                                     }
+                                    ref={isbn13Ref}
                                 />
                                 {isbn13Error &&
                                     displayErrorMessage('ISBN-13 is required')}
@@ -972,6 +995,7 @@ function AddBookForm() {
                                             ? 'input-error form-text'
                                             : 'form-text'
                                     }
+                                    ref={isbn10Ref}
                                 />
                                 {isbn10Error &&
                                     displayErrorMessage('ISBN-10 is required')}
@@ -998,6 +1022,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={pagesRef}
                             />
                             {pageCountError &&
                                 displayErrorMessage('Page count is required')}
@@ -1023,6 +1048,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : ' form-text'
                                 }
+                                ref={yearRef}
                             />
                             {yearError &&
                                 displayErrorMessage(
@@ -1055,6 +1081,7 @@ function AddBookForm() {
                                         ? 'input-error form-text'
                                         : 'form-text'
                                 }
+                                ref={imageUrlRef}
                             />
                             {imageUrlError &&
                                 displayErrorMessage(
@@ -1080,11 +1107,12 @@ function AddBookForm() {
                                 className={`form-text h-max  w-full !p-3 !text-sm ${
                                     blurbError && 'input-error'
                                 }`}
+                                ref={blurbRef}
                             ></textarea>
 
                             {blurbError &&
                                 displayErrorMessage(
-                                    'The blurb must be between 10 and 10,000 characters',
+                                    'Blurb must be between 10 and 10,000 characters',
                                 )}
                         </div>
                         <div id='error-container' className='error'></div>
