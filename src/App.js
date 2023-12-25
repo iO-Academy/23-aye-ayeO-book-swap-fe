@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import {
+    BrowserRouter,
+    Route,
+    Routes,
+    useLocation,
+    useNavigate,
+} from 'react-router-dom';
 
 import './App.css';
 import Nav from './Components/Nav';
@@ -69,7 +75,7 @@ function App() {
                 }}
             >
                 <Nav />
-                <Routes>
+                <Routes basename='/'>
                     <Route path='/' element={<Bookshelf claimed={0} />} />
                     <Route
                         path='/claimed'
