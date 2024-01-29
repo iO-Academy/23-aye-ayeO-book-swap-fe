@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '../Logo';
+import { getYearFromDateString } from '../../utilities';
 
 function Footer() {
     return (
@@ -23,7 +24,8 @@ function Footer() {
                 <div className='max-w-7xl mx-auto py-4 w-max'>
                     <Logo />
                     <p className='text-zinc-300 text-center text-xs p-2'>
-                        © 2023 Swapee. All rights reserved.
+                        © {new Date().getFullYear()} Swapee. All rights
+                        reserved.
                     </p>
                 </div>
             </div>
