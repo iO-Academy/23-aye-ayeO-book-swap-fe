@@ -75,7 +75,7 @@ function App() {
                 }}
             >
                 <Nav />
-                <Routes basename='/'>
+                <Routes basename={process.env.PUBLIC_URL}>
                     <Route path='/' element={<Bookshelf claimed={0} />} />
                     <Route
                         path='/claimed'
