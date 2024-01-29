@@ -666,7 +666,7 @@ function AddBookForm() {
                 blurb,
                 image:
                     imageUrl ||
-                    'https://vladistanchev.co.uk/images/cover-coming-soon.webp',
+                    `https://${window.location.hostname}/cover-coming-soon.webp`,
             };
 
             console.log(requestBody.image);
