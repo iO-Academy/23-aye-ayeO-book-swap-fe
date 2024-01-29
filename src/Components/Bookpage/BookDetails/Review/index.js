@@ -14,7 +14,6 @@ function Review({ review }) {
             border
             border-zinc-100
         bg-white
-        border-slate-200
         rounded-lg
         w-full
         my-4
